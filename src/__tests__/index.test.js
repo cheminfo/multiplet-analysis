@@ -4,10 +4,10 @@ import quadruplet from './data/d=1_J=7_m=q.json';
 import { analyseSignal } from '..';
 
 describe('analyseSignal of simulated spectra', () => {
-  it.only('d=2_J=7_m=d', () => {
+  it('d=2_J=7_m=d', () => {
     let result = analyseSignal(doublet, { frequency: 400 });
     expect(result.multiplicity).toBe('');
-    expect(result.j[0]).toStrictEqual({ multiplicy: 'd', coupling: 7 });
+    expect(result.j[0]).toStrictEqual({ multiplicity: 'd', coupling: 7 });
   });
 
   it('d=1_J=7_m=q', () => {
