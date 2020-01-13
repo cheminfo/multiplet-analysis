@@ -31,7 +31,7 @@ export function analyseSignal(data = {}, options = {}) {
   let minTestedPt = Math.trunc(minTestedJ / resolutionHz);
 
   // will find center of symetry of the multiplet
-  // add zeroes as to make it symetrical
+  // add zeroes as to make it symetrical if requested... and needed
 
   // main J-coupling determination
   // not calculated - set to -1
