@@ -11,7 +11,7 @@ export function analyseSignal(data = {}, options = {}) {
   const { maxTestedJ = 20 } = options;
   const { minTestedJ = 5 } = options;
   const { minimalResolution = 0.01 } = options;
-  var scalProd = new Array();
+  let scalProd = new Array();
   let result = {};
 
   //option see if cut is good. (should we cut more or interpolate if cut too close to peak - cause artifacts in both cases)
@@ -29,7 +29,7 @@ export function analyseSignal(data = {}, options = {}) {
   resolutionHz = resolutionPpm * frequency;
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
   let minTestedPt = Math.trunc(minTestedJ / resolutionHz);
-
+  console.log(maxTestedJ);
   // will find center of symetry of the multiplet
   // add zeroes as to make it symetrical if requested... and needed
 
@@ -42,11 +42,11 @@ export function analyseSignal(data = {}, options = {}) {
     scalProd[jStar] = deco(y, jStar);
   }
   if (debug) {
-    console.log(resolutionHz + ' Hz per point');
-    console.log('min ' + minTestedPt + ' in pt');
-    console.log('max ' + maxTestedPt + ' in pt');
-    console.log('array ' + scalProd + ' in pt');
-    console.log('array ' + scalProd[0] + scalProd[6] + ' in pt');
+    console.log(`${resolutionHz} Hz per point`);
+    console.log(`min ${minTestedPt} in pt`);
+    console.log(`max ${maxTestedPt} in pt`);
+    console.log(`array ${scalProd} in pt`);
+    console.log(`array ${scalProd[0]}${scalProd[6]} in pt`);
   }
 
   // we do some complex stuff ...

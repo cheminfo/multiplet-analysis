@@ -68,3 +68,6 @@ const result = library(args);
 [ci-url]: https://github.com/cheminfo/multiplet-analysis/actions?query=workflow%3A%22Node.js+CI%22
 [download-image]: https://img.shields.io/npm/dm/multiplet-analysis.svg
 [download-url]: https://www.npmjs.com/package/multiplet-analysis
+
+npm i ml-fft
+npm home ml-fft
