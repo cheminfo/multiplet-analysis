@@ -7,7 +7,7 @@
 export function analyseSignal(data = {}, options = {}) {
   const { x = [], y = [] } = data;
   const { frequency = 400 } = options;
-  const { debug = true } = options;
+  const { debug = 0 } = options;
   const { maxTestedJ = 20 } = options;
   const { minTestedJ = 5 } = options;
   const { minimalResolution = 0.01 } = options;
@@ -29,7 +29,6 @@ export function analyseSignal(data = {}, options = {}) {
   resolutionHz = resolutionPpm * frequency;
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
   let minTestedPt = Math.trunc(minTestedJ / resolutionHz);
-  console.log(maxTestedJ);
   // will find center of symetry of the multiplet
   // add zeroes as to make it symetrical if requested... and needed
 

@@ -8,7 +8,7 @@ describe('analyseSignal of simulated spectra', () => {
     // was it.only
     let result = analyseSignal(doublet, { frequency: 400 });
     expect(result.multiplicity).toBe('');
-    expect(result.j[0]).toStrictEqual({ multiplicity: 'dq', coupling: 7 });
+    expect(result.j[0]).toStrictEqual({ multiplicity: 'd', coupling: 7 });
   });
 
   it('d=1_J=7_m=q', () => {
