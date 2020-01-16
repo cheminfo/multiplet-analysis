@@ -70,7 +70,7 @@
 
         graph
           .newSerie('line serie', {}, 'line') // Creates a new serie
-          .autoAxis() // Assigns axes
+          .autoAxis() // Assigns axes 
           .setWaveform(waveForm);
 
         var modifiers = []; // We can define a specific style for some points in the scatter plot
@@ -101,7 +101,10 @@
         graph2
           .newSerie('line serie', {}, 'line') // Creates a new serie
           .autoAxis() // Assigns axes
-          .setWaveform(waveForm2);
+          .setWaveform(waveForm2)
+          //.setStyle({stroke: 'green'})
+          ;
+          graph2
 
         var modifiers = []; // We can define a specific style for some points in the scatter plot
         // modifiers[20] = { shape: 'circle', r: 12, fill: 'rgba(0, 100, 255, 0.3)', stroke: 'rgb(0, 150, 255)' };
@@ -111,7 +114,7 @@
           .autoAxis() // Assigns axes
           .setWaveform(waveForm3)
           .setStyle(
-            { shape: 'circle', r: 4, fill: 'green', stroke: 'blue' },
+            { shape: 'circle', r: 3, fill: 'yellow', stroke: 'red' },
             modifiers,
           );
 
