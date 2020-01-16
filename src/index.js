@@ -19,7 +19,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   //option see if cut is good. (should we cut more or interpolate if cut too close to peak - cause artifacts in both cases)
 
   // determine if need interpolation
-  let resolutionPpm = Math.abs(x[0] - x[x.length - 1]) / x.length;
+  let resolutionPpm = Math.abs(x[0] - x[x.length - 1]) / (x.length - 1);
   let resolutionHz = resolutionPpm * frequency;
   // test if interpolation is needed.
   if (resolutionHz < minimalResolution) {
@@ -27,7 +27,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   }
 
   // recalculate resolution after interpolation
-  resolutionPpm = Math.abs(x[0] - x[x.length - 1]) / x.length;
+  resolutionPpm = Math.abs(x[0] - x[x.length - 1]) / (x.length - 1);
   resolutionHz = resolutionPpm * frequency;
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
   let minTestedPt = Math.trunc(minTestedJ / resolutionHz) + 1;
