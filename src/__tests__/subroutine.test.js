@@ -5,4 +5,3 @@ describe('subroutine', () => {
     expect(subroutine()).toBe(1);
   });
 });
-

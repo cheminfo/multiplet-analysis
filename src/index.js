@@ -4,6 +4,7 @@
  * @param {object} [options={}] Options (default is empty object)
  * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
  */
+import { saveStep } from './saveStep';
 
 export function analyseMultiplet(data = {}, options = {}) {
   const { x = [], y = [] } = data;
@@ -36,14 +37,19 @@ export function analyseMultiplet(data = {}, options = {}) {
   // main J-coupling determination
   // not calculated - set to -1
   for (let jStar = 0; jStar < minTestedPt; jStar++) {
-    JStarArray[jStar] = -1;
+    JStarArray[jStar] = jStar * resolutionHz;
     scalProd[jStar] = -1;
   }
+
+
+
   for (let jStar = maxTestedPt; jStar >= minTestedPt; jStar -= 1) {
     scalProd[jStar] = measureDeco(y, jStar, 1);
     JStarArray[jStar] = jStar * resolutionHz;
     console.log(jStar + ' J* = ' + JStarArray[jStar] + ' ' + scalProd[jStar] + ' lenght '  + y.length);
   }
+  saveStep(x, y, JStarArray, scalProd, 1);
+
     console.log(`array ${JStarArray} in pt`);
   // LP: I would like to plot JStarArray over scalProd
   if (debug) {
