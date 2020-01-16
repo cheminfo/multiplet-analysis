@@ -15,11 +15,19 @@
       createGraph();
 
       async function createGraph() {
-        var response = await fetch('./data.json');
+        var heightSubgraphs = 250;
+        var widthSpectra = 400;
+        var widthErrFun = 300;
+        var response = await fetch('./multiplet1.json');
         var values = await response.json();
-
         response = await fetch('./annotations.json');
         var annotations = await response.json();
+
+        response = await fetch('./errfun1.json');
+        var values2 = await response.json();
+
+        response = await fetch('./annotations.json');
+        var annotations2 = await response.json();
 
         // options for zoom
         let options = {
@@ -52,8 +60,9 @@
         };
 
         var graph = new Graph('graph', options);
-        graph.resize(500, 500); // Resizes the container
-
+        graph.resize(widthSpectra, heightSubgraphs); // Resizes the container
+        
+      
         let waveForm = Graph.newWaveform();
         let arrayX = values.x;
         let arrayY = values.y;
@@ -87,6 +96,45 @@
         }
 
         graph.draw(); // Draw
+        
+        var graph2 = new Graph('graph', options);
+        graph2.resize(widthErrFun, heightSubgraphs); // Resizes the container
+
+      
+        let waveForm2 = Graph.newWaveform();
+        let arrayX2 = values2.x;
+        let arrayY2 = values2.y;
+        waveForm2.setData(arrayY2, arrayX2);
+
+        graph2
+          .newSerie('line serie', {}, 'line') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm2);
+
+        var modifiers = []; // We can define a specific style for some points in the scatter plot
+        // modifiers[20] = { shape: 'circle', r: 12, fill: 'rgba(0, 100, 255, 0.3)', stroke: 'rgb(0, 150, 255)' };
+
+        graph2
+          .newSerie('scatter serie', {}, 'scatter') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm2)
+          .setStyle(
+            { shape: 'circle', r: 4, fill: 'green', stroke: 'blue' },
+            modifiers,
+          );
+
+        // adding shapes
+        // https://github.com/NPellet/jsGraph/tree/master/src/shapes
+
+        console.log(annotations2);
+        for (let annotation of annotations2) {
+          let shape2 = graph2.newShape(annotation.type, annotation.data);
+          // shape.autoAxes();
+          shape2.draw();
+        }
+
+        graph2.draw(); // Draw
+        
       }
     </script>
   </body>
