@@ -4,20 +4,19 @@
 [![build status][ci-image]][ci-url]
 [![npm download][download-image]][download-url]
 
-The goal of this project is to be able to determine the multiplicity of 
+The goal of this project is to be able to determine the multiplicity of
 a NMR signal as well as the coupling constants.
 
 The result of the analysis that is an object composed:
+
 - delta
 - multiplicity : m (massif if delta is unspecified), s, s br, d br. We can repeat the multiplicity in this field but if it is empty we should use it from coupling constants array.
 - peak: [{x: , y:, z:, width}, {x: , y:, z:, width}, ]
 - j []
   - multiplicity: (d, t, q, p pent quint, sext hex, sept hept, oct, non)
-  - coupling:  (Hz)
-
+  - coupling: (Hz)
 
 ## Developement
-
 
 ```bash
 git clone https://github.com/cheminfo/multiplet-analysis.git
@@ -34,6 +33,25 @@ In the `jest --.watch` terminal you may as well select only one specific test.
 
 In is also possible to select a specific test in the code by
 adding `.only` after `describe` or `it` like for example: `it.only('s`
+
+### Debugging data
+
+In order to debug algorithm it is important to be able to visualize them. In the project we added a folder `/web` that contains `index.html`.
+This webpage will load `data.json` and `annotations.json` and display a chart.
+
+To automatically use and refresh this webpage you should install the plugin `Live server` and then right click on `index.html` and `open with live server`.
+This will open the webpage in the browser and realod it if the files change.
+
+There are also 2 examples files to create the data:
+
+- exampleGenerateAnnotations : create an array of annotations
+- exampleGenerateData : create an object like {x:[], y:[]}
+
+When you clone / update the project don't forget to `npm i` to load possible new dependencies.
+
+If you want to execute those scripts written as module you need to use `esm` that is installed as a development dependency.
+
+`node -r esm exampleGenerateAnnotations.js`
 
 ## Creating simulated data
 
