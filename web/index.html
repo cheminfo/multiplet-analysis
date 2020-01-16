@@ -73,9 +73,6 @@
           .autoAxis() // Assigns axes 
           .setWaveform(waveForm);
 
-        var modifiers = []; // We can define a specific style for some points in the scatter plot
-        // modifiers[20] = { shape: 'circle', r: 12, fill: 'rgba(0, 100, 255, 0.3)', stroke: 'rgb(0, 150, 255)' };
-
         console.log(annotations);
         for (let annotation of annotations) {
           let shape = graph.newShape(annotation.type, annotation.data);
@@ -102,12 +99,11 @@
           .newSerie('line serie', {}, 'line') // Creates a new serie
           .autoAxis() // Assigns axes
           .setWaveform(waveForm2)
-          //.setStyle({stroke: 'green'})
+          .setStyle({stroke: 'green'})  // LP COMMENT CHANGER couleur?
           ;
-          graph2
 
         var modifiers = []; // We can define a specific style for some points in the scatter plot
-        // modifiers[20] = { shape: 'circle', r: 12, fill: 'rgba(0, 100, 255, 0.3)', stroke: 'rgb(0, 150, 255)' };
+         //modifiers[20] = { shape: 'circle', r: 12, fill: 'rgba(0, 100, 255, 0.3)', stroke: 'rgb(0, 150, 255)' };
 
         graph2
           .newSerie('scatter serie', {}, 'scatter') // Creates a new serie
@@ -121,12 +117,12 @@
         // adding shapes
         // https://github.com/NPellet/jsGraph/tree/master/src/shapes
 
-        console.log(annotations2);
+    /*    console.log(annotations2);
         for (let annotation of annotations2) {
           let shape2 = graph2.newShape(annotation.type, annotation.data);
           // shape.autoAxes();
           shape2.draw();
-        }
+        }*/
 
         graph2.draw(); // Draw
         
