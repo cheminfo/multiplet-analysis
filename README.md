@@ -39,7 +39,7 @@ adding `.only` after `describe` or `it` like for example: `it.only('s`
 In order to debug algorithm it is important to be able to visualize them. In the project we added a folder `/web` that contains `index.html`.
 This webpage will load `data.json` and `annotations.json` and display a chart.
 
-To automatically use and refresh this webpage you should install the plugin `Live server` and then right click on `index.html` and `open with live server`.
+To automatically use and refresh this webpage you should install the plugin `Live server` typing `code --install-extension ritwickdey.liveserver`. Then, right click on `index.html` and `open with live server`.
 This will open the webpage in the browser and realod it if the files change.
 
 There are also 2 examples files to create the data:
