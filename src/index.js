@@ -41,16 +41,16 @@ export function analyseMultiplet(data = {}, options = {}) {
     scalProd[jStar] = -1;
   }
 
-
-
   for (let jStar = maxTestedPt; jStar >= minTestedPt; jStar -= 1) {
     scalProd[jStar] = measureDeco(y, jStar, 1);
     JStarArray[jStar] = jStar * resolutionHz;
-    console.log(jStar + ' J* = ' + JStarArray[jStar] + ' ' + scalProd[jStar] + ' lenght '  + y.length);
+    console.log(
+      `${jStar} J* = ${JStarArray[jStar]} ${scalProd[jStar]} lenght ${y.length}`,
+    );
   }
   saveStep(x, y, JStarArray, scalProd, 1);
 
-    console.log(`array ${JStarArray} in pt`);
+  console.log(`array ${JStarArray} in pt`);
   // LP: I would like to plot JStarArray over scalProd
   if (debug) {
     console.log(`${resolutionHz} Hz per point`);
@@ -72,17 +72,17 @@ export function analyseMultiplet(data = {}, options = {}) {
 function measureDeco(y, JStar, sign) {
   let y1 = new Array();
   let y2 = new Array();
-  let v11 = 0,
-    v22 = 0,
-    v12 = 0;
+  let v11 = 0;
+  let v22 = 0;
+  let v12 = 0;
   y1 = deco(y, JStar, sign, 1);
   y2 = deco(y, JStar, sign, 0);
-  for (let index = 0; index <y1.length; index++){
+  for (let index = 0; index < y1.length; index++) {
     v12 += y1[index] * y2[index];
     v11 += y1[index] * y1[index];
     v22 += y2[index] * y2[index];
   }
-  return (v12/(Math.sqrt(v11*v22)));
+  return v12 / Math.sqrt(v11 * v22);
 }
 
 function deco(yi, JStar, sign, dir) {
@@ -109,7 +109,7 @@ clear all
 min_j=1.5;%depend on the linewidth of the signal
 max_j=21;%typically largest JHH couling
 symmetrize=1;%symetrize multiplet at each step of deconvolution
-center=1;%center multiplet before analysis 
+center=1;%center multiplet before analysis
 
 %spectral parameter (to be fixed)
 hz_per_pt=0.1;% to be fixed and set to swh/si
@@ -159,14 +159,14 @@ for main_j_loop=1:number_of_coupling_looked_in_multiplet%:10
   if top_pt>size(segment_int,1)
       top_pt=size(segment_int,1);
   end
-  
+
   % center
   if center
   [segment_int, shifted_by]=center_spectrum(segment_int');
   segment_int=segment_int';
   disp(['Shifted by ' num2str(shifted_by) ' pt'])
   end
-  
+
   % symmetrize
   if symmetrize
   segment_int= flipud(segment_int)*0.5+0.5*segment_int;
@@ -225,7 +225,7 @@ for main_j_loop=1:number_of_coupling_looked_in_multiplet%:10
   else
       break
   end
-  
+
 end
 table_of_J
 */
