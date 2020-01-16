@@ -71,7 +71,8 @@
         graph
           .newSerie('line serie', {}, 'line') // Creates a new serie
           .autoAxis() // Assigns axes 
-          .setWaveform(waveForm);
+          .setWaveform(waveForm)
+          .setLineColor('red');
 
         console.log(annotations);
         for (let annotation of annotations) {
