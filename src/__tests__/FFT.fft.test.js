@@ -9,6 +9,7 @@ describe('subroutine', () => {
       im[i] = 4 - i - 1;
     }
     console.log('in-fft ' + re);
+    FFT.init(4);
     FFT.fft(re, im);
     console.log('out-fft ' + re + ' should be 1 1 1 1 after FT');
     re = [1, 0, 0, 0];
