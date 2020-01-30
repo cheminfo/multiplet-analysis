@@ -9,7 +9,7 @@ import { saveStep } from './saveStep';
 export function analyseMultiplet(data = {}, options = {}) {
   const { x = [], y = [] } = data;
   const { frequency = 400 } = options;
-  const { debug = 1 } = options;
+  const { debug = 0 } = options;
   const { maxTestedJ = 20 } = options;
   const { minTestedJ = 1 } = options;
   const { minimalResolution = 0.01 } = options;
@@ -44,13 +44,13 @@ export function analyseMultiplet(data = {}, options = {}) {
   for (let jStar = maxTestedPt; jStar >= minTestedPt; jStar -= 1) {
     scalProd[jStar] = measureDeco(y, jStar, 1);
     JStarArray[jStar] = jStar * resolutionHz;
-    console.log(
+    /*console.log(
       `${jStar} J* = ${JStarArray[jStar]} ${scalProd[jStar]} lenght ${y.length}`,
-    );
+    );*/
   }
   saveStep(x, y, JStarArray, scalProd, 1);
 
-  console.log(`array ${JStarArray} in pt`);
+  /*console.log(`array ${JStarArray} in pt`);*/
   // LP: I would like to plot JStarArray over scalProd
   if (debug) {
     console.log(`${resolutionHz} Hz per point`);
@@ -75,8 +75,8 @@ function measureDeco(y, JStar, sign) {
   let v11 = 0;
   let v22 = 0;
   let v12 = 0;
-  y1 = deco(y, JStar, sign, 1);
-  y2 = deco(y, JStar, sign, 0);
+  y1 = deco(y, JStar, sign, 1, 1, 1/2);// dir left to right
+  y2 = deco(y, JStar, sign,-1, 1, 1/2);// dir right to left
   for (let index = 0; index < y1.length; index++) {
     v12 += y1[index] * y2[index];
     v11 += y1[index] * y1[index];
@@ -85,19 +85,45 @@ function measureDeco(y, JStar, sign) {
   return v12 / Math.sqrt(v11 * v22);
 }
 
-function deco(yi, JStar, sign, dir) {
-  let y = new Array(yi.length);
-  for (let scan = 0; scan < y.length; scan++) y[scan] = yi[scan];
-  if (dir) {
-    for (let scan = JStar; scan < y.length - JStar; scan++) {
-      y[scan] -= sign * y[scan - JStar];
+function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
+  var sign = typeof sign !== 'undefined' ? sign : 1; // set default value : ++ multiplet :1 +- multiplet : -1
+  var dir = typeof dir !== 'undefined' ? dir : 1; // set default value : from left to right : 1 -1 from right to left, 0: sum of both
+  var chopTail = typeof chopTail !== 'undefined' ? chopTail : 1; // set default value : run the end of the multiplet
+  var multiplicity = typeof multiplicity !== 'undefined' ? multiplicity : 0.5; // set default value for spin 1/2
+  let nbLines = parseInt( 2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
+  let y1 = new Array(yi.length);
+  let y2 = new Array(yi.length);
+
+  if (dir >= 0) {
+    for (let scan = 0; scan < y1.length; scan++) y1[scan] = yi[scan];
+    for (let scan = 0; scan < y1.length - JStar * nbLines; scan++) {
+      for (let line = 0; line < nbLines; line++) {
+        y1[scan + (line + 1) * JStar] -= sign * y1[scan];
+      }
     }
-    return y.slice(0, y.length - JStar - 1);
-  } else {
-    for (let scan = y.length - JStar - 1; scan >= JStar; scan -= 1) {
-      y[scan] -= sign * y[scan + JStar];
+    if (dir > 0) {
+      return y1.slice(0, y1.length - chopTail * JStar * nbLines - 1);
     }
-    return y.slice(JStar, y.length - 1);
+  }
+  if (dir <= 0) {
+    for (let scan = 0; scan < y2.length; scan++) y2[scan] = yi[scan];
+    for (let scan = y2.length - 1; scan >= JStar * nbLines; scan -= 1) {
+      for (let line = 0; line < nbLines; line++) {
+        y2[scan - (line + 1) * JStar] -= sign * y2[scan];
+      }
+    }
+    if (dir < 0) {
+      return y2.slice(chopTail * JStar * nbLines, y2.length - 1);
+    }
+  }
+  if (dir == 0) {
+    let yout = new Array(yi.length + JStar * nbLines);
+    for (let scan = 0; scan < JStar * nbLines; scan++) yout[scan] = 0; // initialize
+    for (let scan = 0; scan < y2.length; scan++)
+      yout[scan + JStar * nbLines] = y2[scan]; // fill
+    for (let scan = 0; scan < y1.length; scan++)
+      yout[scan + JStar * nbLines] += y1[scan];
+    return y1.slice(0, y1.length - chopTail * JStar * nbLines - 1);
   }
 }
 
