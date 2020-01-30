@@ -7,15 +7,23 @@
 import { saveStep } from './saveStep';
 
 export function analyseMultiplet(data = {}, options = {}) {
-  const { x = [], y = [] } = data;
+  var { x = [], y = [] } = data;
   const { frequency = 400 } = options;
   const { debug = 0 } = options;
   const { maxTestedJ = 20 } = options;
   const { minTestedJ = 1 } = options;
   const { minimalResolution = 0.01 } = options;
+  const { makeShortCutForSpeed = 0 } = options;
+  const { critFoundJ = 0.98 } = options;
+  const { sign = 1 } = options;
+  const { chopTail = 1 } = options;
+  const { multiplicity = 0.5 } = options;
   let scalProd = new Array();
   let JStarArray = new Array();
+  let JArray = new Array();
   let result = {};
+  result.j = [];
+
   //option see if cut is good. (should we cut more or interpolate if cut too close to peak - cause artifacts in both cases)
 
   // determine if need interpolation
@@ -36,20 +44,41 @@ export function analyseMultiplet(data = {}, options = {}) {
 
   // main J-coupling determination
   // not calculated - set to -1
+
   for (let jStar = 0; jStar < minTestedPt; jStar++) {
     JStarArray[jStar] = jStar * resolutionHz;
     scalProd[jStar] = -1;
   }
 
-  for (let jStar = maxTestedPt; jStar >= minTestedPt; jStar -= 1) {
-    scalProd[jStar] = measureDeco(y, jStar, 1);
-    JStarArray[jStar] = jStar * resolutionHz;
-    /*console.log(
+  for (let loopoverJvalues = 1; loopoverJvalues < 10; loopoverJvalues++) {
+    let topValue = -1;
+    let topPosJ = 0;
+    let gotJValue = false;
+    for (let jStar = maxTestedPt; jStar >= minTestedPt; jStar -= 1) {
+      scalProd[jStar] = measureDeco(y, jStar, sign, chopTail, multiplicity);
+      JStarArray[jStar] = jStar * resolutionHz;
+      if (!gotJValue) {
+        if (scalProd[jStar] > topValue) {
+          topValue = scalProd[jStar];
+          topPosJ = jStar;
+        }
+        if (jStar < maxTestedPt) {
+          if (scalProd[jStar] < scalProd[jStar + 1] && topValue > critFoundJ) {
+            result.j.push({ multiplicity: 'd', coupling: topPosJ * resolutionHz });
+            gotJValue = true;
+            if (makeShortCutForSpeed) break;
+          }
+        }
+      }
+      /*console.log(
       `${jStar} J* = ${JStarArray[jStar]} ${scalProd[jStar]} lenght ${y.length}`,
     );*/
-  }
-  saveStep(x, y, JStarArray, scalProd, 1);
+    }
+    saveStep(x, y, JStarArray, scalProd, loopoverJvalues);
+    if (!gotJValue) break;
+    else y = deco(y, topPosJ, sign, 0, chopTail, multiplicity);
 
+  }
   /*console.log(`array ${JStarArray} in pt`);*/
   // LP: I would like to plot JStarArray over scalProd
   if (debug) {
@@ -61,22 +90,21 @@ export function analyseMultiplet(data = {}, options = {}) {
   }
 
   // we do some complex stuff ...
-  result.delta = 7.2;
-  result.multiplicity = '';
-  result.j = [];
-  result.j.push({ multiplicity: 'd', coupling: 7 });
-  result.j.push({ multiplicity: 't', coupling: 2 });
+  //result.delta = 7.2;
+  //result.multiplicity = '';
+  //result.j.push({ multiplicity: 'd', coupling: 7 });
+  //result.j.push({ multiplicity: 't', coupling: 2 });
   return result;
 }
 
-function measureDeco(y, JStar, sign) {
+function measureDeco(y, JStar, sign, chopTail, multiplicity) {
   let y1 = new Array();
   let y2 = new Array();
   let v11 = 0;
   let v22 = 0;
   let v12 = 0;
-  y1 = deco(y, JStar, sign, 1, 1, 1/2);// dir left to right
-  y2 = deco(y, JStar, sign,-1, 1, 1/2);// dir right to left
+  y1 = deco(y, JStar, sign, 1, chopTail, multiplicity); // dir left to right
+  y2 = deco(y, JStar, sign, -1, chopTail, multiplicity); // dir right to left
   for (let index = 0; index < y1.length; index++) {
     v12 += y1[index] * y2[index];
     v11 += y1[index] * y1[index];
@@ -86,11 +114,19 @@ function measureDeco(y, JStar, sign) {
 }
 
 function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
-  var sign = typeof sign !== 'undefined' ? sign : 1; // set default value : ++ multiplet :1 +- multiplet : -1
-  var dir = typeof dir !== 'undefined' ? dir : 1; // set default value : from left to right : 1 -1 from right to left, 0: sum of both
-  var chopTail = typeof chopTail !== 'undefined' ? chopTail : 1; // set default value : run the end of the multiplet
-  var multiplicity = typeof multiplicity !== 'undefined' ? multiplicity : 0.5; // set default value for spin 1/2
-  let nbLines = parseInt( 2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
+  if (typeof sign == 'undefined') {
+    sign = 1;
+  } // set default value : ++ multiplet :1 +- multiplet : -1
+  if (typeof dir == 'undefined') {
+    dir = 1;
+  } // set default value : from left to right : 1 -1 from right to left, 0: sum of both
+  if (typeof chopTail == 'undefined') {
+    chopTail = 1;
+  } // set default value : run the end of the multiplet
+  if (typeof multiplicity == 'undefined') {
+    multiplicity = 0.5;
+  } // set default value for spin 1/2
+  let nbLines = parseInt(2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
   let y1 = new Array(yi.length);
   let y2 = new Array(yi.length);
 
