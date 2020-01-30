@@ -17,6 +17,6 @@ describe('analyse multiplet of simulated spectra', () => {
   it('d=1_J=7_m=q', () => {
     let result = analyseMultiplet(quadruplet, { frequency: 400 });
     //expect(result.j).toHaveLength(2);
-    expect(result.j).toHaveLength(2);
+    expect(result.j).toHaveLength(4);
   });
 });

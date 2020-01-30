@@ -14,7 +14,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { minTestedJ = 1 } = options;
   const { minimalResolution = 0.01 } = options;
   const { makeShortCutForSpeed = 0 } = options;
-  const { critFoundJ = 0.98 } = options;
+  const { critFoundJ = 0.95 } = options;
   const { sign = 1 } = options;
   const { chopTail = 1 } = options;
   const { multiplicity = 0.5 } = options;
@@ -64,7 +64,10 @@ export function analyseMultiplet(data = {}, options = {}) {
         }
         if (jStar < maxTestedPt) {
           if (scalProd[jStar] < scalProd[jStar + 1] && topValue > critFoundJ) {
-            result.j.push({ multiplicity: 'd', coupling: topPosJ * resolutionHz });
+            result.j.push({
+              multiplicity: 'd',
+              coupling: topPosJ * resolutionHz,
+            });
             gotJValue = true;
             if (makeShortCutForSpeed) break;
           }
@@ -77,7 +80,6 @@ export function analyseMultiplet(data = {}, options = {}) {
     saveStep(x, y, JStarArray, scalProd, loopoverJvalues);
     if (!gotJValue) break;
     else y = deco(y, topPosJ, sign, 0, chopTail, multiplicity);
-
   }
   /*console.log(`array ${JStarArray} in pt`);*/
   // LP: I would like to plot JStarArray over scalProd
@@ -99,7 +101,7 @@ export function analyseMultiplet(data = {}, options = {}) {
 
 function measureDeco(y, JStar, sign, chopTail, multiplicity) {
   let y1 = new Array();
-  let y2 = new Array();
+  let y2 = new Array(); 
   let v11 = 0;
   let v22 = 0;
   let v12 = 0;
