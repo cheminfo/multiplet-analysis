@@ -103,8 +103,8 @@ export function analyseMultiplet(data = {}, options = {}) {
 }
 
 function measureDeco(y, JStar, sign, chopTail, multiplicity) {
-  let y1 = new Array();
-  let y2 = new Array();
+  let y1 = [];
+  let y2 = [];
   let v11 = 0;
   let v22 = 0;
   let v12 = 0;
