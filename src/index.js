@@ -7,7 +7,7 @@
 import { saveStep } from './saveStep';
 
 export function analyseMultiplet(data = {}, options = {}) {
-  var { x = [], y = [] } = data;
+  let { x = [], y = [] } = data;
   const { frequency = 400 } = options;
   const { debug = 0 } = options;
   const { maxTestedJ = 20 } = options;
@@ -101,7 +101,7 @@ export function analyseMultiplet(data = {}, options = {}) {
 
 function measureDeco(y, JStar, sign, chopTail, multiplicity) {
   let y1 = new Array();
-  let y2 = new Array(); 
+  let y2 = new Array();
   let v11 = 0;
   let v22 = 0;
   let v12 = 0;
@@ -116,16 +116,16 @@ function measureDeco(y, JStar, sign, chopTail, multiplicity) {
 }
 
 function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
-  if (typeof sign == 'undefined') {
+  if (typeof sign === 'undefined') {
     sign = 1;
   } // set default value : ++ multiplet :1 +- multiplet : -1
-  if (typeof dir == 'undefined') {
+  if (typeof dir === 'undefined') {
     dir = 1;
   } // set default value : from left to right : 1 -1 from right to left, 0: sum of both
-  if (typeof chopTail == 'undefined') {
+  if (typeof chopTail === 'undefined') {
     chopTail = 1;
   } // set default value : run the end of the multiplet
-  if (typeof multiplicity == 'undefined') {
+  if (typeof multiplicity === 'undefined') {
     multiplicity = 0.5;
   } // set default value for spin 1/2
   let nbLines = parseInt(2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
@@ -157,10 +157,12 @@ function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
   if (dir == 0) {
     let yout = new Array(yi.length + JStar * nbLines);
     for (let scan = 0; scan < JStar * nbLines; scan++) yout[scan] = 0; // initialize
-    for (let scan = 0; scan < y2.length; scan++)
-      yout[scan + JStar * nbLines] = y2[scan]; // fill
-    for (let scan = 0; scan < y1.length; scan++)
+    for (let scan = 0; scan < y2.length; scan++) {
+      yout[scan + JStar * nbLines] = y2[scan];
+    } // fill
+    for (let scan = 0; scan < y1.length; scan++) {
       yout[scan + JStar * nbLines] += y1[scan];
+    }
     return y1.slice(0, y1.length - chopTail * JStar * nbLines - 1);
   }
 }
