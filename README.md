@@ -16,6 +16,10 @@ The result of the analysis that is an object composed:
   - multiplicity: (d, t, q, p pent quint, sext hex, sept hept, oct, non)
   - coupling: (Hz)
 
+## Run example
+
+`node -r esm examples/quadruplet.js`
+
 ## Developement
 
 ```bash

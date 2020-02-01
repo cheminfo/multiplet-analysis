@@ -4,12 +4,12 @@
  * @param {object} [options={}] Options (default is empty object)
  * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
  */
-import { saveStep } from './saveStep';
+import { appendDebug } from './appendDebug';
 
 export function analyseMultiplet(data = {}, options = {}) {
   let { x = [], y = [] } = data;
   const { frequency = 400 } = options;
-  const { debug = 0 } = options;
+  const { debug = false } = options;
   const { maxTestedJ = 20 } = options;
   const { minTestedJ = 1 } = options;
   const { minimalResolution = 0.01 } = options;
@@ -18,9 +18,9 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { sign = 1 } = options;
   const { chopTail = 1 } = options;
   const { multiplicity = 0.5 } = options;
-  let scalProd = new Array();
-  let JStarArray = new Array();
-  let JArray = new Array();
+  let scalProd = [];
+  let JStarArray = [];
+  let JArray = [];
   let result = {};
   result.j = [];
 
@@ -77,7 +77,10 @@ export function analyseMultiplet(data = {}, options = {}) {
       `${jStar} J* = ${JStarArray[jStar]} ${scalProd[jStar]} lenght ${y.length}`,
     );*/
     }
-    saveStep(x, y, JStarArray, scalProd, loopoverJvalues);
+    if (debug) {
+      appendDebug(x, y, JStarArray, scalProd, loopoverJvalues, result);
+    }
+
     if (!gotJValue) break;
     else y = deco(y, topPosJ, sign, 0, chopTail, multiplicity);
   }
