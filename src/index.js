@@ -14,7 +14,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { minTestedJ = 1 } = options;
   const { minimalResolution = 0.01 } = options;
   const { makeShortCutForSpeed = 0 } = options;
-  const { critFoundJ = 0.95 } = options;
+  const { critFoundJ = 0.90 } = options;
   const { sign = 1 } = options;
   const { chopTail = 1 } = options;
   const { multiplicity = 0.5 } = options;
@@ -82,7 +82,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
 
     if (!gotJValue) break;
-    else y = deco(y, topPosJ, sign, 0, chopTail, multiplicity);
+    else y = deco(y, topPosJ, sign, 0, chopTail, multiplicity);// for next step
   }
   /*console.log(`array ${JStarArray} in pt`);*/
   // LP: I would like to plot JStarArray over scalProd

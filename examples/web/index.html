@@ -15,7 +15,7 @@
     </table>
 
     <script>
-      const options = {
+      /*const options = {
         // options for zoom
         plugins: {
           zoom: {
@@ -43,14 +43,40 @@
             },
           },
         ],
-      };
+      };*/
 
       createGraph();
 
       async function createGraph() {
         let options = {
           width: 400,
-          height: 250,
+          height: 150,
+          plugins: {
+          zoom: {
+            zoomMode: 'xy',
+          },
+        },
+        mouseActions: [
+          {
+            plugin: 'zoom',
+            shift: false,
+            ctrl: false,
+          },
+          {
+            plugin: 'zoom',
+            type: 'mousewheel',
+            options: {
+              direction: 'y',
+            },
+          },
+          {
+            plugin: 'zoom',
+            type: 'dblclick',
+            options: {
+              mode: 'total',
+            },
+          },
+        ],
         };
 
         let response = await fetch('./result.json');
@@ -90,11 +116,11 @@
           .newSerie('line serie', {}, 'line') // Creates a new serie
           .autoAxis() // Assigns axes
           .setWaveform(waveForm)
-          .setLineColor('red');
+          .setLineColor('blue');
         graph.draw(); // Draw
       }
 
-      function addErrorFunction(id, data) {
+      function addErrorFunction(id, data, options = {}) {
         const { width = 400, height = 250 } = options;
         let graph = new Graph(id, options);
         graph.resize(width, height); // Resizes the container
