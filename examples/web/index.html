@@ -15,40 +15,7 @@
     </table>
 
     <script>
-      /*const options = {
-        // options for zoom
-        plugins: {
-          zoom: {
-            zoomMode: 'xy',
-          },
-        },
-        mouseActions: [
-          {
-            plugin: 'zoom',
-            shift: false,
-            ctrl: false,
-          },
-          {
-            plugin: 'zoom',
-            type: 'mousewheel',
-            options: {
-              direction: 'y',
-            },
-          },
-          {
-            plugin: 'zoom',
-            type: 'dblclick',
-            options: {
-              mode: 'total',
-            },
-          },
-        ],
-      };*/
-
-      createGraph();
-
-      async function createGraph() {
-        let options = {
+      const  options = {
           width: 400,
           height: 150,
           plugins: {
@@ -78,6 +45,10 @@
           },
         ],
         };
+      createGraph();
+
+      async function createGraph() {
+        
 
         let response = await fetch('./result.json');
         let result = await response.json();
