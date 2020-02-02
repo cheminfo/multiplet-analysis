@@ -40,7 +40,7 @@ adding `.only` after `describe` or `it` like for example: `it.only('s`
 
 ### Debugging data
 
-In order to debug algorithm it is important to be able to visualize them. In the project we added a folder `/web` that contains `index.html`.
+In order to debug algorithm it is important to be able to visualize them. In the project we added a folder `/examples/web` that contains `index.html`.
 This webpage will load `data.json` and `annotations.json` and display a chart.
 
 To automatically use and refresh this webpage you should install the plugin `Live server` typing `code --install-extension ritwickdey.liveserver`. Then, right click on `index.html` and `open with live server`.
@@ -55,7 +55,7 @@ When you clone / update the project don't forget to `npm i` to load possible new
 
 If you want to execute those scripts written as module you need to use `esm` that is installed as a development dependency.
 
-`node -r esm exampleGenerateAnnotations.js`
+`node -r esm ./examples/web/exampleGenerateAnnotations.js`
 
 ## Creating simulated data
 
