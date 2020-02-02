@@ -23,7 +23,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   let JArray = [];
   let result = {};
   result.j = [];
-
+  const maxNumberOfCoupling = 10;
   //option see if cut is good. (should we cut more or interpolate if cut too close to peak - cause artifacts in both cases)
 
   // determine if need interpolation
@@ -50,7 +50,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     scalProd[jStar] = -1;
   }
 
-  for (let loopoverJvalues = 1; loopoverJvalues < 10; loopoverJvalues++) {
+  for (let loopoverJvalues = 1; loopoverJvalues < maxNumberOfCoupling; loopoverJvalues++) {
     let topValue = -1;
     let topPosJ = 0;
     let gotJValue = false;
