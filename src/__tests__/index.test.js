@@ -16,9 +16,9 @@ describe('analyse multiplet of simulated spectra', () => {
 
   it('d=1_J=7_m=q', () => {
     let result = analyseMultiplet(quadruplet, { frequency: 400 });
-    expect(result.j[0].coupling).toBeCloseTo(7, 0); // one decimal at low resolution (no interpolation)
-    expect(result.j[1].coupling).toBeCloseTo(7, 0); // one decimal at low resolution (no interpolation)
-    expect(result.j[2].coupling).toBeCloseTo(7, 0); // one decimal at low resolution (no interpolation)
+    expect(result.j[0].coupling).toBeCloseTo(7, 1); // one decimal at low resolution (no interpolation)
+    expect(result.j[1].coupling).toBeCloseTo(7, 0); // no decimal at low resolution (no interpolation)
+    expect(result.j[2].coupling).toBeCloseTo(7, 0); // no decimal at low resolution (no interpolation)
    // expect(result.j).toHaveLength(3);
   });
 });
