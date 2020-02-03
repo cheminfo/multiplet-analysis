@@ -1,13 +1,12 @@
 import { fft } from 'fft-js';
 import { ifft } from 'fft-js';
-import { fftInPlace } from 'fft-js';
 //https://www.npmjs.com/package/fft-js
 describe('subroutine', () => {
   it('test basic fft from fft-js', () => {
     const pw2 = 3;
     const si = Math.pow(2, pw2);
-    var an = [...Array(si/2)].map(x=>Array(2).fill(0));// n x 2 array
-    var te = [...Array(si/2)].map(x=>Array(2).fill(0));
+    let an = [...Array(si/2)].map(x=>Array(2).fill(0));// n x 2 array
+    let te = [...Array(si/2)].map(x=>Array(2).fill(0));
 
     for (let i = 0; i < si / 2; i++) {
       for (let j = 0; j < 2; j++) {
@@ -19,8 +18,8 @@ describe('subroutine', () => {
     console.log(`in-fft  ${an}`); //there is no inplace ifft!!!!!!!!
     /*an = fftInPlace(an);
     an = ifftInPlace(an); */ 
-    var out = fft(an);
-    var out2 = ifft(out);
+    let out = fft(an);
+    let out2 = ifft(out);
     console.log(`out2 ifft(fft) ${out2}`);
     console.log(`si: ${si}`);
     expect(out2).toStrictEqual(an);

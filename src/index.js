@@ -23,7 +23,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   let scalProd = [];
   let JStarArray = [];
   let JArray = [];
-  
+
   let result = {};
   result.j = [];
   const maxNumberOfCoupling = 10;
@@ -54,7 +54,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   console.log(
     `Math.abs(x[0] - x[x.length - 1]) ${Math.abs(x[0] - x[x.length - 1])}`,
   );*/
-  
+
   let sca = [];
   let spe = [];
   if (resolutionHz > minimalResolution) {
@@ -87,12 +87,10 @@ export function analyseMultiplet(data = {}, options = {}) {
     loopoverJvalues < maxNumberOfCoupling;
     loopoverJvalues++
   ) {
-
     let topValue = -1;
     let topPosJ = 0;
     let gotJValue = false;
     for (let jStar = maxTestedPt; jStar >= minTestedPt; jStar -= 1) {
-
       scalProd[jStar] = measureDeco(spe, jStar, sign, chopTail, multiplicity);
       JStarArray[jStar] = jStar * resolutionHz;
       if (!gotJValue) {
@@ -120,22 +118,20 @@ export function analyseMultiplet(data = {}, options = {}) {
       appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result);
     }
 
-    if (!gotJValue) break;
-    else {
-
+    if (!gotJValue) {
+      break;
+    } else {
       spe = deco(spe, topPosJ, sign, 0, chopTail, multiplicity); // for next step
-      if (chopTail){     
-        let remove = 0.5 * topPosJ * ((2*multiplicity));
-         sca = sca.slice(remove , sca.length - remove );
+      if (chopTail) {
+        let remove = 0.5 * topPosJ * (2 * multiplicity);
+        sca = sca.slice(remove, sca.length - remove);
       }
-      if (sca.length != spe.length) {
-        ErrorEvent("sts");
+      if (sca.length !== spe.length) {
+        ErrorEvent('sts');
       }
       /*console.log(`size sca ${sca.length} in pt`);
       console.log(`size spe ${spe.length} in pt`);*/
     }
-
-
   }
   /*console.log(`array ${JStarArray} in pt`);*/
   // LP: I would like to plot JStarArray over scalProd
@@ -196,7 +192,7 @@ function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
       }
     }
     if (dir > 0) {
-      return y1.slice(0, y1.length - chopTail * JStar * nbLines -0);
+      return y1.slice(0, y1.length - chopTail * JStar * nbLines - 0);
     }
   }
   if (dir <= 0) {
@@ -207,10 +203,10 @@ function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
       }
     }
     if (dir < 0) {
-      return y2.slice(chopTail * JStar * nbLines, y2.length -0);
+      return y2.slice(chopTail * JStar * nbLines, y2.length - 0);
     }
   }
-  if (dir == 0) {
+  if (dir === 0) {
     let yout = new Array(yi.length + JStar * nbLines);
     for (let scan = 0; scan < JStar * nbLines; scan++) yout[scan] = 0; // initialize
     for (let scan = 0; scan < y2.length; scan++) {
@@ -219,7 +215,7 @@ function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
     for (let scan = 0; scan < y1.length; scan++) {
       yout[scan + JStar * nbLines] += y1[scan];
     }
-    return y1.slice(0, y1.length - chopTail * JStar * nbLines -0);
+    return y1.slice(0, y1.length - chopTail * JStar * nbLines - 0);
   }
 }
 
@@ -227,55 +223,54 @@ function trigInterpolate(x, y, nextPowerTwo) {
   let sca = Array(nextPowerTwo);
   let spe = Array(nextPowerTwo);
 
-  let scaIncrement = ( x[x.length - 1] - x[0] )/(x.length - 1);// delta one pt
+  let scaIncrement = (x[x.length - 1] - x[0]) / (x.length - 1); // delta one pt
   let scaPt = x[0] - scaIncrement / 2; // move to limit side - not middle of first point (half a pt left...)
   let trueWidth = scaIncrement * x.length;
   scaIncrement = trueWidth / nextPowerTwo;
   scaPt += scaIncrement / 2; // move from limit side to middle of first pt
-// set scale
+  // set scale
 
   for (let loop = 0; loop < nextPowerTwo; loop++) {
     sca[loop] = scaPt;
     scaPt += scaIncrement;
   }
-  
+
   // interpolate spectrum
   // prepare input for fft apply fftshift
-  let an = [...Array(y.length)].map(x=>Array(2).fill(0));// n x 2 array
+  let an = [...Array(y.length)].map((x) => Array(2).fill(0)); // n x 2 array
   let halfNumPt = y.length / 2;
   for (let loop = 0; loop < halfNumPt; loop++) {
-    an[loop+halfNumPt][0] = y[loop];;//Re
-    an[loop+halfNumPt][1] = 0;//Im
-    an[loop][0] = y[loop+halfNumPt];//Re
-    an[loop][1] = 0;//Im
+    an[loop + halfNumPt][0] = y[loop]; //Re
+    an[loop + halfNumPt][1] = 0; //Im
+    an[loop][0] = y[loop + halfNumPt]; //Re
+    an[loop][1] = 0; //Im
   }
   let out = ifft(an);
-  out[0][0]= out[0][0]/2;// divide first point by 2
-  out[0][1]= out[0][1]/2;
+  out[0][0] = out[0][0] / 2; // divide first point by 2
+  out[0][1] = out[0][1] / 2;
   // move to larger array...
-  let an2 = [...Array(nextPowerTwo)].map(x=>Array(2).fill(0));// n x 2 array
+  let an2 = [...Array(nextPowerTwo)].map((x) => Array(2).fill(0)); // n x 2 array
   for (let loop = 0; loop < halfNumPt; loop++) {
-    an2[loop][0] = out[loop][0];//Re
-    an2[loop][1] = out[loop][1];//Im
+    an2[loop][0] = out[loop][0]; //Re
+    an2[loop][1] = out[loop][1]; //Im
   }
 
-  for (let loop = halfNumPt; loop < nextPowerTwo; loop++) {// zero filling
+  for (let loop = halfNumPt; loop < nextPowerTwo; loop++) {
+    // zero filling
     an2[loop][0] = 0;
     an2[loop][1] = 0;
   }
   let out2 = fft(an2);
   halfNumPt = nextPowerTwo / 2;
-// applies fftshift
+  // applies fftshift
   for (let loop = 0; loop < halfNumPt; loop++) {
-    spe[loop]=out2[loop +halfNumPt][0];// only Re now...
+    spe[loop] = out2[loop + halfNumPt][0]; // only Re now...
   }
   for (let loop = 0; loop < halfNumPt; loop++) {
-    spe[loop+halfNumPt]=out2[loop][0];// only Re now...
+    spe[loop + halfNumPt] = out2[loop][0]; // only Re now...
   }
-  return{ spectrum: spe, scale: sca};
+  return { spectrum: spe, scale: sca };
 }
-
-
 
 /* matlab code :
 %%  demo deconvolution of J. coupling

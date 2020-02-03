@@ -87,8 +87,10 @@
           .newSerie('line serie', {}, 'line') // Creates a new serie
           .autoAxis() // Assigns axes
           .setWaveform(waveForm)
-          .setLineColor('blue');
+          .setLineColor('blue')
+          .getYAxis().setScientific(true);
         graph.draw(); // Draw
+
       }
 
       function addErrorFunction(id, data, options = {}) {
@@ -102,6 +104,11 @@
           .autoAxis() // Assigns axes
           .setWaveform(waveForm)
           .setLineColor('red');
+        graph.getLeftAxis()
+          .forceMin(-1)
+          .forceMax(1);
+        graph.getBottomAxis()
+          .forceMin(0)
         graph.draw(); // Draw
       }
     </script>
