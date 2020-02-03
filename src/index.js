@@ -5,22 +5,25 @@
  * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
  */
 import { appendDebug } from './appendDebug';
-
+import { fft } from 'fft-js';
+import { ifft } from 'fft-js';
 export function analyseMultiplet(data = {}, options = {}) {
   let { x = [], y = [] } = data;
   const { frequency = 400 } = options;
   const { debug = false } = options;
   const { maxTestedJ = 20 } = options;
   const { minTestedJ = 1 } = options;
-  const { minimalResolution = 0.01 } = options;
+  const { minimalResolution = 0.01 } = options; // in Hz / pt
   const { makeShortCutForSpeed = 0 } = options;
-  const { critFoundJ = 0.90 } = options;
+  const { critFoundJ = 0.9 } = options;
   const { sign = 1 } = options;
   const { chopTail = 1 } = options;
   const { multiplicity = 0.5 } = options;
   let scalProd = [];
   let JStarArray = [];
   let JArray = [];
+  let sca = [];
+  let spe = [];
   let result = {};
   result.j = [];
   const maxNumberOfCoupling = 10;
@@ -29,13 +32,97 @@ export function analyseMultiplet(data = {}, options = {}) {
   // determine if need interpolation
   let resolutionPpm = Math.abs(x[0] - x[x.length - 1]) / (x.length - 1);
   let resolutionHz = resolutionPpm * frequency;
-  // test if interpolation is needed.
-  if (resolutionHz < minimalResolution) {
-    // if yes interpolate and update x and y
+
+  let factorResolution = resolutionHz / minimalResolution;
+  console.log(`>minimalResolution ${minimalResolution}`);
+  console.log(`>factorResolution ${factorResolution}`);
+
+  console.log(`>resolutionHz ${resolutionHz}`);
+  //console.log(`factorResolution ${factorResolution}`);
+  //console.log(`nb pt before ${x.length}`);
+
+  let nextPowerTwo = Math.pow(
+    2,
+    Math.round(
+      Math.log((x.length - 1) * factorResolution) / Math.log(2.0) + 0.5,
+    ),
+  );
+  console.log(`nextPowerTwo ${nextPowerTwo}`);
+  factorResolution = (factorResolution * nextPowerTwo) / x.length;
+
+  console.log(`factorResolution ${factorResolution}`);
+  console.log(`x.length ${x.length}`);
+  console.log(
+    `Math.abs(x[0] - x[x.length - 1]) ${Math.abs(x[0] - x[x.length - 1])}`,
+  );
+  console.log(
+    `Math.abs(x[0] - x[x.length - 1])* frequencyx.length ${(Math.abs(
+      x[0] - x[x.length - 1],
+    ) *
+      frequency) /
+      x.length}`,
+  );
+
+  if (resolutionHz > minimalResolution) {
+    // need increase
+    console.log(
+      `increase resolution by trigonometric interpolation ${factorResolution} `,
+    );
+
+    sca = Array(nextPowerTwo);
+    spe = Array(nextPowerTwo);
+    var scaIncrement = ( x[x.length - 1] - x[0] )/(x.length - 1);// delta one pt
+    let scaPt = x[0] - scaIncrement / 2; // move to limit side - not middle of first point (half a pt left...)
+    const trueWidth = scaIncrement * x.length;
+    var scaIncrement = trueWidth/nextPowerTwo;
+    scaPt += scaIncrement / 2; // move from limit side to middle of first pt
+// set scale
+    for (let loop = 0; loop < nextPowerTwo; loop++) {
+      sca[loop]=scaPt;
+      scaPt += scaIncrement;
+    }
+    // interpolate spectrum
+    // prepare input for fft apply fftshift
+    var an = [...Array(y.length)].map(x=>Array(2).fill(0));// n x 2 array
+    var halfNumPt = y.length / 2;
+    for (let loop = 0; loop < halfNumPt; loop++) {
+      an[loop+halfNumPt][0] = y[loop];;//Re
+      an[loop+halfNumPt][1] = 0;//Im
+      an[loop][0] = y[loop+halfNumPt];//Re
+      an[loop][1] = 0;//Im
+    }
+    var out = ifft(an);
+    out[0][0]= out[0][0]/2;// divide first point by 2
+    out[0][1]= out[0][1]/2;
+    // move to larger array...
+    var an2 = [...Array(nextPowerTwo)].map(x=>Array(2).fill(0));// n x 2 array
+    for (let loop = 0; loop < halfNumPt; loop++) {
+      an2[loop][0] = out[loop][0];//Re
+      an2[loop][1] = out[loop][1];//Im
+    }
+    for (let loop = halfNumPt; loop < nextPowerTwo; loop++) {// zero filling
+      an2[loop][0] = 0;
+      an2[loop][1] = 0;
+    }
+    var out2 = fft(an2);
+    halfNumPt = nextPowerTwo / 2;
+// applies fftshift
+    for (let loop = 0; loop < halfNumPt; loop++) {
+      spe[loop]=out2[loop +halfNumPt][0];// only Re now...
+    }
+    for (let loop = 0; loop < halfNumPt; loop++) {
+      spe[loop+halfNumPt]=out2[loop][0];// only Re now...
+    }
+  } else {
+    sca = x;
+    spe = y;
   }
 
+  //var sca = [];
+  //var an = [...Array(si/2)].map(x=>Array(2).fill(0));// n x 2 array
+
   // recalculate resolution after interpolation
-  resolutionPpm = Math.abs(x[0] - x[x.length - 1]) / (x.length - 1);
+  resolutionPpm = Math.abs(sca[0] - sca[sca.length - 1]) / (sca.length - 1);
   resolutionHz = resolutionPpm * frequency;
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
   let minTestedPt = Math.trunc(minTestedJ / resolutionHz) + 1;
@@ -50,12 +137,16 @@ export function analyseMultiplet(data = {}, options = {}) {
     scalProd[jStar] = -1;
   }
 
-  for (let loopoverJvalues = 1; loopoverJvalues < maxNumberOfCoupling; loopoverJvalues++) {
+  for (
+    let loopoverJvalues = 1;
+    loopoverJvalues < maxNumberOfCoupling;
+    loopoverJvalues++
+  ) {
     let topValue = -1;
     let topPosJ = 0;
     let gotJValue = false;
     for (let jStar = maxTestedPt; jStar >= minTestedPt; jStar -= 1) {
-      scalProd[jStar] = measureDeco(y, jStar, sign, chopTail, multiplicity);
+      scalProd[jStar] = measureDeco(spe, jStar, sign, chopTail, multiplicity);
       JStarArray[jStar] = jStar * resolutionHz;
       if (!gotJValue) {
         if (scalProd[jStar] > topValue) {
@@ -78,11 +169,11 @@ export function analyseMultiplet(data = {}, options = {}) {
     );*/
     }
     if (debug) {
-      appendDebug(x, y, JStarArray, scalProd, loopoverJvalues, result);
+      appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result);
     }
 
     if (!gotJValue) break;
-    else y = deco(y, topPosJ, sign, 0, chopTail, multiplicity);// for next step
+    else spe = deco(spe, topPosJ, sign, 0, chopTail, multiplicity); // for next step
   }
   /*console.log(`array ${JStarArray} in pt`);*/
   // LP: I would like to plot JStarArray over scalProd
