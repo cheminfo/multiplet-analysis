@@ -20,6 +20,7 @@ The result of the analysis that is an object composed:
 
 `node -r esm examples/quadruplet.js`
 `node -r esm examples/ddd.js`
+`node -r esm examples/ddd_ABCD.js`
 `node -r esm examples/doublet.js`
 
 ## Developement
