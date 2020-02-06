@@ -14,7 +14,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { debug = false } = options;
   const { maxTestedJ = 20 } = options;
   const { minTestedJ = 1 } = options;
-  const { minimalResolution = 0.01 } = options; // in Hz / pt
+  const { minimalResolution = 0.05 } = options; // in Hz / pt
   const { makeShortCutForSpeed = 0 } = options;
   const { critFoundJ = 0.9 } = options;
   const { sign = 1 } = options;
@@ -42,12 +42,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   //console.log(`factorResolution ${factorResolution}`);
   //console.log(`nb pt before ${x.length}`);
 
-  let nextPowerTwo = Math.pow(
-    2,
-    Math.round(
-      Math.log((x.length - 1) * factorResolution) / Math.log(2.0) + 0.5,
-    ),
-  );
+  let nextPowerTwo = Math.pow( 2, Math.round( Math.log((x.length - 1) * factorResolution) / Math.log(2.0) + 0.5, ), );
   factorResolution = (factorResolution * nextPowerTwo) / x.length;
 
   /*console.log(`factorResolution ${factorResolution}`);
@@ -55,7 +50,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   console.log(
     `Math.abs(x[0] - x[x.length - 1]) ${Math.abs(x[0] - x[x.length - 1])}`,
   );*/
-
+  let movedBy;
   let sca = [];
   let spe = [];
   if (resolutionHz > minimalResolution) {
@@ -67,6 +62,17 @@ export function analyseMultiplet(data = {}, options = {}) {
     sca = x;
     spe = y;
   }
+/// for testing break symmetry before running...
+  movedBy = 120;
+  if (movedBy > 0) { 
+    spe = spe.slice(0, spe.length - movedBy);
+    sca = sca.slice(0, sca.length - movedBy);
+  }
+  if (movedBy < 0) { 
+    spe = spe.slice(-movedBy, spe.length);
+    sca = sca.slice(-movedBy, sca.length);
+  }
+ /// end 
 
   resolutionPpm = Math.abs(sca[0] - sca[sca.length - 1]) / (sca.length - 1);
   resolutionHz = resolutionPpm * frequency;
@@ -83,11 +89,21 @@ export function analyseMultiplet(data = {}, options = {}) {
     scalProd[jStar] = -1;
   }
 
-  for (
-    let loopoverJvalues = 1;
-    loopoverJvalues < maxNumberOfCoupling;
-    loopoverJvalues++
-  ) {
+  for (let loopoverJvalues = 1;  loopoverJvalues < maxNumberOfCoupling;  loopoverJvalues++ ) {
+
+    if (symmetrizeEachStep === true) {
+      movedBy =  -measureSym(spe) ;
+      if (movedBy > 0) { 
+        spe = spe.slice(0,spe.length - movedBy);
+        sca = sca.slice(0,sca.length - movedBy);
+      }
+      if (movedBy < 0) { 
+        spe = spe.slice(-movedBy, spe.length);
+        sca = sca.slice(-movedBy, sca.length);
+      }
+      spe = symmetrize(spe);
+    }
+
     let topValue = -1;
     let topPosJ = 0;
     let gotJValue = false;
@@ -130,19 +146,20 @@ export function analyseMultiplet(data = {}, options = {}) {
       if (sca.length !== spe.length) {
         ErrorEvent('sts');
       }
+      
       /*console.log(`size sca ${sca.length} in pt`);
       console.log(`size spe ${spe.length} in pt`);*/
     }
   }
   /*console.log(`array ${JStarArray} in pt`);*/
   // LP: I would like to plot JStarArray over scalProd
-  if (debug) {
+  /*if (debug) {
     console.log(`${resolutionHz} Hz per point`);
     console.log(`min ${minTestedPt} in pt`);
     console.log(`max ${maxTestedPt} in pt`);
     console.log(`array ${JStarArray} in pt`);
     console.log(`array ${scalProd} in pt`);
-  }
+  }*/
 
   // we do some complex stuff ...
   //result.delta = 7.2;
@@ -155,19 +172,33 @@ export function analyseMultiplet(data = {}, options = {}) {
 function measureDeco(y, JStar, sign, chopTail, multiplicity) {
   let y1 = [];
   let y2 = [];
+  y1 = deco(y, JStar, sign, 1, chopTail, multiplicity); // dir left to right
+  y2 = deco(y, JStar, sign, -1, chopTail, multiplicity); // dir right to left
+  return scalarProduct(y1, y2, 1);
+}
+
+function scalarProduct(y1, y2, sens) {
+  // sens = 1; crude scalar product
+  // sens =-1: flip spectrum first
   let v11 = 0;
   let v22 = 0;
   let v12 = 0;
-  y1 = deco(y, JStar, sign, 1, chopTail, multiplicity); // dir left to right
-  y2 = deco(y, JStar, sign, -1, chopTail, multiplicity); // dir right to left
-  for (let index = 0; index < y1.length; index++) {
-    v12 += y1[index] * y2[index];
-    v11 += y1[index] * y1[index];
-    v22 += y2[index] * y2[index];
+  if (sens > 0) {
+    for (let index = 0; index < y1.length; index++) {
+      v12 += y1[index] * y2[index];
+      v11 += y1[index] * y1[index];
+      v22 += y2[index] * y2[index];
+    }
+  } else {// Here as if flip left/right array
+    for (let index = 0; index < y1.length; index++) {
+      v12 += y1[index] * y2[y1.length - index - 1];
+      v11 += y1[index] * y1[index];
+      v22 += y2[index] * y2[index];
+    }
   }
+  
   return v12 / Math.sqrt(v11 * v22);
 }
-
 function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
   if (typeof sign === 'undefined') {
     sign = 1;
@@ -273,6 +304,45 @@ function trigInterpolate(x, y, nextPowerTwo) {
   return { spectrum: spe, scale: sca };
 }
 
+function symmetrize(y) {
+  let tmp;
+  for (let indi = 0; indi < y.length / 2; indi++) {
+    tmp = y[indi] * 0.5 + 0.5 * y[y.length - 1 - indi];
+    y[indi] = tmp;
+    y[y.length - 1 - indi] = tmp;
+  }
+  return y;
+}
+
+function measureSym(y) {
+  let spref, spnew, movedBy = 0;
+  spref = scalarProduct(y, y, -1);
+  // search left...
+  for (let indi = 1; indi < y.length / 2; indi++) {
+    spnew = scalarProduct(y.slice(indi, y.length), y.slice(indi, y.length), -1);
+    if (spnew > spref) {
+    //  console.log(`${spnew} > ${spref} size: ${y.length}`);
+      spref = spnew;
+      movedBy = indi;
+    } else {
+       // console.log('OK+ ' + movedBy + " " + indi + ' ' + spnew);
+    }
+  }
+  if (movedBy === 0) {
+    for (let indi = 1; indi < y.length / 2; indi++) {
+      spnew = scalarProduct(y.slice(0, y.length - indi), y.slice(0, y.length - indi), -1);
+      if (spnew > spref) {
+      //  console.log(`${spnew} > ${spref} size: ${y.length}`);
+        spref = spnew;
+        movedBy = -indi;
+      } else {
+       // console.log('OK- ' + movedBy + ' ' + indi + ' ' + spnew);
+      }
+    }
+  }
+  //console.log('OK  ' + movedBy);
+ return(movedBy);
+}
 /* matlab code :
 %%  demo deconvolution of J. coupling
 clear all
