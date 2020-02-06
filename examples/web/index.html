@@ -119,9 +119,11 @@
           .setLineColor('red');
         graph
           .getLeftAxis()
-          .forceMin(-1)
-          .forceMax(1);
-        graph.getBottomAxis().forceMin(0);
+          .setCurrentMin(-1)
+          .setCurrentMax(1);
+        graph.getBottomAxis()
+        .setCurrentMin(0)
+        .setCurrentMax(20);
         graph.draw(); // Draw
       }
     </script>
