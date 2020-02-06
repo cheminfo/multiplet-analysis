@@ -10,15 +10,16 @@
     <table id="target" border="1" style="border-collapse: collapse;">
       <tr>
         <th>Multiplet</th>
+        <th>Coupling</th>
         <th>Error function of the deconvolution of in-phase splitting</th>
       </tr>
     </table>
 
     <script>
-      const  options = {
-          width: 400,
-          height: 150,
-          plugins: {
+      const options = {
+        width: 400,
+        height: 150,
+        plugins: {
           zoom: {
             zoomMode: 'xy',
           },
@@ -44,35 +45,47 @@
             },
           },
         ],
-        };
+      };
       createGraph();
 
       async function createGraph() {
-        
-
         let response = await fetch('./result.json');
         let result = await response.json();
 
         let steps = result.debug.steps;
-        let id = 0;
+
+        let index = 0;
 
         for (let step of steps) {
-          console.log(step);
-          id++;
+          let j = result.j[index];
+
           let tr = document.createElement('TR');
+
           let tdMultiplet = document.createElement('TD');
-          tdMultiplet.setAttribute('id', 'multiplet' + id);
+          tdMultiplet.setAttribute('id', 'multiplet' + index);
           tr.appendChild(tdMultiplet);
 
+          let tdCoupling = document.createElement('TD');
+          if (j) {
+            tdCoupling.innerHTML =
+              j.multiplicity + ': ' + j.coupling.toFixed(3) + ' Hz';
+          }
+
+          tr.appendChild(tdCoupling);
+
           let tdErrorFunction = document.createElement('TD');
-          tdErrorFunction.setAttribute('id', 'errorFunction' + id);
+          tdErrorFunction.setAttribute('id', 'errorFunction' + index);
           tr.appendChild(tdErrorFunction);
 
           document.getElementById('target').appendChild(tr);
 
-          addMultiplet('multiplet' + id, step.multiplet, options);
-          addErrorFunction('errorFunction' + id, step.errorFunction, options);
-
+          addMultiplet('multiplet' + index, step.multiplet, options);
+          addErrorFunction(
+            'errorFunction' + index,
+            step.errorFunction,
+            options,
+          );
+          index++;
           continue;
         }
       }
@@ -88,9 +101,9 @@
           .autoAxis() // Assigns axes
           .setWaveform(waveForm)
           .setLineColor('blue')
-          .getYAxis().setScientific(true);
+          .getYAxis()
+          .setScientific(true);
         graph.draw(); // Draw
-
       }
 
       function addErrorFunction(id, data, options = {}) {
@@ -104,11 +117,11 @@
           .autoAxis() // Assigns axes
           .setWaveform(waveForm)
           .setLineColor('red');
-        graph.getLeftAxis()
+        graph
+          .getLeftAxis()
           .forceMin(-1)
           .forceMax(1);
-        graph.getBottomAxis()
-          .forceMin(0)
+        graph.getBottomAxis().forceMin(0);
         graph.draw(); // Draw
       }
     </script>
