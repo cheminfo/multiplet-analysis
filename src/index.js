@@ -20,6 +20,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { sign = 1 } = options;
   const { chopTail = 1 } = options;
   const { multiplicity = 0.5 } = options;
+  const { symmetrizeEachStep = false } = options;
   let scalProd = [];
   let JStarArray = [];
   let JArray = [];

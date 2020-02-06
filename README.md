@@ -19,6 +19,8 @@ The result of the analysis that is an object composed:
 ## Run example
 
 `node -r esm examples/quadruplet.js`
+`node -r esm examples/ddd.js`
+`node -r esm examples/doublet.js`
 
 ## Developement
 
@@ -44,7 +46,7 @@ In order to debug algorithm it is important to be able to visualize them. In the
 This webpage will load `data.json` and `annotations.json` and display a chart.
 
 To automatically use and refresh this webpage you should install the plugin `Live server` typing `code --install-extension ritwickdey.liveserver`. Then, right click on `index.html` and `open with live server`.
-This will open the webpage in the browser and realod it if the files change.
+This will open the webpage in the browser and reload it if the files change.
 
 There are also 2 examples files to create the data:
 
