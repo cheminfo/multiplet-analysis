@@ -16,7 +16,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { minTestedJ = 0.5 } = options;
   const { minimalResolution = 0.05 } = options; // in Hz / pt
   const { makeShortCutForSpeed = 0 } = options;
-  const { critFoundJ = 0.90 } = options;
+  const { critFoundJ = 0.9 } = options;
   const { sign = 1 } = options;
   const { chopTail = 1 } = options;
   const { multiplicity = 0.5 } = options;
@@ -28,7 +28,7 @@ export function analyseMultiplet(data = {}, options = {}) {
 
   let result = {};
   result.j = [];
-  const maxNumberOfCoupling = 10;
+  const maxNumberOfCoupling = 12;
   //option see if cut is good. (should we cut more or interpolate if cut too close to peak - cause artifacts in both cases)
 
   // determine if need interpolation
@@ -94,7 +94,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   let incrementForSpeed = 1;
   let curIncrementForSpeed;
   if (!debug) {
-    incrementForSpeed = (1 + 1 / minimalResolution) | 0; // for 0.001
+    incrementForSpeed = (1 + 0.5 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
   }
 
   for (
@@ -102,6 +102,8 @@ export function analyseMultiplet(data = {}, options = {}) {
     loopoverJvalues < maxNumberOfCoupling;
     loopoverJvalues++
   ) {
+
+    //symmetrize if requested to
     if (symmetrizeEachStep === true) {
       movedBy = -measureSym(spe);
       if (movedBy > 0) {
