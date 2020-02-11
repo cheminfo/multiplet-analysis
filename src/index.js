@@ -66,6 +66,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     spe = y;
   }
 /// for testing break symmetry before running...
+/*
   movedBy = 120;
   if (movedBy > 0) { 
     spe = spe.slice(0, spe.length - movedBy);
@@ -74,7 +75,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   if (movedBy < 0) { 
     spe = spe.slice(-movedBy, spe.length);
     sca = sca.slice(-movedBy, sca.length);
-  }
+  }*/
  /// end 
 
   resolutionPpm = Math.abs(sca[0] - sca[sca.length - 1]) / (sca.length - 1);
