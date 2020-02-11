@@ -28,17 +28,17 @@ describe('analyse multiplet of simulated spectra', () => {
     //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(quadruplet, { frequency: 400 , symmetrizeEachStep: true});
     expect(result.j[0].coupling).toBeCloseTo(7, 0); // improve....
-    expect(result.j[1].coupling).toBeCloseTo(7, 0); 
-    expect(result.j[2].coupling).toBeCloseTo(7, 0); 
+    expect(result.j[1].coupling).toBeCloseTo(7, 0);
+    expect(result.j[2].coupling).toBeCloseTo(7, 0);
    // expect(result.j).toHaveLength(3);
   });
 
   it('d=1_J=2,4,6_m=ddd', () => {
     //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(ddd, { frequency: 400 });
-    expect(result.j[0].coupling).toBeCloseTo(6, 2); 
-    expect(result.j[1].coupling).toBeCloseTo(4, 2); 
-    expect(result.j[2].coupling).toBeCloseTo(2, 2); 
+    expect(result.j[0].coupling).toBeCloseTo(6, 2);
+    expect(result.j[1].coupling).toBeCloseTo(4, 2);
+    expect(result.j[2].coupling).toBeCloseTo(2, 2);
    // expect(result.j).toHaveLength(3);
   });
 

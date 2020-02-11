@@ -5,7 +5,8 @@ import { join } from 'path';
 
 //let result = analyseMultiplet(quadruplet, { frequency: 400, debug: true });
 //let result = analyseMultiplet(quadruplet, { frequency: 400, debug: true, symmetrizeEachStep: true});
-let result = analyseMultiplet(quadruplet, { frequency: 400, debug: true , symmetrizeEachStep: true , takeBestPartMultiplet : true});
+//let result = analyseMultiplet(quadruplet, { frequency: 400, debug: true , symmetrizeEachStep: true , takeBestPartMultiplet : true});
+let result = analyseMultiplet(quadruplet, { frequency: 400, debug: true , symmetrizeEachStep: true});
 
 writeFileSync(
   join(__dirname, 'web', 'result.json'),

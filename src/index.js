@@ -97,7 +97,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   if (!debug) {
     incrementForSpeed = (1 + 0.5 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
   }
-
+  incrementForSpeed=1;
   for (
     let loopoverJvalues = 1;
     loopoverJvalues < maxNumberOfCoupling;
@@ -117,12 +117,11 @@ export function analyseMultiplet(data = {}, options = {}) {
         sca = sca.slice(-movedBy, sca.length);
       }
       if (debug) {// save this to plot it as well
-
         for (let index = 0; index < spe.length; index++) {
           beforeSymSpe[index] = spe[index];
         }
-        spe = symmetrize(spe);
       }
+      spe = symmetrize(spe);
     }
 
     let topValue = -1;
@@ -193,6 +192,8 @@ export function analyseMultiplet(data = {}, options = {}) {
 
             // end refine
             if (topValue > critFoundJ) {
+               //           console.log(`J:: ` + (topPosJ * resolutionHz));
+
               result.j.push({
                 multiplicity: 'd',
                 coupling: topPosJ * resolutionHz,
