@@ -1,0 +1,66 @@
+<!-- showing graph using jsGraph -->
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script language="javascript" src="./jsgraph.min.js"></script>
+  </head>
+
+  <body>
+    <div id="simulated"></div>
+
+    <script>
+      const options = {
+        width: 800,
+        height: 600,
+        plugins: {
+          zoom: {
+            zoomMode: 'xy',
+          },
+        },
+        mouseActions: [
+          {
+            plugin: 'zoom',
+            shift: false,
+            ctrl: false,
+          },
+          {
+            plugin: 'zoom',
+            type: 'mousewheel',
+            options: {
+              direction: 'y',
+            },
+          },
+          {
+            plugin: 'zoom',
+            type: 'dblclick',
+            options: {
+              mode: 'total',
+            },
+          },
+        ],
+      };
+      createGraph();
+
+      async function createGraph() {
+        let response = await fetch('./simulated.json');
+        let data = await response.json();
+
+        const { width = 800, height = 400 } = options;
+        let graph = new Graph('simulated', options);
+        graph.resize(width, height); // Resizes the container
+        let waveForm = Graph.newWaveform();
+        waveForm.setData(data.y, data.x);
+        graph
+          .newSerie('line serie', {}, 'line') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm)
+          .setLineColor('blue')
+          .getYAxis()
+          .setScientific(true);
+        graph.getBottomAxis().flip(true);
+        graph.draw(); // Draw
+      }
+    </script>
+  </body>
+</html>
