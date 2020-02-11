@@ -54,6 +54,8 @@ export function analyseMultiplet(data = {}, options = {}) {
   let movedBy;
   let sca = [];
   let spe = [];
+  let topPosJ = 0;
+
   if (resolutionHz > minimalResolution) {
     // need increase resolution
     let returned = trigInterpolate(x, y, nextPowerTwo);
@@ -89,31 +91,59 @@ export function analyseMultiplet(data = {}, options = {}) {
     JStarArray[jStar] = jStar * resolutionHz;
     scalProd[jStar] = -1;
   }
-  for (let loopoverJvalues = 1;  loopoverJvalues < maxNumberOfCoupling;  loopoverJvalues++ ) {
+  let incrementForSpeed = 1;
+  let curIncrementForSpeed;
+  if (!debug) {
+    incrementForSpeed = (1 + 1 / minimalResolution) | 0; // for 0.001
+  }
 
+  for (
+    let loopoverJvalues = 1;
+    loopoverJvalues < maxNumberOfCoupling;
+    loopoverJvalues++
+  ) {
     if (symmetrizeEachStep === true) {
-      movedBy =  -measureSym(spe) ;
-      if (movedBy > 0) { 
-        spe = spe.slice(0,spe.length - movedBy);
-        sca = sca.slice(0,sca.length - movedBy);
+      movedBy = -measureSym(spe);
+      if (movedBy > 0) {
+        spe = spe.slice(0, spe.length - movedBy);
+        sca = sca.slice(0, sca.length - movedBy);
       }
-      if (movedBy < 0) { 
+      if (movedBy < 0) {
         spe = spe.slice(-movedBy, spe.length);
         sca = sca.slice(-movedBy, sca.length);
       }
       spe = symmetrize(spe);
     }
-    
+
     let topValue = -1;
-    let topPosJ = 0;
     let gotJValue = false;
-    let LimitCoupling = Math.floor(sca.length / 2) - 1 ;
+    let LimitCoupling = Math.floor(sca.length / 2) - 1;//limit with respect to size of spectrum (which is reducing at each step)
+    let critFoundJLow = critFoundJ - 0.3;
     if (maxTestedPt > LimitCoupling) {
       maxTestedPt = LimitCoupling;
     }
-
-    for (let jStar = maxTestedPt; jStar >= minTestedPt; jStar -= 1) {
-      scalProd[jStar] = measureDeco(spe, jStar, sign, chopTail, multiplicity);
+    if ((loopoverJvalues > 1) && !debug) {
+      if (maxTestedPt > Math.floor(topPosJ + 1.0 / resolutionHz)) {
+        maxTestedPt = Math.floor(topPosJ + 1.0 / resolutionHz);
+        //console.log(`recuded size to :: ` + maxTestedPt);
+        //console.log(`recuded size to :: ` + maxTestedPt + " = " + (maxTestedPt*resolutionHz));
+       }
+    }
+    curIncrementForSpeed = incrementForSpeed;
+    let jStarFine;
+    for (
+      let jStar = maxTestedPt;
+      jStar >= minTestedPt;
+      jStar -= curIncrementForSpeed
+    ) {
+      scalProd[jStar] = measureDeco(
+        spe,
+        jStar,
+        sign,
+        chopTail,
+        multiplicity,
+        curIncrementForSpeed,
+      );
       JStarArray[jStar] = jStar * resolutionHz;
       if (!gotJValue) {
         if (scalProd[jStar] > topValue) {
@@ -121,13 +151,45 @@ export function analyseMultiplet(data = {}, options = {}) {
           topPosJ = jStar;
         }
         if (jStar < maxTestedPt) {
-          if (scalProd[jStar] < scalProd[jStar + 1] && topValue > critFoundJ) {
-            result.j.push({
-              multiplicity: 'd',
-              coupling: topPosJ * resolutionHz,
-            });
-            gotJValue = true;
-            if (makeShortCutForSpeed) break;
+          if (
+            scalProd[jStar] < scalProd[jStar + curIncrementForSpeed] &&
+            topValue > critFoundJLow
+          ) {
+            // here refine...
+            jStarFine = jStar;
+            while (curIncrementForSpeed > 1) {
+              //console.log(`curIncrementForSpeed:: ` + curIncrementForSpeed);
+
+              curIncrementForSpeed = Math.floor(curIncrementForSpeed / 2); // get smaller and smaller step
+              for (
+                jStarFine = topPosJ - 2 * curIncrementForSpeed;
+                jStarFine < topPosJ + 2 * curIncrementForSpeed;
+                jStarFine += curIncrementForSpeed
+              ) {
+                scalProd[jStarFine] = measureDeco(
+                  spe,
+                  jStarFine,
+                  sign,
+                  chopTail,
+                  multiplicity,
+                  curIncrementForSpeed,
+                );
+                if (scalProd[jStarFine] > topValue) {
+                  topValue = scalProd[jStarFine];
+                  topPosJ = jStarFine;
+                }
+              }
+            }
+
+            // end refine
+            if (topValue > critFoundJ) {
+              result.j.push({
+                multiplicity: 'd',
+                coupling: topPosJ * resolutionHz,
+              });
+              gotJValue = true;
+              if (makeShortCutForSpeed) break;
+            }
           }
         }
       }
@@ -144,7 +206,14 @@ export function analyseMultiplet(data = {}, options = {}) {
       break;
     } else {
       // apply here the deconvolution for the next step of the recursive process
-      spe = deco(spe, topPosJ, sign, 0 + 0.1*takeBestPartMultiplet, chopTail, multiplicity); // for next step
+      spe = deco(
+        spe,
+        topPosJ,
+        sign,
+        0 + 0.1 * takeBestPartMultiplet,
+        chopTail,
+        multiplicity,
+      ); // for next step
       if (chopTail) {
         let remove = 0.5 * topPosJ * (2 * multiplicity);
         sca = sca.slice(remove, sca.length - remove);
@@ -152,57 +221,38 @@ export function analyseMultiplet(data = {}, options = {}) {
       if (sca.length !== spe.length) {
         ErrorEvent('sts');
       }
-      
-      /*console.log(`size sca ${sca.length} in pt`);
-      console.log(`size spe ${spe.length} in pt`);*/
     }
   }
-  /*console.log(`array ${JStarArray} in pt`);*/
-  // LP: I would like to plot JStarArray over scalProd
-  /*if (debug) {
-    console.log(`${resolutionHz} Hz per point`);
-    console.log(`min ${minTestedPt} in pt`);
-    console.log(`max ${maxTestedPt} in pt`);
-    console.log(`array ${JStarArray} in pt`);
-    console.log(`array ${scalProd} in pt`);
-  }*/
-
-  // we do some complex stuff ...
-  //result.delta = 7.2;
-  //result.multiplicity = '';
-  //result.j.push({ multiplicity: 'd', coupling: 7 });
-  //result.j.push({ multiplicity: 't', coupling: 2 });
   return result;
 }
 
-function measureDeco(y, JStar, sign, chopTail, multiplicity) {
+function measureDeco(y, JStar, sign, chopTail, multiplicity, incrementForSpeed) {
   let y1 = [];
   let y2 = [];
   y1 = deco(y, JStar, sign, 1, chopTail, multiplicity); // dir left to right
   y2 = deco(y, JStar, sign, -1, chopTail, multiplicity); // dir right to left
-  return scalarProduct(y1, y2, 1);
+  return scalarProduct(y1, y2, 1, incrementForSpeed);
 }
 
-function scalarProduct(y1, y2, sens) {
+function scalarProduct(y1, y2, sens, incrementForSpeed) {
   // sens = 1; crude scalar product
   // sens =-1: flip spectrum first
   let v11 = 0;
   let v22 = 0;
   let v12 = 0;
   if (sens > 0) {
-    for (let index = 0; index < y1.length; index++) {
+    for (let index = 0; index < y1.length; index += incrementForSpeed) {
       v12 += y1[index] * y2[index];
       v11 += y1[index] * y1[index];
       v22 += y2[index] * y2[index];
     }
   } else {// Here as if flip left/right array
-    for (let index = 0; index < y1.length; index++) {
+    for (let index = 0; index < y1.length; index += incrementForSpeed) {
       v12 += y1[index] * y2[y1.length - index - 1];
       v11 += y1[index] * y1[index];
       v22 += y2[index] * y2[index];
     }
   }
-  
   return v12 / Math.sqrt(v11 * v22);
 }
 function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
@@ -259,9 +309,6 @@ function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
     for (let scan = half; scan < y2.length - JStar * nbLines; scan++) {
       y1[scan] =  2 * sign * y2[scan  + JStar * nbLines];
     }
-    console.log(`here is 1 ` + half);
-    console.log(`here is 2 ` + (y2.length - JStar * nbLines));
-    console.log(`here is 4 ` + y2.length );
     return y1.slice(0, y1.length - JStar * nbLines);
   }
 }
@@ -331,10 +378,10 @@ function symmetrize(y) {
 
 function measureSym(y) {
   let spref, spnew, movedBy = 0;
-  spref = scalarProduct(y, y, -1);
+  spref = scalarProduct(y, y, -1, 1);
   // search left...
   for (let indi = 1; indi < y.length / 2; indi++) {
-    spnew = scalarProduct(y.slice(indi, y.length), y.slice(indi, y.length), -1);
+    spnew = scalarProduct(y.slice(indi, y.length), y.slice(indi, y.length), -1, 1);
     if (spnew > spref) {
     //  console.log(`${spnew} > ${spref} size: ${y.length}`);
       spref = spnew;
@@ -345,7 +392,7 @@ function measureSym(y) {
   }
   if (movedBy === 0) {
     for (let indi = 1; indi < y.length / 2; indi++) {
-      spnew = scalarProduct(y.slice(0, y.length - indi), y.slice(0, y.length - indi), -1);
+      spnew = scalarProduct(y.slice(0, y.length - indi), y.slice(0, y.length - indi), -1, 1);
       if (spnew > spref) {
       //  console.log(`${spnew} > ${spref} size: ${y.length}`);
         spref = spnew;
