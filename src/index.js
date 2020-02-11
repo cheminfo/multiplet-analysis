@@ -97,7 +97,6 @@ export function analyseMultiplet(data = {}, options = {}) {
   if (!debug) {
     incrementForSpeed = (1 + 0.5 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
   }
-  incrementForSpeed=1;
   for (
     let loopoverJvalues = 1;
     loopoverJvalues < maxNumberOfCoupling;
