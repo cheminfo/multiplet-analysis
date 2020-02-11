@@ -14,7 +14,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { debug = false } = options;
   const { maxTestedJ = 20 } = options;
   const { minTestedJ = 0.5 } = options;
-  const { minimalResolution = 0.05 } = options; // in Hz / pt
+  const { minimalResolution = 0.01 } = options; // in Hz / pt
   const { makeShortCutForSpeed = 0 } = options;
   const { critFoundJ = 0.9 } = options;
   const { sign = 1 } = options;
@@ -22,6 +22,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { multiplicity = 0.5 } = options;
   const { symmetrizeEachStep = false } = options;
   const { takeBestPartMultiplet = false } = options;
+  const { addPhaseInterpolation = 0 } = options;
   let scalProd = [];
   let JStarArray = [];
   let JArray = [];
@@ -58,7 +59,9 @@ export function analyseMultiplet(data = {}, options = {}) {
 
   if (resolutionHz > minimalResolution) {
     // need increase resolution
-    let returned = trigInterpolate(x, y, nextPowerTwo);
+    let returned = trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation);
+    if (debug) console.log(`interpolating`);
+
     spe = returned.spectrum;
     sca = returned.scale;
   } else {
@@ -192,7 +195,8 @@ export function analyseMultiplet(data = {}, options = {}) {
 
             // end refine
             if (topValue > critFoundJ) {
-               //           console.log(`J:: ` + (topPosJ * resolutionHz));
+              if (debug)
+                         console.log(`J:: ` + (topPosJ * resolutionHz));
 
               result.j.push({
                 multiplicity: 'd',
@@ -214,7 +218,7 @@ export function analyseMultiplet(data = {}, options = {}) {
        appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result, beforeSymSpe );
       else
        appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result);
-      }
+    }
 
     if (!gotJValue) {
       break;
@@ -327,7 +331,7 @@ function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
   }
 }
 
-function trigInterpolate(x, y, nextPowerTwo) {
+function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
   let sca = Array(nextPowerTwo);
   let spe = Array(nextPowerTwo);
 
@@ -354,13 +358,13 @@ function trigInterpolate(x, y, nextPowerTwo) {
     an[loop][1] = 0; //Im
   }
   let out = ifft(an);
-  out[0][0] = out[0][0] / 2; // divide first point by 2
-  out[0][1] = out[0][1] / 2;
+  out[0][0] = out[0][0] / 2; // divide first point by 2 Re
+  out[0][1] = out[0][1] / 2; // divide first point by 2 Im
   // move to larger array...
   let an2 = [...Array(nextPowerTwo)].map((x) => Array(2).fill(0)); // n x 2 array
   for (let loop = 0; loop < halfNumPt; loop++) {
-    an2[loop][0] = out[loop][0]; //Re
-    an2[loop][1] = out[loop][1]; //Im
+    an2[loop][0] = out[loop][0];//* Math.cos((phase / 180) * 3.1416) +
+    an2[loop][1] = out[loop][1];//* Math.cos((phase / 180) * 3.1416) -
   }
 
   for (let loop = halfNumPt; loop < nextPowerTwo; loop++) {
@@ -371,11 +375,14 @@ function trigInterpolate(x, y, nextPowerTwo) {
   let out2 = fft(an2);
   halfNumPt = nextPowerTwo / 2;
   // applies fftshift
+  let phase = addPhaseInterpolation;
   for (let loop = 0; loop < halfNumPt; loop++) {
-    spe[loop] = out2[loop + halfNumPt][0]; // only Re now...
+    //spe[loop] = out2[loop + halfNumPt][0]; // only Re now...
+    spe[loop] = out2[loop + halfNumPt][0] * Math.cos((phase / 180) * 3.1416) + out2[loop + halfNumPt][1] * Math.sin((phase / 180) * 3.1416); // only Re now...
   }
   for (let loop = 0; loop < halfNumPt; loop++) {
-    spe[loop + halfNumPt] = out2[loop][0]; // only Re now...
+    //spe[loop + halfNumPt] = out2[loop][0]; // only Re now...
+    spe[loop + halfNumPt] = out2[loop ][0] * Math.cos((phase / 180) * 3.1416) + out2[loop ][1] * Math.sin((phase / 180) * 3.1416); // only Re now...
   }
   return { spectrum: spe, scale: sca };
 }
