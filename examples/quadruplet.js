@@ -3,8 +3,9 @@ import { analyseMultiplet } from '../src/index';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 
-let result = analyseMultiplet(quadruplet, { frequency: 400, debug: true });
+//let result = analyseMultiplet(quadruplet, { frequency: 400, debug: true });
 //let result = analyseMultiplet(quadruplet, { frequency: 400, debug: true, symmetrizeEachStep: true});
+let result = analyseMultiplet(quadruplet, { frequency: 400, debug: true , symmetrizeEachStep: true , takeBestPartMultiplet : true});
 
 writeFileSync(
   join(__dirname, 'web', 'result.json'),

@@ -13,14 +13,15 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { frequency = 400 } = options;
   const { debug = false } = options;
   const { maxTestedJ = 20 } = options;
-  const { minTestedJ = 1 } = options;
+  const { minTestedJ = 0.5 } = options;
   const { minimalResolution = 0.05 } = options; // in Hz / pt
   const { makeShortCutForSpeed = 0 } = options;
-  const { critFoundJ = 0.9 } = options;
+  const { critFoundJ = 0.90 } = options;
   const { sign = 1 } = options;
   const { chopTail = 1 } = options;
   const { multiplicity = 0.5 } = options;
   const { symmetrizeEachStep = false } = options;
+  const { takeBestPartMultiplet = false } = options;
   let scalProd = [];
   let JStarArray = [];
   let JArray = [];
@@ -88,7 +89,6 @@ export function analyseMultiplet(data = {}, options = {}) {
     JStarArray[jStar] = jStar * resolutionHz;
     scalProd[jStar] = -1;
   }
-
   for (let loopoverJvalues = 1;  loopoverJvalues < maxNumberOfCoupling;  loopoverJvalues++ ) {
 
     if (symmetrizeEachStep === true) {
@@ -103,10 +103,15 @@ export function analyseMultiplet(data = {}, options = {}) {
       }
       spe = symmetrize(spe);
     }
-
+    
     let topValue = -1;
     let topPosJ = 0;
     let gotJValue = false;
+    let LimitCoupling = Math.floor(sca.length / 2) - 1 ;
+    if (maxTestedPt > LimitCoupling) {
+      maxTestedPt = LimitCoupling;
+    }
+
     for (let jStar = maxTestedPt; jStar >= minTestedPt; jStar -= 1) {
       scalProd[jStar] = measureDeco(spe, jStar, sign, chopTail, multiplicity);
       JStarArray[jStar] = jStar * resolutionHz;
@@ -138,7 +143,8 @@ export function analyseMultiplet(data = {}, options = {}) {
     if (!gotJValue) {
       break;
     } else {
-      spe = deco(spe, topPosJ, sign, 0, chopTail, multiplicity); // for next step
+      // apply here the deconvolution for the next step of the recursive process
+      spe = deco(spe, topPosJ, sign, 0 + 0.1*takeBestPartMultiplet, chopTail, multiplicity); // for next step
       if (chopTail) {
         let remove = 0.5 * topPosJ * (2 * multiplicity);
         sca = sca.slice(remove, sca.length - remove);
@@ -216,38 +222,47 @@ function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
   let y1 = new Array(yi.length);
   let y2 = new Array(yi.length);
 
-  if (dir >= 0) {
+  if (dir > -1) {
     for (let scan = 0; scan < y1.length; scan++) y1[scan] = yi[scan];
     for (let scan = 0; scan < y1.length - JStar * nbLines; scan++) {
       for (let line = 0; line < nbLines; line++) {
         y1[scan + (line + 1) * JStar] -= sign * y1[scan];
       }
     }
-    if (dir > 0) {
-      return y1.slice(0, y1.length - chopTail * JStar * nbLines - 0);
+    if (dir > 0.5) {
+      return y1.slice(0, y1.length - chopTail * JStar * nbLines);
     }
   }
-  if (dir <= 0) {
+  if (dir < 1) {
     for (let scan = 0; scan < y2.length; scan++) y2[scan] = yi[scan];
     for (let scan = y2.length - 1; scan >= JStar * nbLines; scan -= 1) {
       for (let line = 0; line < nbLines; line++) {
         y2[scan - (line + 1) * JStar] -= sign * y2[scan];
       }
     }
-    if (dir < 0) {
-      return y2.slice(chopTail * JStar * nbLines, y2.length - 0);
+    if (dir < -0.2) {
+      return y2.slice(chopTail * JStar * nbLines, y2.length);
     }
   }
   if (dir === 0) {
-    let yout = new Array(yi.length + JStar * nbLines);
-    for (let scan = 0; scan < JStar * nbLines; scan++) yout[scan] = 0; // initialize
-    for (let scan = 0; scan < y2.length; scan++) {
-      yout[scan + JStar * nbLines] = y2[scan];
-    } // fill
-    for (let scan = 0; scan < y1.length; scan++) {
-      yout[scan + JStar * nbLines] += y1[scan];
+    for (let scan = 0; scan < y2.length - JStar * nbLines; scan++) {
+      y1[scan] += sign * y2[scan + JStar * nbLines];
     }
-    return y1.slice(0, y1.length - chopTail * JStar * nbLines - 0);
+    return y1.slice(0, y1.length - JStar * nbLines);
+  }
+  // multiply by two because take best half of both...
+  let half = ((y1.length - JStar * nbLines) / 2.0) | 0;
+  if (dir === 0.1) {
+    for (let scan = 0; scan < half; scan++) {
+      y1[scan] = 2 * y1[scan];
+    }
+    for (let scan = half; scan < y2.length - JStar * nbLines; scan++) {
+      y1[scan] =  2 * sign * y2[scan  + JStar * nbLines];
+    }
+    console.log(`here is 1 ` + half);
+    console.log(`here is 2 ` + (y2.length - JStar * nbLines));
+    console.log(`here is 4 ` + y2.length );
+    return y1.slice(0, y1.length - JStar * nbLines);
   }
 }
 

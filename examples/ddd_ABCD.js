@@ -5,8 +5,9 @@ import { join } from 'path';
 
 let result = analyseMultiplet(ddd, {
   frequency: 400,
-  debug: true,
   symmetrizeEachStep: true,
+  takeBestPartMultiplet: true,
+  debug: true,
 });
 
 writeFileSync(
