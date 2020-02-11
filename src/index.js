@@ -93,6 +93,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   }
   let incrementForSpeed = 1;
   let curIncrementForSpeed;
+
   if (!debug) {
     incrementForSpeed = (1 + 0.5 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
   }
@@ -102,6 +103,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     loopoverJvalues < maxNumberOfCoupling;
     loopoverJvalues++
   ) {
+    let beforeSymSpe = new Array(spe.length);
 
     //symmetrize if requested to
     if (symmetrizeEachStep === true) {
@@ -114,7 +116,13 @@ export function analyseMultiplet(data = {}, options = {}) {
         spe = spe.slice(-movedBy, spe.length);
         sca = sca.slice(-movedBy, sca.length);
       }
-      spe = symmetrize(spe);
+      if (debug) {// save this to plot it as well
+
+        for (let index = 0; index < spe.length; index++) {
+          beforeSymSpe[index] = spe[index];
+        }
+        spe = symmetrize(spe);
+      }
     }
 
     let topValue = -1;
@@ -201,8 +209,11 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
 
     if (debug) {
-      appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result);
-    }
+      if(symmetrizeEachStep === true)
+       appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result, beforeSymSpe );
+      else
+       appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result);
+      }
 
     if (!gotJValue) {
       break;

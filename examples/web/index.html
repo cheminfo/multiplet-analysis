@@ -103,6 +103,17 @@
           .setLineColor('blue')
           .getYAxis()
           .setScientific(true);
+          let waveForm2 = Graph.newWaveform();
+          if (!(typeof data.s === 'undefined')){
+            waveForm2.setData(data.s, data.x);
+        graph
+          .newSerie('line serie2', {}, 'line') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm2)
+          .setLineColor('green')
+          .getYAxis()
+          .setScientific(true);
+        }
         graph.draw(); // Draw
       }
 
