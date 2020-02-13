@@ -100,3 +100,7 @@ const result = library(args);
 
 npm i ml-fft
 npm home ml-fft
+ see : 
+ [example](https://github.com/cheminfo/multiplet-analysis/blob/master/examples/web/index.html)
+ 
+  [example2](https://github.com/cheminfo/multiplet-analysis/blob/master/examples/web/index2.html)
