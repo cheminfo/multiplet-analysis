@@ -16,7 +16,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { minTestedJ = 0.5 } = options;
   const { minimalResolution = 0.01 } = options; // in Hz / pt
   const { makeShortCutForSpeed = 0 } = options;
-  const { critFoundJ = 0.9 } = options;
+  const { critFoundJ = 0.95 } = options;
   const { sign = 1 } = options;
   const { chopTail = 1 } = options;
   const { multiplicity = 0.5 } = options;
@@ -25,7 +25,6 @@ export function analyseMultiplet(data = {}, options = {}) {
   const { addPhaseInterpolation = 0 } = options;
   let scalProd = [];
   let JStarArray = [];
-  let JArray = [];
 
   let result = {};
   result.j = [];

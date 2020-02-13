@@ -23,6 +23,10 @@ The result of the analysis that is an object composed:
 `node -r esm examples/ddd_ABCD.js`
 `node -r esm examples/doublet.js`
 
+`node -r esm examples/simulate.js` to simulate from a user-defined spin system
+
+
+
 ## Developement
 
 ```bash
