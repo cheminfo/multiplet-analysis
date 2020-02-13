@@ -69,14 +69,15 @@ writeFileSync(
   'utf8',
 );
 
-import simulated from '../examples/web-simulated/simulated.json';
+//import simulated from '../examples/web-simulated/simulated.json';
 import { analyseMultiplet } from '../src/index';
 
-//let result = analyseMultiplet(simulated, { frequency: 400, debug: true });
-//let result = analyseMultiplet(simulated, { frequency: 400, debug: true, symmetrizeEachStep: true});
-let result = analyseMultiplet(simulated, { frequency: 400, debug: true , symmetrizeEachStep: true , takeBestPartMultiplet : true});
-//let result = analyseMultiplet(simulated, { frequency: 400, debug: true , takeBestPartMultiplet : true});
-//let result = analyseMultiplet(simulated, { frequency: 400, debug: true , symmetrizeEachStep: true});
+////let result = analyseMultiplet(simulated, { frequency: 400, debug: true });
+//let result = analyseMultiplet(spectrum, { frequency: 400, debug: true });
+//let result = analyseMultiplet(spectrum, { frequency: 400, debug: true, symmetrizeEachStep: true});
+let result = analyseMultiplet(spectrum, { frequency: 400, debug: true , symmetrizeEachStep: true , takeBestPartMultiplet : true});
+//let result = analyseMultiplet(spectrum, { frequency: 400, debug: true , takeBestPartMultiplet : true});
+//let result = analyseMultiplet(spectrum, { frequency: 400, debug: true , symmetrizeEachStep: true});
 
 writeFileSync(
   join(__dirname, 'web', 'result.json'),
