@@ -1,0 +1,142 @@
+<!-- showing graph using jsGraph -->
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script language="javascript" src="./jsgraph.min.js"></script>
+  </head>
+
+  <body>
+    <table id="target" border="1" style="border-collapse: collapse;">
+      <tr>
+        <th>Multiplet</th>
+        <th>Coupling</th>
+        <th>Error function of the deconvolution of in-phase splitting</th>
+      </tr>
+    </table>
+
+    <script>
+      const options = {
+        width: 400,
+        height: 150,
+        plugins: {
+          zoom: {
+            zoomMode: 'xy',
+          },
+        },
+        mouseActions: [
+          {
+            plugin: 'zoom',
+            shift: false,
+            ctrl: false,
+          },
+          {
+            plugin: 'zoom',
+            type: 'mousewheel',
+            options: {
+              direction: 'y',
+            },
+          },
+          {
+            plugin: 'zoom',
+            type: 'dblclick',
+            options: {
+              mode: 'total',
+            },
+          },
+        ],
+      };
+      createGraph();
+
+      async function createGraph() {
+        let response = await fetch('./result2.json');
+        let result = await response.json();
+
+        let steps = result.debug.steps;
+
+        let index = 0;
+
+        for (let step of steps) {
+          let j = result.j[index];
+
+          let tr = document.createElement('TR');
+
+          let tdMultiplet = document.createElement('TD');
+          tdMultiplet.setAttribute('id', 'multiplet' + index);
+          tr.appendChild(tdMultiplet);
+
+          let tdCoupling = document.createElement('TD');
+          if (j) {
+            tdCoupling.innerHTML =
+              j.multiplicity + ': ' + j.coupling.toFixed(3) + ' Hz';
+          }
+
+          tr.appendChild(tdCoupling);
+
+          let tdErrorFunction = document.createElement('TD');
+          tdErrorFunction.setAttribute('id', 'errorFunction' + index);
+          tr.appendChild(tdErrorFunction);
+
+          document.getElementById('target').appendChild(tr);
+
+          addMultiplet('multiplet' + index, step.multiplet, options);
+          addErrorFunction(
+            'errorFunction' + index,
+            step.errorFunction,
+            options,
+          );
+          index++;
+          continue;
+        }
+      }
+
+      function addMultiplet(id, data, options = {}) {
+        const { width = 400, height = 250 } = options;
+        let graph = new Graph(id, options);
+        graph.resize(width, height); // Resizes the container
+        let waveForm = Graph.newWaveform();
+        waveForm.setData(data.y, data.x);
+        graph
+          .newSerie('line serie', {}, 'line') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm)
+          .setLineColor('blue')
+          .getYAxis()
+          .setScientific(true);
+          let waveForm2 = Graph.newWaveform();
+          if (!(typeof data.s === 'undefined')){
+            waveForm2.setData(data.s, data.x);
+        graph
+          .newSerie('line serie2', {}, 'line') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm2)
+          .setLineColor('green')
+          .getYAxis()
+          .setScientific(true);
+        }
+        graph.draw(); // Draw
+      }
+
+      function addErrorFunction(id, data, options = {}) {
+        const { width = 400, height = 250 } = options;
+        let graph = new Graph(id, options);
+        graph.resize(width, height); // Resizes the container
+        let waveForm = Graph.newWaveform();
+        waveForm.setData(data.y, data.x);
+        graph
+          .newSerie('line serie', {}, 'line') // Creates a new serie
+          .autoAxis() // Assigns axes
+          .setWaveform(waveForm)
+          .setLineColor('red');
+        graph
+          .getLeftAxis()
+          .setCurrentMin(-1)
+          .setCurrentMax(1);
+        graph.getBottomAxis()
+        .setCurrentMin(0)
+        .setCurrentMax(20);
+        graph.draw(); // Draw
+      }
+    </script>
+  </body>
+</html>
