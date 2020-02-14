@@ -4,9 +4,9 @@
  * @param {object} [options={}] Options (default is empty object)
  * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
  */
+import { fft, ifft } from 'fft-js';
+
 import { appendDebug } from './appendDebug';
-import { fft } from 'fft-js';
-import { ifft } from 'fft-js';
 
 /**
  * Analyse a multiplet
@@ -86,11 +86,11 @@ export function analyseMultiplet(data = {}, options = {}) {
   /// for testing break symmetry before running...
   /*
   movedBy = 120;
-  if (movedBy > 0) { 
+  if (movedBy > 0) {
     spe = spe.slice(0, spe.length - movedBy);
     sca = sca.slice(0, sca.length - movedBy);
   }
-  if (movedBy < 0) { 
+  if (movedBy < 0) {
     spe = spe.slice(-movedBy, spe.length);
     sca = sca.slice(-movedBy, sca.length);
   }*/
@@ -211,7 +211,7 @@ export function analyseMultiplet(data = {}, options = {}) {
 
             // end refine
             if (topValue > critFoundJ) {
-              if (debug) console.log(`J:: ` + topPosJ * resolutionHz);
+              if (debug) console.log(`J:: ${topPosJ * resolutionHz}`);
 
               result.j.push({
                 multiplicity: 'd',
@@ -229,7 +229,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
 
     if (debug) {
-      if (symmetrizeEachStep === true)
+      if (symmetrizeEachStep === true) {
         appendDebug(
           sca,
           spe,
@@ -239,7 +239,9 @@ export function analyseMultiplet(data = {}, options = {}) {
           result,
           beforeSymSpe,
         );
-      else appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result);
+      } else {
+        appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result);
+      }
     }
 
     if (!gotJValue) {
@@ -432,9 +434,9 @@ function symmetrize(y) {
 }
 
 function measureSym(y) {
-  let spref,
-    spnew,
-    movedBy = 0;
+  let spref;
+  let spnew;
+  let movedBy = 0;
   spref = scalarProduct(y, y, -1, 1);
   // search left...
   for (let indi = 1; indi < y.length / 2; indi++) {

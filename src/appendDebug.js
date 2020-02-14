@@ -5,7 +5,7 @@ export function appendDebug(
   scalProd,
   loopoverJvalues,
   result,
-  beforeSymSpe
+  beforeSymSpe,
 ) {
   if (!result.debug) {
     result.debug = {
@@ -25,7 +25,7 @@ export function appendDebug(
     if (yin[i] !== undefined) {
       data.x.push(xin[i]);
       data.y.push(yin[i]);
-      if (!(typeof beforeSymSpe === 'undefined')){
+      if (!(typeof beforeSymSpe === 'undefined')) {
         data.s.push(beforeSymSpe[i]);
       }
     }
