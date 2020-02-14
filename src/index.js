@@ -8,6 +8,14 @@ import { appendDebug } from './appendDebug';
 import { fft } from 'fft-js';
 import { ifft } from 'fft-js';
 
+/**
+ * Analyse a multiplet
+ * @param {object} [data] object of the kind {x:[], y:[]} containing the multiplet
+ * @param {object} [options={}]
+ * @param {number} [options.frequency=400] frequency
+ * @param {boolean} [options.debug=false] generate debug information if true
+ */
+
 export function analyseMultiplet(data = {}, options = {}) {
   let { x = [], y = [] } = data;
   const {
