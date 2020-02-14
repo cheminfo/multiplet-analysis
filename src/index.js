@@ -305,19 +305,17 @@ function scalarProduct(y1, y2, sens, incrementForSpeed) {
   }
   return v12 / Math.sqrt(v11 * v22);
 }
-function deco(yi, JStar, sign, dir, chopTail, multiplicity) {
-  if (typeof sign === 'undefined') {
-    sign = 1;
-  } // set default value : ++ multiplet :1 +- multiplet : -1
-  if (typeof dir === 'undefined') {
-    dir = 1;
-  } // set default value : from left to right : 1 -1 from right to left, 0: sum of both
-  if (typeof chopTail === 'undefined') {
-    chopTail = 1;
-  } // set default value : run the end of the multiplet
-  if (typeof multiplicity === 'undefined') {
-    multiplicity = 0.5;
-  } // set default value for spin 1/2
+
+/**
+ *
+ * @param {number} [yi]
+ * @param {number} [JStar]
+ * @param {number} [sign=1]  ++ multiplet :1 +- multiplet : -1
+ * @param {number} [dir=1] from left to right : 1 -1 from right to left, 0: sum of both
+ * @param {number} [chopTail=1] run the end of the multiplet
+ * @param {number} [multiplicity] value for spin 1/2
+ */
+function deco(yi, JStar, sign = 1, dir = 1, chopTail = 1, multiplicity = 0.5) {
   let nbLines = parseInt(2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
   let y1 = new Array(yi.length);
   let y2 = new Array(yi.length);
