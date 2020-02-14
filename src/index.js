@@ -422,11 +422,10 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
 }
 
 function symmetrize(y) {
-  let tmp;
   for (let indi = 0; indi < y.length / 2; indi++) {
-    tmp = y[indi] * 0.5 + 0.5 * y[y.length - 1 - indi];
-    y[indi] = tmp;
-    y[y.length - 1 - indi] = tmp;
+    const average = (y[indi] + y[y.length - 1 - indi]) / 2;
+    y[indi] = average;
+    y[y.length - 1 - indi] = average;
   }
   return y;
 }
