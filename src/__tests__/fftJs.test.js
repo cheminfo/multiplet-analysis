@@ -15,14 +15,14 @@ describe('subroutine', () => {
         //an[i][j] = 1;
       }
     }
-    console.log(`in-fft  ${an}`); //there is no inplace ifft!!!!!!!!
+    //console.log(`in-fft  ${an}`); //there is no inplace ifft!!!!!!!!
     /*an = fftInPlace(an);
     an = ifftInPlace(an); */
 
     let out = fft(an);
     let out2 = ifft(out);
-    console.log(`out2 ifft(fft) ${out2}`);
-    console.log(`si: ${si}`);
+    //console.log(`out2 ifft(fft) ${out2}`);
+    //console.log(`si: ${si}`);
     expect(out2).toStrictEqual(an);
 
     for (let i = 0; i < si / 2; i++) {
@@ -34,13 +34,13 @@ describe('subroutine', () => {
       }
     }
     an[0][0] = 1;
-    console.log(`in fftInPlace ${an} should be 1 1 1 1 after FT`);
+    //console.log(`in fftInPlace ${an} should be 1 1 1 1 after FT`);
     let out3 = fft(an);
 
     //fftInPlace(an);//??
-    console.log(
-      `out fftInPlace ${out3} should be 1 0 1 0 1 0 1 0 (Re, Im, ...)`,
-    );
+    //console.log(
+     //// `out fftInPlace ${out3} should be 1 0 1 0 1 0 1 0 (Re, Im, ...)`,
+    //);
     expect(out3).toStrictEqual(te);
   });
 });
