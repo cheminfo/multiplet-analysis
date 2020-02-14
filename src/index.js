@@ -393,8 +393,8 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
   // move to larger array...
   let an2 = [...Array(nextPowerTwo)].map((x) => Array(2).fill(0)); // n x 2 array
   for (let loop = 0; loop < halfNumPt; loop++) {
-    an2[loop][0] = out[loop][0]; //* Math.cos((phase / 180) * 3.1416) +
-    an2[loop][1] = out[loop][1]; //* Math.cos((phase / 180) * 3.1416) -
+    an2[loop][0] = out[loop][0]; //* Math.cos((phase / 180) * Math.PI) +
+    an2[loop][1] = out[loop][1]; //* Math.cos((phase / 180) * Math.PI) -
   }
 
   for (let loop = halfNumPt; loop < nextPowerTwo; loop++) {
@@ -409,14 +409,14 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
   for (let loop = 0; loop < halfNumPt; loop++) {
     //spe[loop] = out2[loop + halfNumPt][0]; // only Re now...
     spe[loop] =
-      out2[loop + halfNumPt][0] * Math.cos((phase / 180) * 3.1416) +
-      out2[loop + halfNumPt][1] * Math.sin((phase / 180) * 3.1416); // only Re now...
+      out2[loop + halfNumPt][0] * Math.cos((phase / 180) * Math.PI) +
+      out2[loop + halfNumPt][1] * Math.sin((phase / 180) * Math.PI); // only Re now...
   }
   for (let loop = 0; loop < halfNumPt; loop++) {
     //spe[loop + halfNumPt] = out2[loop][0]; // only Re now...
     spe[loop + halfNumPt] =
-      out2[loop][0] * Math.cos((phase / 180) * 3.1416) +
-      out2[loop][1] * Math.sin((phase / 180) * 3.1416); // only Re now...
+      out2[loop][0] * Math.cos((phase / 180) * Math.PI) +
+      out2[loop][1] * Math.sin((phase / 180) * Math.PI); // only Re now...
   }
   return { spectrum: spe, scale: sca };
 }
