@@ -39,7 +39,7 @@ describe('subroutine', () => {
 
     //fftInPlace(an);//??
     //console.log(
-     //// `out fftInPlace ${out3} should be 1 0 1 0 1 0 1 0 (Re, Im, ...)`,
+    //// `out fftInPlace ${out3} should be 1 0 1 0 1 0 1 0 (Re, Im, ...)`,
     //);
     expect(out3).toStrictEqual(te);
   });

@@ -32,6 +32,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     symmetrizeEachStep = false,
     takeBestPartMultiplet = false,
     addPhaseInterpolation = 0,
+    forceFirstDeconvolutionToThisValue = 0,
   } = options;
 
   let scalProd = [];

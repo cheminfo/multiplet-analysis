@@ -27,21 +27,7 @@ describe('subroutine', () => {
     //console.log(`out ifft ${re} should be 0.25 0.25 0.25 0.25 `);
     //console.log(`out ifft ${im} should be 0 0 0 0: OK`);
 
-    /*
-      it('Test nmredata read async', async () => {
-        var nr = await readNMRR(zipBrukerSeveralSDF);
-        var sdfFileList = nr.getSDFList();
-        expect(6).toBe(sdfFileList.length);
-        expect(sdfFileList[nr.activeElement]).toBe(sdfFileList[0]);
-      });
-      it('Test nmredata read sync', () => {
-        var nr = readNMRRSync(resolve('testFiles/menthol_1D_1H_assigned_J.zip'));
-        var sdfFileList = nr.getSDFList();
-        expect(6).toBe(sdfFileList.length);
-        expect(sdfFileList[nr.activeElement]).toBe(sdfFileList[0]);
-      });
-      it('nmrRecord with jcamp, sync reading', () => {
-*/
+  
     re = [1, 0, 0, 0];
     im = [0, 0, 0, 0];
     /* FFT.fft(re, im);
