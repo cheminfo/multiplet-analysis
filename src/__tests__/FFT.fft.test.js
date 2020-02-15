@@ -27,7 +27,6 @@ describe('subroutine', () => {
     //console.log(`out ifft ${re} should be 0.25 0.25 0.25 0.25 `);
     //console.log(`out ifft ${im} should be 0 0 0 0: OK`);
 
-  
     re = [1, 0, 0, 0];
     im = [0, 0, 0, 0];
     /* FFT.fft(re, im);

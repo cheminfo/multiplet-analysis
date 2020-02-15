@@ -74,6 +74,8 @@ import { analyseMultiplet } from '../src/index';
 //let result = analyseMultiplet(simulated, { frequency: 400, debug: true });
 //let result = analyseMultiplet(simulated, { frequency: 400, debug: true, symmetrizeEachStep: true});
 let result = analyseMultiplet(spectrum, { frequency: 400, debug: true , takeBestPartMultiplet : true});
+//let result = analyseMultiplet(spectrum, { frequency: 400, debug: true , forceFirstDeconvolutionToThisValue : 14.145});
+//let result = analyseMultiplet(spectrum, { frequency: 400, debug: true , forceFirstDeconvolutionToThisValue : 4.2, takeBestPartMultiplet : true});
 //let result = analyseMultiplet(simulated, { frequency: 400, debug: true , takeBestPartMultiplet : true});
 //let result = analyseMultiplet(simulated, { frequency: 400, debug: true , symmetrizeEachStep: true});
 
