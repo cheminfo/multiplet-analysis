@@ -1,7 +1,7 @@
 export function getGeneralPascal(n, spin = 0.5) {
   //spin = typeof spin !== 'undefined' ? spin : 0.5;
   if (n === 0) return [1];
-  conts mult = 2 * spin + 1;
+  const mult = 2 * spin + 1;
   if (mult === 2) {
     // this algorithm is faster for spin 1/2 from https://gist.github.com/lpatiny/5956d1866998fc565d4c676cf4a2be3b
     var line = [1];
@@ -13,7 +13,7 @@ export function getGeneralPascal(n, spin = 0.5) {
     // this is a more general algorithm
     line = [1];
     if (n === 0) return line;
-    var mult = 2 * spin + 1;
+    const mult = 2 * spin + 1;
     for (var j = 0; j < mult - 1; j++) line.push(1);
     // complete with "1 1" or "1 1 1" for spin 1/2 and 1 respectively
     var previousLine = line;
