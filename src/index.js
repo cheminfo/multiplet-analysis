@@ -398,10 +398,10 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
   let an = [...Array(nextPowerTwoAn)].map(() => Array(2).fill(0)); // n x 2 array
   const halfNumPt = y.length / 2;
   console.log("si " + an.length + "  e " + halfNumPt);
-
-  for (let loop = Math.floor((nextPowerTwoAn-y.length)/2); loop < halfNumPt; loop++) {
-    an[loop + halfNumPt][0] = y[loop]; //Re
-    an[loop + halfNumPt][1] = 0; //Im
+  const shiftMult = Math.floor((nextPowerTwoAn - y.length) / 2.0);
+  for (let loop = 0; loop < halfNumPt; loop++) {
+    an[2 * shiftMult + loop + halfNumPt][0] = y[loop]; //Re
+    an[2 * shiftMult + loop + halfNumPt][1] = 0; //Im
     an[loop][0] = y[loop + halfNumPt]; //Re
     an[loop][1] = 0; //Im
   }
