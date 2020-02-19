@@ -391,19 +391,29 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
 
   // interpolate spectrum
   // prepare input for fft apply fftshift
-  let an = [...Array(y.length)].map((x) => Array(2).fill(0)); // n x 2 array
-  let halfNumPt = y.length / 2;
+  let nextPowerTwoAn = Math.pow(
+    2,
+    Math.round(Math.log(y.length - 1) / Math.log(2.0) + 0.5),
+  );
+  let an = [...Array(nextPowerTwoAn)].map(() => Array(2).fill(0)); // n x 2 array
+  const halfNumPt = y.length / 2;
+  console.log("si " + an.length + "  e " + halfNumPt);
+
   for (let loop = 0; loop < halfNumPt; loop++) {
     an[loop + halfNumPt][0] = y[loop]; //Re
     an[loop + halfNumPt][1] = 0; //Im
     an[loop][0] = y[loop + halfNumPt]; //Re
     an[loop][1] = 0; //Im
   }
+  console.log("in");
+
   let out = ifft(an);
+  console.log("out");
+
   out[0][0] = out[0][0] / 2; // divide first point by 2 Re
   out[0][1] = out[0][1] / 2; // divide first point by 2 Im
   // move to larger array...
-  let an2 = [...Array(nextPowerTwo)].map((x) => Array(2).fill(0)); // n x 2 array
+  let an2 = [...Array(nextPowerTwo)].map(() => Array(2).fill(0)); // n x 2 array
   for (let loop = 0; loop < halfNumPt; loop++) {
     an2[loop][0] = out[loop][0]; //* Math.cos((phase / 180) * Math.PI) +
     an2[loop][1] = out[loop][1]; //* Math.cos((phase / 180) * Math.PI) -
@@ -415,18 +425,18 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
     an2[loop][1] = 0;
   }
   let out2 = fft(an2);
-  halfNumPt = nextPowerTwo / 2;
+  const halfNumPt2 = nextPowerTwo / 2;
   // applies fftshift
   let phase = addPhaseInterpolation;
-  for (let loop = 0; loop < halfNumPt; loop++) {
-    //spe[loop] = out2[loop + halfNumPt][0]; // only Re now...
+  for (let loop = 0; loop < halfNumPt2; loop++) {
+    //spe[loop] = out2[loop + halfNumPt2][0]; // only Re now...
     spe[loop] =
-      out2[loop + halfNumPt][0] * Math.cos((phase / 180) * Math.PI) +
-      out2[loop + halfNumPt][1] * Math.sin((phase / 180) * Math.PI); // only Re now...
+      out2[loop + halfNumPt2][0] * Math.cos((phase / 180) * Math.PI) +
+      out2[loop + halfNumPt2][1] * Math.sin((phase / 180) * Math.PI); // only Re now...
   }
-  for (let loop = 0; loop < halfNumPt; loop++) {
-    //spe[loop + halfNumPt] = out2[loop][0]; // only Re now...
-    spe[loop + halfNumPt] =
+  for (let loop = 0; loop < halfNumPt2; loop++) {
+    //spe[loop + halfNumPt2] = out2[loop][0]; // only Re now...
+    spe[loop + halfNumPt2] =
       out2[loop][0] * Math.cos((phase / 180) * Math.PI) +
       out2[loop][1] * Math.sin((phase / 180) * Math.PI); // only Re now...
   }

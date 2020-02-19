@@ -1,4 +1,5 @@
 import doublet from '../data/dd-exp.json';
+
 import { analyseMultiplet } from '../src/index';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
