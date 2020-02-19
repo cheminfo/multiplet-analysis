@@ -397,7 +397,6 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
   );
   let an = [...Array(nextPowerTwoAn)].map(() => Array(2).fill(0)); // n x 2 array
   const halfNumPt = y.length / 2;
-  console.log("si " + an.length + "  e " + halfNumPt);
   const shiftMult = Math.floor((nextPowerTwoAn - y.length) / 2.0);
   for (let loop = 0; loop < halfNumPt; loop++) {
     an[2 * shiftMult + loop + halfNumPt][0] = y[loop]; //Re
@@ -405,10 +404,8 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
     an[loop][0] = y[loop + halfNumPt]; //Re
     an[loop][1] = 0; //Im
   }
-  console.log("in");
 
   let out = ifft(an);
-  console.log("out");
 
   out[0][0] = out[0][0] / 2; // divide first point by 2 Re
   out[0][1] = out[0][1] / 2; // divide first point by 2 Im

@@ -5,8 +5,8 @@ describe('subroutine', () => {
   it('test basic fft from fft-js', () => {
     const pw2 = 3;
     const si = Math.pow(2, pw2);
-    let an = [...Array(si / 2)].map((x) => Array(2).fill(0)); // n x 2 array
-    let te = [...Array(si / 2)].map((x) => Array(2).fill(0));
+    let an = [...Array(si / 2)].map(() => Array(2).fill(0)); // n x 2 array
+    let te = [...Array(si / 2)].map(() => Array(2).fill(0));
 
     for (let i = 0; i < si / 2; i++) {
       for (let j = 0; j < 2; j++) {
