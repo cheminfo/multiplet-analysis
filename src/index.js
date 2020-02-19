@@ -399,7 +399,7 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
   const halfNumPt = y.length / 2;
   console.log("si " + an.length + "  e " + halfNumPt);
 
-  for (let loop = 0; loop < halfNumPt; loop++) {
+  for (let loop = Math.floor((nextPowerTwoAn-y.length)/2); loop < halfNumPt; loop++) {
     an[loop + halfNumPt][0] = y[loop]; //Re
     an[loop + halfNumPt][1] = 0; //Im
     an[loop][0] = y[loop + halfNumPt]; //Re
