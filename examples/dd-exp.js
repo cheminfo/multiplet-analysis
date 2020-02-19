@@ -4,7 +4,7 @@ import { analyseMultiplet } from '../src/index';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 
-let result = analyseMultiplet(doublet, { frequency: 400, debug: true });
+//let result = analyseMultiplet(doublet, { frequency: 400, debug: true });
 let result = analyseMultiplet(doublet, { frequency: 400, debug: true , takeBestPartMultiplet : true});
 
 writeFileSync(

@@ -14,7 +14,6 @@ export function getGeneralPascal(n, spin = 0.5) {
     // this is a more general algorithm
     line = [1];
     if (n === 0) return line;
-    const mult = 2 * spin + 1;
     for (let j = 0; j < mult - 1; j++) line.push(1);
     // complete with "1 1" or "1 1 1" for spin 1/2 and 1 respectively
     let previousLine = line;

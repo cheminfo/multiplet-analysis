@@ -1,5 +1,4 @@
 <!-- showing graph using jsGraph -->
-
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -7,6 +6,7 @@
   </head>
 
   <body>
+    <!-- <body bgcolor="#808080">  -->
     <h4>Result of the recursive deconvolution of multiplet structures.</h4>
     <p>The result of the attempts to simplify the structure of the multiplet (on the left) obtained by the application of the inverse of the convolution with doublet of delta function (the effect of J) are measured for different splitting (error function on the right).</p>
     <p>The measure uses a scalar product of the vectors formed by the multiplet obtained by simplification starting at both sides of the multiplet. It reaches the unit value when they are indentical.</p>
@@ -99,6 +99,8 @@
         const { width = 400, height = 250 } = options;
         let graph = new Graph(id, options);
         graph.resize(width, height); // Resizes the container
+        //graph.secondaryGridOff(false);
+
         let waveForm = Graph.newWaveform();
         waveForm.setData(data.y, data.x);
         graph
@@ -108,16 +110,18 @@
           .setLineColor('blue')
           .getYAxis()
           .setScientific(true);
-          let waveForm2 = Graph.newWaveform();
-          if (!(typeof data.s === 'undefined')){
-            waveForm2.setData(data.s, data.x);
-        graph
-          .newSerie('line serie2', {}, 'line') // Creates a new serie
-          .autoAxis() // Assigns axes
-          .setWaveform(waveForm2)
-          .setLineColor('green')
-          .getYAxis()
-          .setScientific(true);
+          //.secondaryGridOff(false);//.setColor('red');
+        let waveForm2 = Graph.newWaveform();
+        if (!(typeof data.s === 'undefined')) {
+          waveForm2.setData(data.s, data.x);
+          graph
+            .newSerie('line serie2', {}, 'line') // Creates a new serie
+            .autoAxis() // Assigns axes
+            .setWaveform(waveForm2)
+            .setLineColor('green')
+            .getYAxis()
+            .setScientific(true);
+            //.secondaryGridOff(false);//.setColor('red');
         }
         graph.draw(); // Draw
       }
