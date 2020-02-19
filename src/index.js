@@ -210,18 +210,19 @@ export function analyseMultiplet(data = {}, options = {}) {
               }
             }
             // end refine
-            
-            if (topValue > critFoundJ) {
 
+            if (topValue > critFoundJ) {
               // ugly force value for tests
-            if (
-              forceFirstDeconvolutionToThisValue > 0 &&
-              loopoverJvalues === 1 &&
-              gotJValue === false
-            ) {
-              topPosJ = Math.floor(forceFirstDeconvolutionToThisValue / resolutionHz);
-              topValue = 1.1;
-            }
+              if (
+                forceFirstDeconvolutionToThisValue > 0 &&
+                loopoverJvalues === 1 &&
+                gotJValue === false
+              ) {
+                topPosJ = Math.floor(
+                  forceFirstDeconvolutionToThisValue / resolutionHz,
+                );
+                topValue = 1.1;
+              }
 
               if (debug) console.log(`J:: ${topPosJ * resolutionHz}`);
 
