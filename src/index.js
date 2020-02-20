@@ -4,10 +4,13 @@
  * @param {object} [options={}] Options (default is empty object)
  * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
  */
-import { fft, ifft } from 'fft-js';
 
 import { appendDebug } from './appendDebug';
 import { symmetrize } from './symmetrize';
+import { trigInterpolate } from './trigInterpolate';
+import { measureDeco } from './measureDeco';
+import { deco } from './deco';
+import { measureSym } from './measureSym';
 
 /**
  * Analyse a multiplet
@@ -49,12 +52,6 @@ export function analyseMultiplet(data = {}, options = {}) {
   let resolutionHz = resolutionPpm * frequency;
 
   let factorResolution = resolutionHz / minimalResolution;
-  /*console.log(`>minimalResolution ${minimalResolution}`);
-  console.log(`>factorResolution ${factorResolution}`);
-
-  console.log(`>resolutionHz ${resolutionHz}`);*/
-  //console.log(`factorResolution ${factorResolution}`);
-  //console.log(`nb pt before ${x.length}`);
 
   let nextPowerTwo = Math.pow(
     2,
@@ -64,11 +61,6 @@ export function analyseMultiplet(data = {}, options = {}) {
   );
   factorResolution = (factorResolution * nextPowerTwo) / x.length;
 
-  /*console.log(`factorResolution ${factorResolution}`);
-  console.log(`x.length ${x.length}`);
-  console.log(
-    `Math.abs(x[0] - x[x.length - 1]) ${Math.abs(x[0] - x[x.length - 1])}`,
-  );*/
   let movedBy;
   let sca = [];
   let spe = [];
@@ -102,7 +94,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   resolutionHz = resolutionPpm * frequency;
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
   let minTestedPt = Math.trunc(minTestedJ / resolutionHz) + 1;
-  // will find center of symetry of the multiplet
+  // will find center of symmetry of the multiplet
   // add zeroes as to make it symetrical if requested... and needed
 
   // main J-coupling determination
@@ -127,7 +119,7 @@ export function analyseMultiplet(data = {}, options = {}) {
 
     //symmetrize if requested to
     if (symmetrizeEachStep === true) {
-      movedBy = -measureSym(spe);
+      movedBy = - measureSym(spe);
       if (movedBy > 0) {
         spe = spe.slice(0, spe.length - movedBy);
         sca = sca.slice(0, sca.length - movedBy);
@@ -282,211 +274,8 @@ export function analyseMultiplet(data = {}, options = {}) {
   return result;
 }
 
-function measureDeco(
-  y,
-  JStar,
-  sign,
-  chopTail,
-  multiplicity,
-  incrementForSpeed,
-) {
-  let y1 = [];
-  let y2 = [];
-  y1 = deco(y, JStar, sign, 1, chopTail, multiplicity); // dir left to right
-  y2 = deco(y, JStar, sign, -1, chopTail, multiplicity); // dir right to left
-  return scalarProduct(y1, y2, 1, incrementForSpeed);
-}
-
-function scalarProduct(y1, y2, sens, incrementForSpeed) {
-  // sens = 1; crude scalar product
-  // sens =-1: flip spectrum first
-  let v11 = 0;
-  let v22 = 0;
-  let v12 = 0;
-  if (sens > 0) {
-    for (let index = 0; index < y1.length; index += incrementForSpeed) {
-      v12 += y1[index] * y2[index];
-      v11 += y1[index] * y1[index];
-      v22 += y2[index] * y2[index];
-    }
-  } else {
-    // Here as if flip left/right array
-    for (let index = 0; index < y1.length; index += incrementForSpeed) {
-      v12 += y1[index] * y2[y1.length - index - 1];
-      v11 += y1[index] * y1[index];
-      v22 += y2[index] * y2[index];
-    }
-  }
-  return v12 / Math.sqrt(v11 * v22);
-}
-
-/**
- *
- * @param {number} [yi]
- * @param {number} [JStar]
- * @param {number} [sign=1]  ++ multiplet :1 +- multiplet : -1
- * @param {number} [dir=1] from left to right : 1 -1 from right to left, 0: sum of both
- * @param {number} [chopTail=1] run the end of the multiplet
- * @param {number} [multiplicity] value for spin 1/2
- */
-function deco(yi, JStar, sign = 1, dir = 1, chopTail = 1, multiplicity = 0.5) {
-  let nbLines = parseInt(2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
-  let y1 = new Array(yi.length);
-  let y2 = new Array(yi.length);
-
-  if (dir > -1) {
-    for (let scan = 0; scan < y1.length; scan++) y1[scan] = yi[scan];
-    for (let scan = 0; scan < y1.length - JStar * nbLines; scan++) {
-      for (let line = 0; line < nbLines; line++) {
-        y1[scan + (line + 1) * JStar] -= sign * y1[scan];
-      }
-    }
-    if (dir > 0.5) {
-      return y1.slice(0, y1.length - chopTail * JStar * nbLines);
-    }
-  }
-  if (dir < 1) {
-    for (let scan = 0; scan < y2.length; scan++) y2[scan] = yi[scan];
-    for (let scan = y2.length - 1; scan >= JStar * nbLines; scan -= 1) {
-      for (let line = 0; line < nbLines; line++) {
-        y2[scan - (line + 1) * JStar] -= sign * y2[scan];
-      }
-    }
-    if (dir < -0.2) {
-      return y2.slice(chopTail * JStar * nbLines, y2.length);
-    }
-  }
-  if (dir === 0) {
-    for (let scan = 0; scan < y2.length - JStar * nbLines; scan++) {
-      y1[scan] += sign * y2[scan + JStar * nbLines];
-    }
-    return y1.slice(0, y1.length - JStar * nbLines);
-  }
-  // multiply by two because take best half of both...
-  let half = ((y1.length - JStar * nbLines) / 2.0) | 0;
-  if (dir === 0.1) {
-    for (let scan = 0; scan < half; scan++) {
-      y1[scan] = 2 * y1[scan];
-    }
-    for (let scan = half; scan < y2.length - JStar * nbLines; scan++) {
-      y1[scan] = 2 * sign * y2[scan + JStar * nbLines];
-    }
-    return y1.slice(0, y1.length - JStar * nbLines);
-  }
-}
-
-function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
-  let sca = Array(nextPowerTwo);
-  let spe = Array(nextPowerTwo);
-
-  let scaIncrement = (x[x.length - 1] - x[0]) / (x.length - 1); // delta one pt
-  let scaPt = x[0] - scaIncrement / 2; // move to limit side - not middle of first point (half a pt left...)
-  let trueWidth = scaIncrement * x.length;
-  scaIncrement = trueWidth / nextPowerTwo;
-  scaPt += scaIncrement / 2; // move from limit side to middle of first pt
-  // set scale
-
-  for (let loop = 0; loop < nextPowerTwo; loop++) {
-    sca[loop] = scaPt;
-    scaPt += scaIncrement;
-  }
-
-  // interpolate spectrum
-  // prepare input for fft apply fftshift
-  let nextPowerTwoAn = Math.pow(
-    2,
-    Math.round(Math.log(y.length - 1) / Math.log(2.0) + 0.5),
-  );
-  let an = [...Array(nextPowerTwoAn)].map(() => Array(2).fill(0)); // n x 2 array
-  const halfNumPt = Math.floor(y.length / 2);// may ignore last pt... if odd number
-  const halfNumPtB = y.length - halfNumPt;
-  const shiftMult = (nextPowerTwoAn - y.length);
-  for (let loop = 0; loop < halfNumPt; loop++) {
-    an[ shiftMult + loop + halfNumPtB][0] = y[loop]; //Re
-    an[ shiftMult + loop + halfNumPtB][1] = 0; //Im
-  }
-  for (let loop = 0; loop < halfNumPtB; loop++) {
-    an[loop][0] = y[loop + halfNumPt]; //Re
-    an[loop][1] = 0; //Im
-  }
-
-  let out = ifft(an);
-
-  out[0][0] = out[0][0] / 2; // divide first point by 2 Re
-  out[0][1] = out[0][1] / 2; // divide first point by 2 Im
-  // move to larger array...
-  let an2 = [...Array(nextPowerTwo)].map(() => Array(2).fill(0)); // n x 2 array
-  for (let loop = 0; loop < halfNumPt; loop++) {
-    an2[loop][0] = out[loop][0]; //* Math.cos((phase / 180) * Math.PI) +
-    an2[loop][1] = out[loop][1]; //* Math.cos((phase / 180) * Math.PI) -
-  }
-
-  for (let loop = halfNumPt; loop < nextPowerTwo; loop++) {
-    // zero filling
-    an2[loop][0] = 0;
-    an2[loop][1] = 0;
-  }
-  let out2 = fft(an2);
-  const halfNumPt2 = nextPowerTwo / 2;
-  // applies fftshift
-  let phase = addPhaseInterpolation;
-  for (let loop = 0; loop < halfNumPt2; loop++) {
-    //spe[loop] = out2[loop + halfNumPt2][0]; // only Re now...
-    spe[loop] =
-      out2[loop + halfNumPt2][0] * Math.cos((phase / 180) * Math.PI) +
-      out2[loop + halfNumPt2][1] * Math.sin((phase / 180) * Math.PI); // only Re now...
-  }
-  for (let loop = 0; loop < halfNumPt2; loop++) {
-    //spe[loop + halfNumPt2] = out2[loop][0]; // only Re now...
-    spe[loop + halfNumPt2] =
-      out2[loop][0] * Math.cos((phase / 180) * Math.PI) +
-      out2[loop][1] * Math.sin((phase / 180) * Math.PI); // only Re now...
-  }
-  return { spectrum: spe, scale: sca };
-}
 
 
-function measureSym(y) {
-  let spref;
-  let spnew;
-  let movedBy = 0;
-  spref = scalarProduct(y, y, -1, 1);
-  // search left...
-  for (let indi = 1; indi < y.length / 2; indi++) {
-    spnew = scalarProduct(
-      y.slice(indi, y.length),
-      y.slice(indi, y.length),
-      -1,
-      1,
-    );
-    if (spnew > spref) {
-      //  console.log(`${spnew} > ${spref} size: ${y.length}`);
-      spref = spnew;
-      movedBy = indi;
-    } else {
-      // console.log('OK+ ' + movedBy + " " + indi + ' ' + spnew);
-    }
-  }
-  if (movedBy === 0) {
-    for (let indi = 1; indi < y.length / 2; indi++) {
-      spnew = scalarProduct(
-        y.slice(0, y.length - indi),
-        y.slice(0, y.length - indi),
-        -1,
-        1,
-      );
-      if (spnew > spref) {
-        //  console.log(`${spnew} > ${spref} size: ${y.length}`);
-        spref = spnew;
-        movedBy = -indi;
-      } else {
-        // console.log('OK- ' + movedBy + ' ' + indi + ' ' + spnew);
-      }
-    }
-  }
-  //console.log('OK  ' + movedBy);
-  return movedBy;
-}
 /* matlab code :
 %%  demo deconvolution of J. coupling
 clear all
