@@ -397,11 +397,14 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
     Math.round(Math.log(y.length - 1) / Math.log(2.0) + 0.5),
   );
   let an = [...Array(nextPowerTwoAn)].map(() => Array(2).fill(0)); // n x 2 array
-  const halfNumPt = y.length / 2;
-  const shiftMult = Math.floor((nextPowerTwoAn - y.length) / 2.0);
+  const halfNumPt = Math.floor(y.length / 2);// may ignore last pt... if odd number
+  const halfNumPtB = y.length - halfNumPt;
+  const shiftMult = (nextPowerTwoAn - y.length);
   for (let loop = 0; loop < halfNumPt; loop++) {
-    an[2 * shiftMult + loop + halfNumPt][0] = y[loop]; //Re
-    an[2 * shiftMult + loop + halfNumPt][1] = 0; //Im
+    an[ shiftMult + loop + halfNumPtB][0] = y[loop]; //Re
+    an[ shiftMult + loop + halfNumPtB][1] = 0; //Im
+  }
+  for (let loop = 0; loop < halfNumPtB; loop++) {
     an[loop][0] = y[loop + halfNumPt]; //Re
     an[loop][1] = 0; //Im
   }
@@ -441,14 +444,6 @@ function trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation) {
   return { spectrum: spe, scale: sca };
 }
 
-function symmetrize(y) {
-  for (let indi = 0; indi < y.length / 2; indi++) {
-    const average = (y[indi] + y[y.length - 1 - indi]) / 2;
-    y[indi] = average;
-    y[y.length - 1 - indi] = average;
-  }
-  return y;
-}
 
 function measureSym(y) {
   let spref;
