@@ -119,7 +119,7 @@ export function analyseMultiplet(data = {}, options = {}) {
 
     //symmetrize if requested to
     if (symmetrizeEachStep === true) {
-      movedBy = - measureSym(spe);
+      movedBy = -measureSym(spe);
       if (movedBy > 0) {
         spe = spe.slice(0, spe.length - movedBy);
         sca = sca.slice(0, sca.length - movedBy);
@@ -267,14 +267,22 @@ export function analyseMultiplet(data = {}, options = {}) {
         sca = sca.slice(remove, sca.length - remove);
       }
       if (sca.length !== spe.length) {
-        ErrorEvent('sts');
+        ErrorEvent('sts');// this is an ugly way to make sure to get an error when this occurs
       }
     }
   }
+  let curTop = -1000000000000000000.0;
+  let curChemShift;
+  for (let i = 0; i < spe.length; i++) {
+    if (spe[i] > curTop) {
+      curTop = spe[i];
+      curChemShift = sca[i];
+    }
+  }
+  result.chemShift = curChemShift;
+
   return result;
 }
-
-
 
 /* matlab code :
 %%  demo deconvolution of J. coupling
