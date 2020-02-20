@@ -7,6 +7,7 @@
 import { fft, ifft } from 'fft-js';
 
 import { appendDebug } from './appendDebug';
+import { symmetrize } from './symmetrize';
 
 /**
  * Analyse a multiplet
