@@ -8,7 +8,14 @@
  * @param {number} [chopTail=1] run the end of the multiplet
  * @param {number} [multiplicity] value for spin 1/2
  */
-export function deco(yi, JStar, sign = 1, dir = 1, chopTail = 1, multiplicity = 0.5) {
+export function deco(
+  yi,
+  JStar,
+  sign = 1,
+  dir = 1,
+  chopTail = 1,
+  multiplicity = 0.5,
+) {
   let nbLines = parseInt(2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
   let y1 = new Array(yi.length);
   let y2 = new Array(yi.length);
