@@ -11,6 +11,7 @@ import { trigInterpolate } from './trigInterpolate';
 import { measureDeco } from './measureDeco';
 import { deco } from './deco';
 import { measureSym } from './measureSym';
+import maxY from 'ml-array-xy-max-y';
 
 /**
  * Analyse a multiplet
@@ -271,7 +272,12 @@ export function analyseMultiplet(data = {}, options = {}) {
       }
     }
   }
-  let curTop = -1000000000000000000.0;
+  /* to be tested ...
+  const points = { sca, spe };
+  MaxSpe = maxY(points);
+  result.chemShift = MaxSpe.index;
+*/
+  let curTop = Number.NEGATIVE_INFINITY;
   let curChemShift;
   for (let i = 0; i < spe.length; i++) {
     if (spe[i] > curTop) {
