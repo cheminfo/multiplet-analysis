@@ -13,7 +13,7 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(result.j[0].coupling).toBeCloseTo(7, 1); // one decimal at low resolution (no interpolation)
     expect(result.j[0].multiplicity).toStrictEqual('d');
     expect(result.j).toHaveLength(1);
-    expect(result.chemShift).toBeCloseTo(2.0, 4);
+    expect(result.chemShift).toBeCloseTo(2.0, 5);
   });
 
   it('d=1_J=7_m=q', () => {
@@ -41,8 +41,7 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(result.j[1].coupling).toBeCloseTo(7, 0);
     expect(result.j[2].coupling).toBeCloseTo(7, 0);
     expect(result.chemShift).toBeCloseTo(1.0, 3);
-
-    // expect(result.j).toHaveLength(3);
+    expect(result.j).toHaveLength(3);
   });
 
   it('d=1_J=2,4,6_m=ddd', () => {
