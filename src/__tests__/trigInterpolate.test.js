@@ -15,7 +15,7 @@ describe('test measureDeco', () => {
 
     const results2 = trigInterpolate([0, 1, 2, 3], [0, 1, 1, 0], 8, 0);
     expect(results2.spectrum).toHaveLength(8);
-    expect(results2.spectrum).toEqual([
+    expect(results2.spectrum).toStrictEqual([
       2.7755575615628914e-17,
       0.25,
       0.5,

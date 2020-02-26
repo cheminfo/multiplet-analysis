@@ -32,10 +32,10 @@ export function trigInterpolate(
   let an = [...Array(nextPowerTwoInput)].map(() => Array(2).fill(0)); // n x 2 array
   const halfNumPt = Math.floor(y.length / 2); // may ignore last pt... if odd number
   const halfNumPtB = y.length - halfNumPt;
-  const shiftMult = nextPowerTwoInput - y.length;
+  const shiftMultiplet = nextPowerTwoInput - y.length;
   for (let loop = 0; loop < halfNumPt; loop++) {
-    an[shiftMult + loop + halfNumPtB][0] = y[loop]; //Re
-    an[shiftMult + loop + halfNumPtB][1] = 0; //Im
+    an[shiftMultiplet + loop + halfNumPtB][0] = y[loop]; //Re
+    an[shiftMultiplet + loop + halfNumPtB][1] = 0; //Im
   }
   for (let loop = 0; loop < halfNumPtB; loop++) {
     an[loop][0] = y[loop + halfNumPt]; //Re
@@ -60,7 +60,7 @@ export function trigInterpolate(
   }
   let out2 = fft(an2);
   const halfNumPt2 = Math.floor(numberOfPointOutput / 2);
-  
+
   // applies fftshift
   let phase = addPhaseInterpolation;
   for (let loop = 0; loop < halfNumPt2; loop++) {
