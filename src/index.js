@@ -273,12 +273,12 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
   }
   // to be tested ...
-  /*
-  const points = { sca, spe };
-  let MaxSpe = maxY(points);
-  result.chemShift = MaxSpe.index;
-*/
-// to be commented
+
+  let maxAmplitudePosition = maxY({ x: sca, y: spe });
+  result.chemShift = sca[maxAmplitudePosition.index];
+
+// for non-javascript implementation
+/*
   let curTop = Number.NEGATIVE_INFINITY;
   let curChemShift;
   for (let i = 0; i < spe.length; i++) {
@@ -287,7 +287,7 @@ export function analyseMultiplet(data = {}, options = {}) {
       curChemShift = sca[i];
     }
   }
-  result.chemShift = curChemShift;
+  result.chemShift = curChemShift;*/
 // end to be commented
 
   return result;
