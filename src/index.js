@@ -10,7 +10,7 @@ import { symmetrize } from './symmetrize';
 import { trigInterpolate } from './trigInterpolate';
 import { measureDeco } from './measureDeco';
 import { deco } from './deco';
-import { measureSym } from './measureSym';
+import { measureSymShift } from './measureSymShift';
 import maxY from 'ml-array-xy-max-y';
 
 /**
@@ -120,7 +120,7 @@ export function analyseMultiplet(data = {}, options = {}) {
 
     //symmetrize if requested to
     if (symmetrizeEachStep === true) {
-      movedBy = -measureSym(spe);
+      movedBy = -measureSymShift(spe);
       if (movedBy > 0) {
         spe = spe.slice(0, spe.length - movedBy);
         sca = sca.slice(0, sca.length - movedBy);

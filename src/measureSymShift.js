@@ -1,6 +1,6 @@
 import { scalarProduct } from './scalarProduct';
 
-export function measureSym(y) {
+export function measureSymShift(y) {
   let spref;
   let spnew;
   let movedBy = 0;
