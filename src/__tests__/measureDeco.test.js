@@ -1,6 +1,6 @@
 import { measureDeco } from '../measureDeco';
 
-describe('analyse multiplet of simulated spectra', () => {
+describe('test measureDeco', () => {
   it('first should be', () => {
     //  it.only
     expect(measureDeco([0, 1, 0, 1, 0], 2, 1, 1, 0.5, 1)).toStrictEqual(1);

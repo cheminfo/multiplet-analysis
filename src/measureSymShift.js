@@ -1,40 +1,40 @@
 import { scalarProduct } from './scalarProduct';
 
 export function measureSymShift(y) {
-  let spref;
-  let spnew;
+  let ScalarProductReference;
+  let ScalarProductNewValue;
   let movedBy = 0;
-  spref = scalarProduct(y, y, -1, 1);
+  ScalarProductReference = scalarProduct(y, y, -1, 1);
   // search left...
-  for (let indi = 1; indi < y.length / 2; indi++) {
-    spnew = scalarProduct(
-      y.slice(indi, y.length),
-      y.slice(indi, y.length),
+  for (let i = 1; i < y.length / 2; i++) {
+    ScalarProductNewValue = scalarProduct(
+      y.slice(i, y.length),
+      y.slice(i, y.length),
       -1,
       1,
     );
-    if (spnew > spref) {
-      //  console.log(`${spnew} > ${spref} size: ${y.length}`);
-      spref = spnew;
-      movedBy = indi;
+    if (ScalarProductNewValue > ScalarProductReference) {
+      //  console.log(`${ScalarProductNewValue} > ${ScalarProductReference} size: ${y.length}`);
+      ScalarProductReference = ScalarProductNewValue;
+      movedBy = i;
     } else {
-      // console.log('OK+ ' + movedBy + " " + indi + ' ' + spnew);
+      // console.log('OK+ ' + movedBy + " " + i + ' ' + ScalarProductNewValue);
     }
   }
   if (movedBy === 0) {
-    for (let indi = 1; indi < y.length / 2; indi++) {
-      spnew = scalarProduct(
-        y.slice(0, y.length - indi),
-        y.slice(0, y.length - indi),
+    for (let i = 1; i < y.length / 2; i++) {
+      ScalarProductNewValue = scalarProduct(
+        y.slice(0, y.length - i),
+        y.slice(0, y.length - i),
         -1,
         1,
       );
-      if (spnew > spref) {
-        //  console.log(`${spnew} > ${spref} size: ${y.length}`);
-        spref = spnew;
-        movedBy = -indi;
+      if (ScalarProductNewValue > ScalarProductReference) {
+        //  console.log(`${ScalarProductNewValue} > ${ScalarProductReference} size: ${y.length}`);
+        ScalarProductReference = ScalarProductNewValue;
+        movedBy = -i;
       } else {
-        // console.log('OK- ' + movedBy + ' ' + indi + ' ' + spnew);
+        // console.log('OK- ' + movedBy + ' ' + i + ' ' + ScalarProductNewValue);
       }
     }
   }
