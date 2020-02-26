@@ -268,15 +268,17 @@ export function analyseMultiplet(data = {}, options = {}) {
         sca = sca.slice(remove, sca.length - remove);
       }
       if (sca.length !== spe.length) {
-        ErrorEvent('sts');// this is an ugly way to make sure to get an error when this occurs
+        ErrorEvent('sts'); // this is an ugly way to make sure to get an error when this occurs
       }
     }
   }
-  /* to be tested ...
+  // to be tested ...
+  /*
   const points = { sca, spe };
-  MaxSpe = maxY(points);
+  let MaxSpe = maxY(points);
   result.chemShift = MaxSpe.index;
 */
+// to be commented
   let curTop = Number.NEGATIVE_INFINITY;
   let curChemShift;
   for (let i = 0; i < spe.length; i++) {
@@ -286,6 +288,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
   }
   result.chemShift = curChemShift;
+// end to be commented
 
   return result;
 }
