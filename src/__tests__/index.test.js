@@ -5,7 +5,7 @@ import ddd from '../../data/d=1_J=2,4,6_m=ddd.json';
 import { analyseMultiplet } from '..';
 
 describe('analyse multiplet of simulated spectra', () => {
-  it('d=2_J=7_m=d', () => {
+  it('d=2_J=7_m=d 1', () => {
     // was it.only
     let result = analyseMultiplet(doublet, { frequency: 400 });
     //expect(result.multiplicity).toBe('');
@@ -16,7 +16,7 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(result.chemShift).toBeCloseTo(2.0, 5);
   });
 
-  it('d=1_J=7_m=q', () => {
+  it('d=1_J=7_m=q 2', () => {
     //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(quadruplet, {
       frequency: 400,

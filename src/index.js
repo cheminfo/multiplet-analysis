@@ -38,6 +38,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     takeBestPartMultiplet = false,
     addPhaseInterpolation = 0,
     forceFirstDeconvolutionToThisValue = 0,
+    appliedPhaseCorrectionType = 0,
   } = options;
 
   let scalProd = [];
@@ -66,14 +67,20 @@ export function analyseMultiplet(data = {}, options = {}) {
   let sca = [];
   let spe = [];
   let topPosJ = 0;
-
   if (resolutionHz > minimalResolution) {
     // need increase resolution
-    let returned = trigInterpolate(x, y, nextPowerTwo, addPhaseInterpolation);
+    let returned = trigInterpolate(
+      x,
+      y,
+      nextPowerTwo,
+      addPhaseInterpolation,
+      appliedPhaseCorrectionType,
+    );
     if (debug) console.log(`interpolating`);
 
     spe = returned.spectrum;
     sca = returned.scale;
+    result.phaseCorrectionOnMultipletInDeg = returned.phaseCorrectionOnMultipletInDeg;
   } else {
     sca = x;
     spe = y;

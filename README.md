@@ -24,6 +24,7 @@ The result of the analysis that is an object composed:
 `node -r esm examples/doublet.js`
 
 `node -r esm examples/simulate.js` to simulate from a user-defined spin system
+`node -r esm examples/dd-exp.js` to simulate from a user-defined spin system
 
 
 

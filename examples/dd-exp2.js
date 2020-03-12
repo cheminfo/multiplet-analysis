@@ -9,6 +9,7 @@ let result = analyseMultiplet(doublet, {
   frequency: 600,
   debug: true,
   takeBestPartMultiplet: true,
+  appliedPhaseCorrectionType: 1,
 });
 
 writeFileSync(
@@ -17,4 +18,4 @@ writeFileSync(
   'utf8',
 );
 
-//console.log(result);
+console.log(result);
