@@ -70,7 +70,7 @@ export function trigInterpolate(
   const halfNumPt2 = Math.floor(numberOfPointOutput / 2);
   let tmp;
   // applies phase correction
-  let phaseRad = ((addPhaseInterpolation + 0.0) / 180.0) * Math.PI;
+  let phaseRad = ((addPhaseInterpolation + 0.0) / 180.0) * Math.PI; // this is for testing additional phases
   if (phaseRad !== 0.0) {
     for (let loop = 0; loop < 2 * halfNumPt2; loop++) {
       tmp =
@@ -89,13 +89,12 @@ export function trigInterpolate(
     let vectx;
     let vecty;
     let norm;
-    let sumNorms = 0;
+    let sumNorms;
 
     for (let loo = 1; loo < 100; loo++) {
       localPhaseRad = 0;
       vectx = 0;
       vecty = 0;
-      norm;
       sumNorms = 0;
       if (appliedPhaseCorrectionType > 0) {
         // if ( true ) {
@@ -127,10 +126,8 @@ export function trigInterpolate(
 
       returnedPhase -= (180.0 * phaseRad) / Math.PI;
 
-     // console.log('localPhase ' + (180.0 * localPhaseRad) / Math.PI);
+      // console.log('localPhase ' + (180.0 * localPhaseRad) / Math.PI);
       //console.log('returnedPhase ' + returnedPhase);
-    
-
 
       if (phaseRad !== 0.0) {
         for (let loop = 0; loop < 2 * halfNumPt2; loop++) {
@@ -159,6 +156,6 @@ export function trigInterpolate(
   return {
     spectrum: spe,
     scale: sca,
-    phaseCorrectionOnMultipletInHz: returnedPhase,
+    phaseCorrectionOnMultipletInDeg: returnedPhase,
   };
 }
