@@ -69,7 +69,7 @@ export function trigInterpolate(
   let interpolatedSpectrum = fft(timeDomainZeroFilled);
   const halfNumPt2 = Math.floor(numberOfPointOutput / 2);
   let tmp;
-  // applies phase correction
+  // applies phase change
   let phaseRad = ((addPhaseInterpolation + 0.0) / 180.0) * Math.PI; // this is for testing additional phases
   if (phaseRad !== 0.0) {
     for (let loop = 0; loop < 2 * halfNumPt2; loop++) {
@@ -89,13 +89,13 @@ export function trigInterpolate(
     let vectx;
     let vecty;
     let norm;
-    let sumNorms;
+   // let sumNorms;
 
     for (let loo = 1; loo < 100; loo++) {
       localPhaseRad = 0;
       vectx = 0;
       vecty = 0;
-      sumNorms = 0;
+     // sumNorms = 0;
       if (appliedPhaseCorrectionType > 0) {
         // if ( true ) {
         for (let loop = 0; loop < 2 * halfNumPt2; loop++) {
@@ -113,7 +113,7 @@ export function trigInterpolate(
           );
           vectx += Math.cos(localPhaseRad) * norm;
           vecty += Math.sin(localPhaseRad) * norm;
-          sumNorms += norm;
+        //  sumNorms += norm;
         }
         if (vectx !== 0) {
           localPhaseRad = Math.atan(vecty / vectx);

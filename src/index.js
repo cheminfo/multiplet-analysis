@@ -5,13 +5,14 @@
  * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
  */
 
+import maxY from 'ml-array-xy-max-y';
+
 import { appendDebug } from './appendDebug';
 import { symmetrize } from './symmetrize';
 import { trigInterpolate } from './trigInterpolate';
 import { measureDeco } from './measureDeco';
 import { deco } from './deco';
 import { measureSymShift } from './measureSymShift';
-import maxY from 'ml-array-xy-max-y';
 
 /**
  * Analyse a multiplet
@@ -80,7 +81,8 @@ export function analyseMultiplet(data = {}, options = {}) {
 
     spe = returned.spectrum;
     sca = returned.scale;
-    result.phaseCorrectionOnMultipletInDeg = returned.phaseCorrectionOnMultipletInDeg;
+    result.phaseCorrectionOnMultipletInDeg =
+      returned.phaseCorrectionOnMultipletInDeg;
   } else {
     sca = x;
     spe = y;
@@ -417,7 +419,8 @@ for main_j_loop=1:number_of_coupling_looked_in_multiplet%:10
   axis([min_j max_j 0 1.1])
   if top_pos~=0
       title(['J(' num2str(main_j_loop) ')=' num2str(symj(top_pos)*hz_per_pt_interp,3) ' Hz'])
-      nbpt=symj(top_pos);
+      
+      =symj(top_pos);
       [v1, v2]=deco(segment_int',nbpt);
       segment_int=(v1*0.5+0.5*v2)';
       table_of_J(1,main_j_loop)=symj(top_pos)*hz_per_pt_interp;
