@@ -5,13 +5,13 @@ The result of the attempts to simplify the structure of the multiplet (on the le
 
 ## Demostration pages
 
-|Examples|
-|----|
-|[1](index2)|
-|[2](index3)|
-|[3](p1)|
-|[4](p2)|
-|[5](p3)|
+|Examples|comment|
+|----|---|
+|[1](index2)||
+|[2](index3)||
+|[3](p1)||
+|[4](p2)||
+|[5](p3)||
 
 ## References
    
