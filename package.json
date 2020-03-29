@@ -40,15 +40,15 @@
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.9.0",
     "eslint": "^6.8.0",
-    "eslint-config-cheminfo": "^2.0.4",
-    "eslint-plugin-import": "^2.20.1",
+    "eslint-config-cheminfo": "^3.0.0",
+    "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jest": "^23.8.2",
     "eslint-plugin-prettier": "^3.1.2",
     "esm": "^3.2.25",
-    "jest": "^24.9.0",
+    "jest": "^25.2.3",
     "nmr-simulation": "^1.0.19",
-    "prettier": "^1.19.1",
-    "rollup": "^1.32.1"
+    "prettier": "^2.0.2",
+    "rollup": "^2.2.0"
   },
   "dependencies": {
     "fft-js": "0.0.12",

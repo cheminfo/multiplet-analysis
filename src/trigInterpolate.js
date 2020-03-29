@@ -89,13 +89,13 @@ export function trigInterpolate(
     let vectx;
     let vecty;
     let norm;
-   // let sumNorms;
+    // let sumNorms;
 
     for (let loo = 1; loo < 100; loo++) {
       localPhaseRad = 0;
       vectx = 0;
       vecty = 0;
-     // sumNorms = 0;
+      // sumNorms = 0;
       if (appliedPhaseCorrectionType > 0) {
         // if ( true ) {
         for (let loop = 0; loop < 2 * halfNumPt2; loop++) {
@@ -113,7 +113,7 @@ export function trigInterpolate(
           );
           vectx += Math.cos(localPhaseRad) * norm;
           vecty += Math.sin(localPhaseRad) * norm;
-        //  sumNorms += norm;
+          //  sumNorms += norm;
         }
         if (vectx !== 0) {
           localPhaseRad = Math.atan(vecty / vectx);

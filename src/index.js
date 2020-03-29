@@ -8,11 +8,11 @@
 import maxY from 'ml-array-xy-max-y';
 
 import { appendDebug } from './appendDebug';
+import { deco } from './deco';
+import { measureDeco } from './measureDeco';
+import { measureSymShift } from './measureSymShift';
 import { symmetrize } from './symmetrize';
 import { trigInterpolate } from './trigInterpolate';
-import { measureDeco } from './measureDeco';
-import { deco } from './deco';
-import { measureSymShift } from './measureSymShift';
 
 /**
  * Analyse a multiplet
@@ -277,7 +277,7 @@ export function analyseMultiplet(data = {}, options = {}) {
         sca = sca.slice(remove, sca.length - remove);
       }
       if (sca.length !== spe.length) {
-        ErrorEvent('sts'); // this is an ugly way to make sure to get an error when this occurs
+        throw Error('sts');
       }
     }
   }
@@ -286,8 +286,8 @@ export function analyseMultiplet(data = {}, options = {}) {
   let maxAmplitudePosition = maxY({ x: sca, y: spe });
   result.chemShift = sca[maxAmplitudePosition.index];
 
-// for non-javascript implementation
-/*
+  // for non-javascript implementation
+  /*
   let curTop = Number.NEGATIVE_INFINITY;
   let curChemShift;
   for (let i = 0; i < spe.length; i++) {
@@ -297,7 +297,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
   }
   result.chemShift = curChemShift;*/
-// end to be commented
+  // end to be commented
 
   return result;
 }
@@ -419,7 +419,7 @@ for main_j_loop=1:number_of_coupling_looked_in_multiplet%:10
   axis([min_j max_j 0 1.1])
   if top_pos~=0
       title(['J(' num2str(main_j_loop) ')=' num2str(symj(top_pos)*hz_per_pt_interp,3) ' Hz'])
-      
+
       =symj(top_pos);
       [v1, v2]=deco(segment_int',nbpt);
       segment_int=(v1*0.5+0.5*v2)';

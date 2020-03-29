@@ -1,5 +1,5 @@
-import { scalarProduct } from './scalarProduct';
 import { deco } from './deco';
+import { scalarProduct } from './scalarProduct';
 
 export function measureDeco(
   y, // input vector
