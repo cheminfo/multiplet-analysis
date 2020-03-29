@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Analyse X / Y array and extract multiplicity
  * @param {object} [data={}] An object containing properties x and y
