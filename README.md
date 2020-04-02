@@ -62,7 +62,7 @@ There are also 2 examples files to create the data:
 When you clone / update the project don't forget to `npm i` to load possible new dependencies.
 
 If you want to execute those scripts written as module you need to use `esm` that is installed as a development dependency.
-
+`npm install esm`
 `node -r esm ./examples/web/exampleGenerateAnnotations.js`
 
 ## Creating simulated data
