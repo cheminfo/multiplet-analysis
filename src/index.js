@@ -183,7 +183,7 @@ export function analyseMultiplet(data = {}, options = {}) {
           topValue = scalProd[jStar];
           topPosJ = jStar;
         }
-        if (jStar < maxTestedPt) {
+        if (jStar <= (maxTestedPt - curIncrementForSpeed)) {
           if (
             scalProd[jStar] < scalProd[jStar + curIncrementForSpeed] &&
             topValue > critFoundJLow
@@ -194,9 +194,15 @@ export function analyseMultiplet(data = {}, options = {}) {
               //console.log(`curIncrementForSpeed:: ` + curIncrementForSpeed);
 
               curIncrementForSpeed = Math.floor(curIncrementForSpeed / 2); // get smaller and smaller step
+              
+               let froms = topPosJ - 2 * curIncrementForSpeed;
+           while (froms < 0) froms += curIncrementForSpeed;
+           let tos = topPosJ + 2 * curIncrementForSpeed;
+           while (tos >= maxTestedPt) tos -= curIncrementForSpeed;
+              
               for (
-                jStarFine = topPosJ - 2 * curIncrementForSpeed;
-                jStarFine < topPosJ + 2 * curIncrementForSpeed;
+                jStarFine = froms;
+                jStarFine < tos;
                 jStarFine += curIncrementForSpeed
               ) {
                 scalProd[jStarFine] = measureDeco(
