@@ -18,14 +18,15 @@ The result of the analysis that is an object composed:
 
 ## Run example
 
-`node -r esm examples/quadruplet.js`
-`node -r esm examples/ddd.js`
-`node -r esm examples/ddd_ABCD.js`
-`node -r esm examples/doublet.js`
+```
+node -r esm examples/quadruplet.js
+node -r esm examples/ddd.js
+node -r esm examples/ddd_ABCD.js
+node -r esm examples/doublet.js
 
-`node -r esm examples/simulate.js` to simulate from a user-defined spin system
-`node -r esm examples/dd-exp.js` to simulate from a user-defined spin system
-
+node -r esm examples/simulate.js; # to simulate from a user-defined spin system
+node -r esm examples/dd-exp.js; # to simulate from a user-defined spin system
+```
 
 
 ## Developement

@@ -15,7 +15,7 @@ export function deco(
   chopTail = 1,
   multiplicity = 0.5,
 ) {
-  let nbLines = parseInt(2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
+  let nbLines = parseInt(2 * multiplicity, 10); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
   let y1 = new Array(yi.length);
   let y2 = new Array(yi.length);
 

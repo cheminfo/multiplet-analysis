@@ -88,6 +88,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     sca = x;
     spe = y;
   }
+
   /// for testing break symmetry before running...
   /*
   movedBy = 120;
@@ -177,13 +178,14 @@ export function analyseMultiplet(data = {}, options = {}) {
         multiplicity,
         curIncrementForSpeed,
       );
+
       JStarArray[jStar] = jStar * resolutionHz;
       if (!gotJValue) {
         if (scalProd[jStar] > topValue) {
           topValue = scalProd[jStar];
           topPosJ = jStar;
         }
-        if (jStar <= (maxTestedPt - curIncrementForSpeed)) {
+        if (jStar < maxTestedPt - curIncrementForSpeed) {
           if (
             scalProd[jStar] < scalProd[jStar + curIncrementForSpeed] &&
             topValue > critFoundJLow
@@ -194,25 +196,26 @@ export function analyseMultiplet(data = {}, options = {}) {
               //console.log(`curIncrementForSpeed:: ` + curIncrementForSpeed);
 
               curIncrementForSpeed = Math.floor(curIncrementForSpeed / 2); // get smaller and smaller step
-              
-               let froms = topPosJ - 2 * curIncrementForSpeed;
-           while (froms < 0) froms += curIncrementForSpeed;
-           let tos = topPosJ + 2 * curIncrementForSpeed;
-           while (tos >= maxTestedPt) tos -= curIncrementForSpeed;
-              
+              let froms = topPosJ - 2 * curIncrementForSpeed;
+              while (froms < 0) froms += curIncrementForSpeed;
+              let tos = topPosJ + 2 * curIncrementForSpeed;
+              while (tos >= maxTestedPt) tos -= curIncrementForSpeed;
+
               for (
                 jStarFine = froms;
-                jStarFine < tos;
+                jStarFine <= tos;
                 jStarFine += curIncrementForSpeed
               ) {
-                scalProd[jStarFine] = measureDeco(
-                  spe,
-                  jStarFine,
-                  sign,
-                  chopTail,
-                  multiplicity,
-                  curIncrementForSpeed,
-                );
+                if (scalProd[jStarFine] !== 0.0) {
+                  scalProd[jStarFine] = measureDeco(
+                    spe,
+                    jStarFine,
+                    sign,
+                    chopTail,
+                    multiplicity,
+                    curIncrementForSpeed,
+                  );
+                }
                 if (scalProd[jStarFine] > topValue) {
                   topValue = scalProd[jStarFine];
                   topPosJ = jStarFine;
