@@ -7,8 +7,8 @@ export function trigInterpolate(
   addPhaseInterpolation,
   appliedPhaseCorrectionType,
 ) {
-  let sca = new Float64Array(numberOfPointOutput);
-  let spe = new Float64Array(numberOfPointOutput);
+  let scale = new Float64Array(numberOfPointOutput);
+  let spectrum = new Float64Array(numberOfPointOutput);
 
   let scaIncrement = (x[x.length - 1] - x[0]) / (x.length - 1); // delta one pt
   //let scaPt = x[0] - scaIncrement / 2; // move to limit side - not middle of first point (half a pt left...)
@@ -19,7 +19,7 @@ export function trigInterpolate(
   // set scale
 
   for (let i = 0; i < numberOfPointOutput; i++) {
-    sca[i] = scaPt;
+    scale[i] = scaPt;
     scaPt += scaIncrement;
   }
 
@@ -59,12 +59,12 @@ export function trigInterpolate(
   }
   let interpolatedSpectrum = fft(timeDomainZeroFilled);
   const halfNumPt2 = Math.floor(numberOfPointOutput / 2);
-  let tmp;
+
   // applies phase change
   let phaseRad = ((addPhaseInterpolation + 0.0) / 180.0) * Math.PI; // this is for testing additional phases
   if (phaseRad !== 0.0) {
     for (let i = 0; i < 2 * halfNumPt2; i++) {
-      tmp =
+      let tmp =
         interpolatedSpectrum[i][0] * Math.cos(phaseRad) +
         interpolatedSpectrum[i][1] * Math.sin(phaseRad); // only Re now...
       interpolatedSpectrum[i][1] =
@@ -74,18 +74,12 @@ export function trigInterpolate(
     }
   }
   let returnedPhase = 0;
-
+  let norm;
   if (appliedPhaseCorrectionType > 0) {
-    let localPhaseRad = 0;
-    let vectx;
-    let vecty;
-    let norm;
-    // let sumNorms;
-
     for (let i = 1; i < 100; i++) {
-      localPhaseRad = 0;
-      vectx = 0;
-      vecty = 0;
+      let localPhaseRad = 0;
+      let vectx = 0;
+      let vecty = 0;
       // sumNorms = 0;
       if (appliedPhaseCorrectionType > 0) {
         // if ( true ) {
@@ -117,12 +111,9 @@ export function trigInterpolate(
 
       returnedPhase -= (180.0 * phaseRad) / Math.PI;
 
-      // console.log('localPhase ' + (180.0 * localPhaseRad) / Math.PI);
-      //console.log('returnedPhase ' + returnedPhase);
-
       if (phaseRad !== 0.0) {
         for (let i = 0; i < 2 * halfNumPt2; i++) {
-          tmp =
+          let tmp =
             interpolatedSpectrum[i][0] * Math.cos(phaseRad) +
             interpolatedSpectrum[i][1] * Math.sin(phaseRad); // only Re now...
           interpolatedSpectrum[i][1] =
@@ -136,17 +127,17 @@ export function trigInterpolate(
 
   // applies fftshift
   for (let i = 0; i < halfNumPt2; i++) {
-    spe[i] = interpolatedSpectrum[i + halfNumPt2][0]; // only Re now...
+    spectrum[i] = interpolatedSpectrum[i + halfNumPt2][0]; // only Re now...
   }
   for (let i = 0; i < halfNumPt2; i++) {
-    spe[i + halfNumPt2] = interpolatedSpectrum[i][0];
+    spectrum[i + halfNumPt2] = interpolatedSpectrum[i][0];
   }
   if (returnedPhase > 360.0) {
     returnedPhase -= 360.0;
   }
   return {
-    spectrum: spe,
-    scale: sca,
+    spectrum,
+    scale,
     phaseCorrectionOnMultipletInDeg: returnedPhase,
   };
 }
