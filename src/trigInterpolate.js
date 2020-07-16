@@ -7,8 +7,8 @@ export function trigInterpolate(
   addPhaseInterpolation,
   appliedPhaseCorrectionType,
 ) {
-  let sca = Array(numberOfPointOutput);
-  let spe = Array(numberOfPointOutput);
+  let sca = new Float64Array(numberOfPointOutput);
+  let spe = new Float64Array(numberOfPointOutput);
 
   let scaIncrement = (x[x.length - 1] - x[0]) / (x.length - 1); // delta one pt
   //let scaPt = x[0] - scaIncrement / 2; // move to limit side - not middle of first point (half a pt left...)

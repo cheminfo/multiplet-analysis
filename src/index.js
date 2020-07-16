@@ -127,7 +127,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     loopoverJvalues < maxNumberOfCoupling;
     loopoverJvalues++
   ) {
-    let beforeSymSpe = new Array(spe.length);
+    let beforeSymSpe = new Float64Array(spe.length);
 
     //symmetrize if requested to
     if (symmetrizeEachStep === true) {
