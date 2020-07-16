@@ -16,9 +16,8 @@ export function deco(
   multiplicity = 0.5,
 ) {
   let nbLines = parseInt(2 * multiplicity, 10); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
-  let y1 = new Array(yi.length);
-  let y2 = new Array(yi.length);
-
+  let y1 = new Float64Array(yi.length);
+  let y2 = new Float64Array(yi.length);
   if (dir > -1) {
     for (let scan = 0; scan < y1.length; scan++) y1[scan] = yi[scan];
     for (let scan = 0; scan < y1.length - JStar * nbLines; scan++) {
