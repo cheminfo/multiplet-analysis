@@ -18,8 +18,8 @@ export function trigInterpolate(
   //scaPt += scaIncrement / 2; // move from limit side to middle of first pt
   // set scale
 
-  for (let loop = 0; loop < numberOfPointOutput; loop++) {
-    sca[loop] = scaPt;
+  for (let i = 0; i < numberOfPointOutput; i++) {
+    sca[i] = scaPt;
     scaPt += scaIncrement;
   }
 
@@ -31,37 +31,31 @@ export function trigInterpolate(
   const halfNumPt = Math.floor(y.length / 2); // may ignore last pt... if odd number
   const halfNumPtB = y.length - halfNumPt;
   const shiftMultiplet = nextPowerTwoInput - y.length;
-  for (let loop = 0; loop < halfNumPt; loop++) {
-    an[shiftMultiplet + loop + halfNumPtB][0] = y[loop]; //Re
-    an[shiftMultiplet + loop + halfNumPtB][1] = 0; //Im
+  for (let i = 0; i < halfNumPt; i++) {
+    an[shiftMultiplet + i + halfNumPtB][0] = y[i]; //Re
+    an[shiftMultiplet + i + halfNumPtB][1] = 0; //Im
   }
-  for (let loop = 0; loop < halfNumPtB; loop++) {
-    an[loop][0] = y[loop + halfNumPt]; //Re
-    an[loop][1] = 0; //Im
+  for (let i = 0; i < halfNumPtB; i++) {
+    an[i][0] = y[i + halfNumPt]; //Re
+    an[i][1] = 0; //Im
   }
 
   let timeDomain = ifft(an);
-  /*an = fft(out);
-  for (let loop = 0; loop < 2 * halfNumPt; loop++) {
-    an[loop][1] = 0; //* Math.cos((phase / 180) * Math.PI) -
-  }
-  out = ifft(an);*/
-
   timeDomain[0][0] = timeDomain[0][0] / 2; // divide first point by 2 Re
   timeDomain[0][1] = timeDomain[0][1] / 2; // divide first point by 2 Im
   // move to larger array...
   let timeDomainZeroFilled = [...Array(numberOfPointOutput)].map(() =>
     Array(2).fill(0),
   ); // n x 2 array
-  for (let loop = 0; loop < halfNumPt; loop++) {
-    timeDomainZeroFilled[loop][0] = timeDomain[loop][0]; //* Math.cos((phase / 180) * Math.PI) +
-    timeDomainZeroFilled[loop][1] = timeDomain[loop][1]; //* Math.cos((phase / 180) * Math.PI) -
+  for (let i = 0; i < halfNumPt; i++) {
+    timeDomainZeroFilled[i][0] = timeDomain[i][0]; //* Math.cos((phase / 180) * Math.PI) +
+    timeDomainZeroFilled[i][1] = timeDomain[i][1]; //* Math.cos((phase / 180) * Math.PI) -
   }
 
-  for (let loop = halfNumPt; loop < numberOfPointOutput; loop++) {
+  for (let i = halfNumPt; i < numberOfPointOutput; i++) {
     // zero filling
-    timeDomainZeroFilled[loop][0] = 0;
-    timeDomainZeroFilled[loop][1] = 0;
+    timeDomainZeroFilled[i][0] = 0;
+    timeDomainZeroFilled[i][1] = 0;
   }
   let interpolatedSpectrum = fft(timeDomainZeroFilled);
   const halfNumPt2 = Math.floor(numberOfPointOutput / 2);
@@ -69,14 +63,14 @@ export function trigInterpolate(
   // applies phase change
   let phaseRad = ((addPhaseInterpolation + 0.0) / 180.0) * Math.PI; // this is for testing additional phases
   if (phaseRad !== 0.0) {
-    for (let loop = 0; loop < 2 * halfNumPt2; loop++) {
+    for (let i = 0; i < 2 * halfNumPt2; i++) {
       tmp =
-        interpolatedSpectrum[loop][0] * Math.cos(phaseRad) +
-        interpolatedSpectrum[loop][1] * Math.sin(phaseRad); // only Re now...
-      interpolatedSpectrum[loop][1] =
-        -interpolatedSpectrum[loop][0] * Math.sin(phaseRad) +
-        interpolatedSpectrum[loop][1] * Math.cos(phaseRad); // only Re now...
-      interpolatedSpectrum[loop][0] = tmp;
+        interpolatedSpectrum[i][0] * Math.cos(phaseRad) +
+        interpolatedSpectrum[i][1] * Math.sin(phaseRad); // only Re now...
+      interpolatedSpectrum[i][1] =
+        -interpolatedSpectrum[i][0] * Math.sin(phaseRad) +
+        interpolatedSpectrum[i][1] * Math.cos(phaseRad); // only Re now...
+      interpolatedSpectrum[i][0] = tmp;
     }
   }
   let returnedPhase = 0;
@@ -88,25 +82,25 @@ export function trigInterpolate(
     let norm;
     // let sumNorms;
 
-    for (let loo = 1; loo < 100; loo++) {
+    for (let i = 1; i < 100; i++) {
       localPhaseRad = 0;
       vectx = 0;
       vecty = 0;
       // sumNorms = 0;
       if (appliedPhaseCorrectionType > 0) {
         // if ( true ) {
-        for (let loop = 0; loop < 2 * halfNumPt2; loop++) {
-          if (interpolatedSpectrum[loop][0] !== 0) {
+        for (let i = 0; i < 2 * halfNumPt2; i++) {
+          if (interpolatedSpectrum[i][0] !== 0) {
             localPhaseRad = Math.atan(
-              interpolatedSpectrum[loop][1] / interpolatedSpectrum[loop][0],
+              interpolatedSpectrum[i][1] / interpolatedSpectrum[i][0],
             );
           } else {
             localPhaseRad =
-              (Math.sign(interpolatedSpectrum[loop][1]) * Math.PI) / 2.0;
+              (Math.sign(interpolatedSpectrum[i][1]) * Math.PI) / 2.0;
           }
           norm = Math.sqrt(
-            interpolatedSpectrum[loop][1] * interpolatedSpectrum[loop][1] +
-              interpolatedSpectrum[loop][0] * interpolatedSpectrum[loop][0],
+            interpolatedSpectrum[i][1] * interpolatedSpectrum[i][1] +
+              interpolatedSpectrum[i][0] * interpolatedSpectrum[i][0],
           );
           vectx += Math.cos(localPhaseRad) * norm;
           vecty += Math.sin(localPhaseRad) * norm;
@@ -119,7 +113,7 @@ export function trigInterpolate(
         }
       }
       norm = Math.sqrt(vecty * vecty + vectx * vectx);
-      phaseRad = -(10.0 / (loo * loo)) * Math.sign(vecty);
+      phaseRad = -(10.0 / (i * i)) * Math.sign(vecty);
 
       returnedPhase -= (180.0 * phaseRad) / Math.PI;
 
@@ -127,25 +121,25 @@ export function trigInterpolate(
       //console.log('returnedPhase ' + returnedPhase);
 
       if (phaseRad !== 0.0) {
-        for (let loop = 0; loop < 2 * halfNumPt2; loop++) {
+        for (let i = 0; i < 2 * halfNumPt2; i++) {
           tmp =
-            interpolatedSpectrum[loop][0] * Math.cos(phaseRad) +
-            interpolatedSpectrum[loop][1] * Math.sin(phaseRad); // only Re now...
-          interpolatedSpectrum[loop][1] =
-            -interpolatedSpectrum[loop][0] * Math.sin(phaseRad) +
-            interpolatedSpectrum[loop][1] * Math.cos(phaseRad); // only Re now...
-          interpolatedSpectrum[loop][0] = tmp;
+            interpolatedSpectrum[i][0] * Math.cos(phaseRad) +
+            interpolatedSpectrum[i][1] * Math.sin(phaseRad); // only Re now...
+          interpolatedSpectrum[i][1] =
+            -interpolatedSpectrum[i][0] * Math.sin(phaseRad) +
+            interpolatedSpectrum[i][1] * Math.cos(phaseRad); // only Re now...
+          interpolatedSpectrum[i][0] = tmp;
         }
       }
     }
   }
 
   // applies fftshift
-  for (let loop = 0; loop < halfNumPt2; loop++) {
-    spe[loop] = interpolatedSpectrum[loop + halfNumPt2][0]; // only Re now...
+  for (let i = 0; i < halfNumPt2; i++) {
+    spe[i] = interpolatedSpectrum[i + halfNumPt2][0]; // only Re now...
   }
-  for (let loop = 0; loop < halfNumPt2; loop++) {
-    spe[loop + halfNumPt2] = interpolatedSpectrum[loop][0];
+  for (let i = 0; i < halfNumPt2; i++) {
+    spe[i + halfNumPt2] = interpolatedSpectrum[i][0];
   }
   if (returnedPhase > 360.0) {
     returnedPhase -= 360.0;
