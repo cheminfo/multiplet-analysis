@@ -1,5 +1,5 @@
 import ddd from '../data/d=1_J=2,4,6_m=ddd.json';
-import { analyseMultiplet } from '../src/index';
+import { analyseMultiplet } from '../src/index.js';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 
