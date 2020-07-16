@@ -25,11 +25,8 @@ export function trigInterpolate(
 
   // interpolate spectrum
   // prepare input for fft apply fftshift
-  let nextPowerTwoInput = Math.pow(
-    2,
-    Math.round(Math.log(y.length - 1) / Math.log(2.0) + 0.5),
-  );
-  //nextPowerTwoAn = Math.pow(2, Math.ceil(Math.log(y.length) / Math.log(2)));
+  let nextPowerTwoInput = 2 ** Math.ceil(Math.log2(y.length));
+
   let an = [...Array(nextPowerTwoInput)].map(() => Array(2).fill(0)); // n x 2 array
   const halfNumPt = Math.floor(y.length / 2); // may ignore last pt... if odd number
   const halfNumPtB = y.length - halfNumPt;
