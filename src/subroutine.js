@@ -3,8 +3,8 @@ import { FFT } from 'ml-fft';
 export function subroutine() {
   let nCols = 4;
   FFT.init(nCols);
-  let re = new Array(nCols);
-  let im = new Array(nCols);
+  let re = new Float64Array(nCols);
+  let im = new Float64Array(nCols);
 
   for (let i = 0; i < nCols; i++) {
     re[i] = i;

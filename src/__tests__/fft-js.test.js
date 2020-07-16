@@ -3,12 +3,12 @@ import { fft, ifft } from 'fft-js';
 //https://www.npmjs.com/package/fft-js
 describe('subroutine', () => {
   it('test basic fft from fft-js', () => {
-    const pw2 = 3;
-    const si = Math.pow(2, pw2);
-    let an = [...Array(si / 2)].map(() => Array(2).fill(0)); // n x 2 array
-    let te = [...Array(si / 2)].map(() => Array(2).fill(0));
+    const pw2 = 2;
+    const size = Math.pow(2, pw2);
+    let an = [...Array(size)].map(() => Array(2).fill(0)); // n x 2 array
+    let te = [...Array(size)].map(() => Array(2).fill(0));
 
-    for (let i = 0; i < si / 2; i++) {
+    for (let i = 0; i < size; i++) {
       for (let j = 0; j < 2; j++) {
         //an[i] = Math.random ;
         an[i][j] = i * 2 + j + 1;
@@ -25,7 +25,7 @@ describe('subroutine', () => {
     //console.log(`si: ${si}`);
     expect(out2).toStrictEqual(an);
 
-    for (let i = 0; i < si / 2; i++) {
+    for (let i = 0; i < size; i++) {
       for (let j = 0; j < 2; j++) {
         //re[i] = + 1 Math.random * 10;
         an[i][j] = 0;
