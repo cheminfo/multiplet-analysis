@@ -1,6 +1,5 @@
 import FFT from 'fft.js';
 
-//https://www.npmjs.com/package/fft-js
 describe('subroutine', () => {
   it('test basic fft from fft.js', () => {
     const pw2 = 2;
