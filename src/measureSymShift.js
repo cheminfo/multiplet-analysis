@@ -2,7 +2,7 @@ import { scalarProduct } from './scalarProduct';
 
 export function measureSymShift(y) {
   if (!(y instanceof Float64Array)) {
-    throw 'measureSymShift requires Float64Array';
+    throw Error('measureSymShift requires Float64Array');
   }
 
   let scalarProductReference;
