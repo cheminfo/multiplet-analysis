@@ -19,7 +19,7 @@ export function deco(
   let y1 = new Float64Array(yi.length);
   let y2 = new Float64Array(yi.length);
   if (dir > -1) {
-    for (let scan = 0; scan < y1.length; scan++) y1[scan] = yi[scan];
+    y1 = yi.slice();
     for (let scan = 0; scan < y1.length - JStar * nbLines; scan++) {
       for (let line = 0; line < nbLines; line++) {
         y1[scan + (line + 1) * JStar] -= sign * y1[scan];
@@ -30,7 +30,7 @@ export function deco(
     }
   }
   if (dir < 1) {
-    for (let scan = 0; scan < y2.length; scan++) y2[scan] = yi[scan];
+    y2 = yi.slice();
     for (let scan = y2.length - 1; scan >= JStar * nbLines; scan -= 1) {
       for (let line = 0; line < nbLines; line++) {
         y2[scan - (line + 1) * JStar] -= sign * y2[scan];
