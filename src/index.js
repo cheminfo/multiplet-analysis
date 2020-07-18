@@ -57,12 +57,8 @@ export function analyseMultiplet(data = {}, options = {}) {
 
   let factorResolution = resolutionHz / minimalResolution;
 
-  let nextPowerTwo = Math.pow(
-    2,
-    Math.round(
-      Math.log((x.length - 1) * factorResolution) / Math.log(2.0) + 0.5,
-    ),
-  );
+  let nextPowerTwo = 2 ** Math.ceil(Math.log2(x.length * factorResolution));
+
   factorResolution = (factorResolution * nextPowerTwo) / x.length;
 
   let movedBy;
