@@ -25,6 +25,10 @@ import { trigInterpolate } from './trigInterpolate';
 
 export function analyseMultiplet(data = {}, options = {}) {
   let { x = [], y = [] } = data;
+
+  if (!(x instanceof Float64Array)) x = Float64Array.from(x);
+  if (!(y instanceof Float64Array)) y = Float64Array.from(y);
+
   const {
     frequency = 400,
     debug = false,
@@ -62,8 +66,8 @@ export function analyseMultiplet(data = {}, options = {}) {
   factorResolution = (factorResolution * nextPowerTwo) / x.length;
 
   let movedBy;
-  let sca = [];
-  let spe = [];
+  let sca;
+  let spe;
   let topPosJ = 0;
   if (resolutionHz > minimalResolution) {
     // need increase resolution
