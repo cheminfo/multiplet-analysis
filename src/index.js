@@ -48,7 +48,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   } = options;
 
   let scalProd = [];
-  let JStarArray = [];
+  let jStarArray = [];
 
   let result = {};
   result.j = [];
@@ -66,8 +66,8 @@ export function analyseMultiplet(data = {}, options = {}) {
   factorResolution = (factorResolution * nextPowerTwo) / x.length;
 
   let movedBy;
-  let sca;
-  let spe;
+  let scale;
+  let spectrum;
   let topPosJ = 0;
   if (resolutionHz > minimalResolution) {
     // need increase resolution
@@ -80,13 +80,13 @@ export function analyseMultiplet(data = {}, options = {}) {
     );
     if (debug) console.log(`interpolating`);
 
-    spe = returned.spectrum;
-    sca = returned.scale;
+    spectrum = returned.spectrum;
+    scale = returned.scale;
     result.phaseCorrectionOnMultipletInDeg =
       returned.phaseCorrectionOnMultipletInDeg;
   } else {
-    sca = x;
-    spe = y;
+    scale = x;
+    spectrum = y;
   }
 
   /// for testing break symmetry before running...
@@ -102,7 +102,8 @@ export function analyseMultiplet(data = {}, options = {}) {
   }*/
   /// end
 
-  resolutionPpm = Math.abs(sca[0] - sca[sca.length - 1]) / (sca.length - 1);
+  resolutionPpm =
+    Math.abs(scale[0] - scale[scale.length - 1]) / (scale.length - 1);
   resolutionHz = resolutionPpm * frequency;
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
   let minTestedPt = Math.trunc(minTestedJ / resolutionHz) + 1;
@@ -113,7 +114,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   // not calculated - set to -1
 
   for (let jStar = 0; jStar < minTestedPt; jStar++) {
-    JStarArray[jStar] = jStar * resolutionHz;
+    jStarArray[jStar] = jStar * resolutionHz;
     scalProd[jStar] = -1;
   }
   let incrementForSpeed = 1;
@@ -127,34 +128,34 @@ export function analyseMultiplet(data = {}, options = {}) {
     loopoverJvalues < maxNumberOfCoupling;
     loopoverJvalues++
   ) {
-    let beforeSymSpe = new Float64Array(spe.length);
+    let beforeSymSpe = new Float64Array(spectrum.length);
 
     //symmetrize if requested to
     if (symmetrizeEachStep === true) {
-      movedBy = -measureSymShift(spe);
+      movedBy = -measureSymShift(spectrum);
       if (movedBy > 0) {
-        spe = spe.slice(0, spe.length - movedBy);
-        sca = sca.slice(0, sca.length - movedBy);
+        spectrum = spectrum.slice(0, spectrum.length - movedBy);
+        scale = scale.slice(0, scale.length - movedBy);
       }
       if (movedBy < 0) {
-        spe = spe.slice(-movedBy, spe.length);
-        sca = sca.slice(-movedBy, sca.length);
+        spectrum = spectrum.slice(-movedBy, spectrum.length);
+        scale = scale.slice(-movedBy, scale.length);
       }
       if (debug) {
         // save this to plot it as well
-        for (let index = 0; index < spe.length; index++) {
-          beforeSymSpe[index] = spe[index];
+        for (let index = 0; index < spectrum.length; index++) {
+          beforeSymSpe[index] = spectrum[index];
         }
       }
-      spe = symmetrize(spe);
+      spectrum = symmetrize(spectrum);
     }
 
     let topValue = -1;
     let gotJValue = false;
-    let LimitCoupling = Math.floor(sca.length / 2) - 1; //limit with respect to size of spectrum (which is reducing at each step)
+    let limitCoupling = Math.floor(scale.length / 2) - 1; //limit with respect to size of spectrum (which is reducing at each step)
     let critFoundJLow = critFoundJ - 0.3;
-    if (maxTestedPt > LimitCoupling) {
-      maxTestedPt = LimitCoupling;
+    if (maxTestedPt > limitCoupling) {
+      maxTestedPt = limitCoupling;
     }
     if (loopoverJvalues > 1 && !debug) {
       if (maxTestedPt > Math.floor(topPosJ + 1.0 / resolutionHz)) {
@@ -171,7 +172,7 @@ export function analyseMultiplet(data = {}, options = {}) {
       jStar -= curIncrementForSpeed
     ) {
       scalProd[jStar] = measureDeco(
-        spe,
+        spectrum,
         jStar,
         sign,
         chopTail,
@@ -179,7 +180,7 @@ export function analyseMultiplet(data = {}, options = {}) {
         curIncrementForSpeed,
       );
 
-      JStarArray[jStar] = jStar * resolutionHz;
+      jStarArray[jStar] = jStar * resolutionHz;
       if (!gotJValue) {
         if (scalProd[jStar] > topValue) {
           topValue = scalProd[jStar];
@@ -208,7 +209,7 @@ export function analyseMultiplet(data = {}, options = {}) {
               ) {
                 if (scalProd[jStarFine] !== 0.0) {
                   scalProd[jStarFine] = measureDeco(
-                    spe,
+                    spectrum,
                     jStarFine,
                     sign,
                     chopTail,
@@ -257,16 +258,23 @@ export function analyseMultiplet(data = {}, options = {}) {
     if (debug) {
       if (symmetrizeEachStep === true) {
         appendDebug(
-          sca,
-          spe,
-          JStarArray,
+          scale,
+          spectrum,
+          jStarArray,
           scalProd,
           loopoverJvalues,
           result,
           beforeSymSpe,
         );
       } else {
-        appendDebug(sca, spe, JStarArray, scalProd, loopoverJvalues, result);
+        appendDebug(
+          scale,
+          spectrum,
+          jStarArray,
+          scalProd,
+          loopoverJvalues,
+          result,
+        );
       }
     }
 
@@ -274,8 +282,8 @@ export function analyseMultiplet(data = {}, options = {}) {
       break;
     } else {
       // apply here the deconvolution for the next step of the recursive process
-      spe = deco(
-        spe,
+      spectrum = deco(
+        spectrum,
         topPosJ,
         sign,
         0 + 0.1 * takeBestPartMultiplet,
@@ -284,31 +292,17 @@ export function analyseMultiplet(data = {}, options = {}) {
       ); // for next step
       if (chopTail) {
         let remove = 0.5 * topPosJ * (2 * multiplicity);
-        sca = sca.slice(remove, sca.length - remove);
+        scale = scale.slice(remove, scale.length - remove);
       }
-      if (sca.length !== spe.length) {
+      if (scale.length !== spectrum.length) {
         throw Error('sts');
       }
     }
   }
   // to be tested ...
 
-  let maxAmplitudePosition = maxY({ x: sca, y: spe });
-  result.chemShift = sca[maxAmplitudePosition.index];
-
-  // for non-javascript implementation
-  /*
-  let curTop = Number.NEGATIVE_INFINITY;
-  let curChemShift;
-  for (let i = 0; i < spe.length; i++) {
-    if (spe[i] > curTop) {
-      curTop = spe[i];
-      curChemShift = sca[i];
-    }
-  }
-  result.chemShift = curChemShift;*/
-  // end to be commented
-
+  let maxAmplitudePosition = maxY({ x: scale, y: spectrum });
+  result.chemShift = scale[maxAmplitudePosition.index];
   return result;
 }
 
