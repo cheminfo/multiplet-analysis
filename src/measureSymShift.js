@@ -18,7 +18,7 @@ export function measureSymShift(y) {
       movedBy = i;
     }
   }
-  if (movedBy === 0) {
+  //if (movedBy === 0) {
     for (let i = 1; i < y.length / 2; i++) {
       const tmpY = new Float64Array(y.buffer, 0, y.length - i);
       scalarProductNewValue = scalarProduct(tmpY, tmpY, -1, 1);
@@ -27,6 +27,6 @@ export function measureSymShift(y) {
         movedBy = -i;
       }
     }
-  }
+  //}
   return movedBy;
 }

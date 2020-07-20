@@ -7,7 +7,7 @@ import { analyseMultiplet } from '../src/index';
 let result = analyseMultiplet(mult, {
   frequency: 500,
   symmetrizeEachStep: true,
-  takeBestPartMultiplet: false,
+  takeBestPartMultiplet: true,
   debug: true,
 });
 

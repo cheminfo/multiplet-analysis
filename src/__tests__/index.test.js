@@ -2,6 +2,7 @@ import { analyseMultiplet } from '..';
 import ddd from '../../data/d=1_J=2,4,6_m=ddd.json';
 import quadruplet from '../../data/d=1_J=7_m=q.json';
 import doublet from '../../data/d=2_J=7_m=d.json';
+import multiplet-analisys-toDebbug from '../../multiplet-analisys-toDebbug.json';
 
 describe('analyse multiplet of simulated spectra', () => {
   it('d=2_J=7_m=d 1', () => {
