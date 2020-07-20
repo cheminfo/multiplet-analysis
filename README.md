@@ -5,7 +5,9 @@
 [![npm download][download-image]][download-url]
 
 The goal of this project is to be able to determine the multiplicity of
-a NMR signal as well as the coupling constants.
+a NMR signal as well as the coupling constants. It is based on a delta-function deconvolution
+developed by D. Jeannerat and G. Bodenhausen
+and [published](https://www.sciencedirect.com/science/article/abs/pii/S1090780799918451?via%3Dihub) in *J. Magn. Reson.* **1999**, 141(1), p133 doi:10.1006/jmre.1999.1845. 
 
 The result of the analysis that is an object composed:
 
