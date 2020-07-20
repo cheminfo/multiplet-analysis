@@ -9,6 +9,7 @@ let result = analyseMultiplet(mult, {
   symmetrizeEachStep: true,
   takeBestPartMultiplet: true,
   debug: true,
+  minimalResolution: 0.01,
 });
 
 writeFileSync(

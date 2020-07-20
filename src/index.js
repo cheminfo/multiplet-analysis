@@ -113,16 +113,18 @@ export function analyseMultiplet(data = {}, options = {}) {
   // main J-coupling determination
   // not calculated - set to -1
 
-  for (let jStar = 0; jStar < minTestedPt; jStar++) {
+  //for (let jStar = 0; jStar < minTestedPt; jStar++) {
+  for (let jStar = 0; jStar < maxTestedPt; jStar++) {
     jStarArray[jStar] = jStar * resolutionHz;
     scalProd[jStar] = -1;
   }
   let incrementForSpeed = 1;
   let curIncrementForSpeed;
 
-  if (!debug) {
-    incrementForSpeed = (1 + 0.5 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
-  }
+  //if (!debug) {
+  //incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // not enough.... some peak sneek between points
+  incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
+  //}
   for (
     let loopoverJvalues = 1;
     loopoverJvalues < maxNumberOfCoupling;
@@ -166,6 +168,10 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
     curIncrementForSpeed = incrementForSpeed;
     let jStarFine;
+    for (let jStar = 0; jStar < maxTestedPt; jStar++) {
+      jStarArray[jStar] = jStar * resolutionHz;
+      scalProd[jStar] = -1;
+    }
     for (
       let jStar = maxTestedPt;
       jStar >= minTestedPt;
@@ -186,9 +192,12 @@ export function analyseMultiplet(data = {}, options = {}) {
           topValue = scalProd[jStar];
           topPosJ = jStar;
         }
-        if (jStar < maxTestedPt - curIncrementForSpeed) {
+
+        if (jStar < maxTestedPt - 2 * curIncrementForSpeed) {
           if (
             scalProd[jStar] < scalProd[jStar + curIncrementForSpeed] &&
+            scalProd[jStar + curIncrementForSpeed] >=
+              scalProd[jStar + 2 * curIncrementForSpeed] &&
             topValue > critFoundJLow
           ) {
             // here refine...
@@ -197,26 +206,25 @@ export function analyseMultiplet(data = {}, options = {}) {
               //console.log(`curIncrementForSpeed:: ` + curIncrementForSpeed);
 
               curIncrementForSpeed = Math.floor(curIncrementForSpeed / 2); // get smaller and smaller step
-              let froms = topPosJ - 2 * curIncrementForSpeed;
+              let froms = topPosJ - 2 * curIncrementForSpeed; // maybe 1 is enough....
               while (froms < 0) froms += curIncrementForSpeed;
-              let tos = topPosJ + 2 * curIncrementForSpeed;
+              let tos = topPosJ + 2 * curIncrementForSpeed; // maybe 1 is enough....
               while (tos >= maxTestedPt) tos -= curIncrementForSpeed;
-
+              topValue = -1; // reset because increased precision may make the top lower
               for (
                 jStarFine = froms;
                 jStarFine <= tos;
                 jStarFine += curIncrementForSpeed
               ) {
-                if (scalProd[jStarFine] !== 0.0) {
-                  scalProd[jStarFine] = measureDeco(
-                    spectrum,
-                    jStarFine,
-                    sign,
-                    chopTail,
-                    multiplicity,
-                    curIncrementForSpeed,
-                  );
-                }
+                // if (( scalProd[jStarFine] === -1) || true) { // this was a bad idea because precision reduced with earlyer tests
+                scalProd[jStarFine] = measureDeco(
+                  spectrum,
+                  jStarFine,
+                  sign,
+                  chopTail,
+                  multiplicity,
+                  curIncrementForSpeed,
+                );
                 if (scalProd[jStarFine] > topValue) {
                   topValue = scalProd[jStarFine];
                   topPosJ = jStarFine;
@@ -224,7 +232,6 @@ export function analyseMultiplet(data = {}, options = {}) {
               }
             }
             // end refine
-
             if (topValue > critFoundJ) {
               // ugly force value for tests
               if (
@@ -245,7 +252,10 @@ export function analyseMultiplet(data = {}, options = {}) {
                 coupling: topPosJ * resolutionHz,
               });
               gotJValue = true;
-              if (makeShortCutForSpeed) break;
+
+              if (makeShortCutForSpeed) {
+                break;
+              }
             }
           }
         }
