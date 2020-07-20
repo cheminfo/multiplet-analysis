@@ -114,7 +114,6 @@ export function analyseMultiplet(data = {}, options = {}) {
   // not calculated - set to -1
 
   for (let jStar = 0; jStar < minTestedPt; jStar++) {
-  //for (let jStar = 0; jStar < maxTestedPt; jStar++) {
     jStarArray[jStar] = jStar * resolutionHz;
     scalProd[jStar] = 0;
   }

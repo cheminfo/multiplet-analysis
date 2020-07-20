@@ -17,4 +17,4 @@ writeFileSync(
   'utf8',
 );
 
-console.log(result);
+//console.log(result);
