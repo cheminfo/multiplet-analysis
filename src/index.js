@@ -113,10 +113,10 @@ export function analyseMultiplet(data = {}, options = {}) {
   // main J-coupling determination
   // not calculated - set to -1
 
-  //for (let jStar = 0; jStar < minTestedPt; jStar++) {
-  for (let jStar = 0; jStar < maxTestedPt; jStar++) {
+  for (let jStar = 0; jStar < minTestedPt; jStar++) {
+  //for (let jStar = 0; jStar < maxTestedPt; jStar++) {
     jStarArray[jStar] = jStar * resolutionHz;
-    scalProd[jStar] = -1;
+    scalProd[jStar] = 0;
   }
   let incrementForSpeed = 1;
   let curIncrementForSpeed;
@@ -168,14 +168,14 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
     curIncrementForSpeed = incrementForSpeed;
     let jStarFine;
-    for (let jStar = 0; jStar < maxTestedPt; jStar++) {
+    for (let jStar = minTestedPt; jStar < maxTestedPt; jStar++) {
       jStarArray[jStar] = jStar * resolutionHz;
       scalProd[jStar] = -1;
     }
     for (
       let jStar = maxTestedPt;
       jStar >= minTestedPt;
-      jStar -= curIncrementForSpeed
+      jStar -= incrementForSpeed
     ) {
       scalProd[jStar] = measureDeco(
         spectrum,
