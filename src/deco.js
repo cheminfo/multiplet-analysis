@@ -1,3 +1,75 @@
+export function decofast1(yi, jStar, sign, nbLines, addspace = 0) {
+  let y1 = new Float64Array(yi.length + addspace );
+  for (let scan = 0; scan < addspace; scan++) {
+    y1[scan] = 0;
+  }
+  for (let scan = 0; scan < yi.length; scan++) {
+    y1[scan + addspace] = yi[scan];
+  }
+  if (sign === 1) {
+    if (nbLines === 1) {
+      for (let scan = 0; scan < y1.length - jStar; scan++) {
+        y1[scan + jStar + addspace] -= y1[scan + addspace] ;
+      }
+    } else {
+      for (let scan = 0; scan < y1.length - jStar * nbLines; scan++) {
+        for (let line = 0; line < nbLines; line++) {
+          y1[scan + (line + 1) * jStar + addspace] -= y1[scan + addspace];
+        }
+      }
+    }
+  } else {
+    if (nbLines === 1) {
+      for (let scan = 0; scan < y1.length - jStar; scan++) {
+        y1[scan + jStar + addspace] += y1[scan + addspace];
+      }
+    } else {
+      for (let scan = 0; scan < y1.length - jStar * nbLines; scan++) {
+        for (let line = 0; line < nbLines; line++) {
+          y1[scan + (line + 1) * jStar + addspace] += y1[scan + addspace];
+        }
+      }
+    }
+  }
+  return y1;
+}
+export function decofast2(yi, jStar, sign, nbLines, addspace = 0) {
+  let y2 = new Float64Array(yi.length + addspace);
+  
+  for (let scan = 0; scan < yi.length; scan++) {
+    y2[scan ] = yi[scan];
+  }
+  for (let scan = 0; scan < addspace; scan++) {
+    y2[scan + yi.length ] = 0;
+  }
+  if (sign === 1) {
+    if (nbLines === 1) {
+      for (let scan = y2.length - 1 - addspace; scan >= jStar * nbLines; scan -= 1) {
+        y2[scan - jStar ] -= y2[scan ];
+      }
+    } else {
+      for (let scan = y2.length - 1 - addspace; scan >= jStar * nbLines; scan -= 1) {
+        for (let line = 0; line < nbLines; line++) {
+          y2[scan - (line + 1) * jStar ] -= y2[scan ];
+        }
+      }
+    }
+  } else {
+    if (nbLines === 1) {
+      for (let scan = y2.length - 1 - addspace; scan >= jStar * nbLines; scan -= 1) {
+        y2[scan - jStar ] += y2[scan ];
+      }
+    } else {
+      for (let scan = y2.length - 1 - addspace; scan >= jStar * nbLines; scan -= 1) {
+        for (let line = 0; line < nbLines; line++) {
+          y2[scan - (line + 1) * jStar ] += y2[scan ];
+        }
+      }
+    }
+  }
+  return y2;
+}
+
 /**
  *
  * @param {number} [yi]
@@ -19,18 +91,8 @@ export function deco(
   let y1;
   let y2;
   if (dir > -1) {
-    y1 = yi.slice();
-    if (nbLines === 1) {
-      for (let scan = 0; scan < y1.length - jStar * nbLines; scan++) {
-        y1[scan + jStar] -= sign * y1[scan];
-      }
-    } else {
-      for (let scan = 0; scan < y1.length - jStar * nbLines; scan++) {
-        for (let line = 0; line < nbLines; line++) {
-          y1[scan + (line + 1) * jStar] -= sign * y1[scan];
-        }
-      }
-    }
+    y1 = decofast1(yi, jStar, sign, nbLines, 0);
+
     if (dir > 0.5) {
       return new Float64Array(
         y1.buffer,
@@ -40,18 +102,7 @@ export function deco(
     }
   }
   if (dir < 1) {
-    y2 = yi.slice();
-    if (nbLines === 1) {
-      for (let scan = y2.length - 1; scan >= jStar * nbLines; scan -= 1) {
-        y2[scan - jStar] -= sign * y2[scan];
-      }
-    } else {
-      for (let scan = y2.length - 1; scan >= jStar * nbLines; scan -= 1) {
-        for (let line = 0; line < nbLines; line++) {
-          y2[scan - (line + 1) * jStar] -= sign * y2[scan];
-        }
-      }
-    }
+    y2 = decofast2(yi, jStar, sign, nbLines, 0);
 
     if (dir < -0.2) {
       return new Float64Array(

@@ -1,4 +1,8 @@
+import { writeFileSync } from 'fs';
+import { join } from 'path';
+
 import { analyseMultiplet } from '..';
+import androstenData from '../../data/allAndrosten.json';
 import ddd from '../../data/d=1_J=2,4,6_m=ddd.json';
 import quadruplet from '../../data/d=1_J=7_m=q.json';
 import doublet from '../../data/d=2_J=7_m=d.json';
@@ -53,6 +57,7 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(result.chemShift).toBeCloseTo(1.0, 3);
     expect(result.j).toHaveLength(3);
   });
+
   it('multiplet-analisys-toDebbug', () => {
     //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(toDebbug, {
@@ -63,10 +68,10 @@ describe('analyse multiplet of simulated spectra', () => {
       minimalResolution: 0.05,
     });
     expect(result.j).toHaveLength(3);
-    expect(result.j[0].coupling).toBeCloseTo(5.15, 1);
-    expect(result.j[1].coupling).toBeCloseTo(5.15, 1);
-    expect(result.j[2].coupling).toBeCloseTo(5.1, 1);
-    expect(result.chemShift).toBeCloseTo(3.78, 2);
+    expect(result.j[0].coupling).toBeCloseTo(8.85, 1);
+    expect(result.j[1].coupling).toBeCloseTo(8.85, 1);
+    expect(result.j[2].coupling).toBeCloseTo(8.7, 1);
+    expect(result.chemShift).toBeCloseTo(3.77, 2);
   });
 
   it('multiplet-analisys-toDebbug 2', () => {
@@ -78,10 +83,101 @@ describe('analyse multiplet of simulated spectra', () => {
       debug: true,
       minimalResolution: 0.01,
     });
+/*
+    writeFileSync(
+      join('examples', 'web', 'result.json'),
+      JSON.stringify(result, null, 1),
+      'utf8',
+    );
+*/
     expect(result.j).toHaveLength(3);
-    expect(result.j[0].coupling).toBeCloseTo(5.15, 1);
-    expect(result.j[1].coupling).toBeCloseTo(5.15, 1);
-    expect(result.j[2].coupling).toBeCloseTo(5.1, 1);
-    expect(result.chemShift).toBeCloseTo(3.78, 2);
+    expect(result.j[0].coupling).toBeCloseTo(8.85, 1);
+    expect(result.j[1].coupling).toBeCloseTo(8.85, 1);
+    expect(result.j[2].coupling).toBeCloseTo(8.7, 1);
+    expect(result.chemShift).toBeCloseTo(3.77, 2);
+  });
+
+  it('androsten multiplets 1', () => {
+    //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
+    let results = [];
+    //let totyo = androstenData[0].debug.steps[0].multiplet.x;
+    //console.log(`totyo`);
+
+    let x;
+    let y;
+    for (let i = 0; i < androstenData.length; i++) {
+      x = [];
+      y = [];
+      x = androstenData[i].debug.steps[0].multiplet.x;
+      y = androstenData[i].debug.steps[0].multiplet.y;
+
+      results[i] = analyseMultiplet(
+        { x: x, y: y },
+        {
+          frequency: 500,
+          symmetrizeEachStep: true,
+          //takeBestPartMultiplet: true,
+          debug: true,
+          minimalResolution: 0.005,
+          critFoundJ: 0.6,
+        },
+      );
+    }
+
+    let i = 1;
+/*
+    writeFileSync(
+      join('examples', 'web', 'result.json'),
+      JSON.stringify(results[i], null, 1),
+      'utf8',
+    );
+    */
+    expect(results[i].j).toHaveLength(androstenData[i].j.length - 1);
+    let k = 0;
+    expect(results[i].j[k].coupling).toBeCloseTo(
+      androstenData[i].j[k].coupling,
+      1,
+    );
+    k++;
+    expect(results[i].j[k].coupling).toBeCloseTo(
+      androstenData[i].j[k].coupling,
+      1,
+    );
+    k++;
+    expect(results[i].j[k].coupling).toBeCloseTo(
+      androstenData[i].j[k].coupling,
+      0,
+    );
+
+    i = 2;
+    /*
+    writeFileSync(
+      join('examples', 'web', 'result.json'),
+      JSON.stringify(results[i], null, 1),
+      'utf8',
+    );
+    */
+
+    expect(results[i].j).toHaveLength(androstenData[i].j.length - 1);
+    k = 0;
+    expect(results[i].j[k].coupling).toBeCloseTo(
+      androstenData[i].j[k].coupling,
+      1,
+    );
+    k++;
+    expect(results[i].j[k].coupling).toBeCloseTo(
+      androstenData[i].j[k].coupling,
+      1,
+    );
+    k++;
+    expect(results[i].j[k].coupling).toBeCloseTo(
+      androstenData[i].j[k].coupling,
+      1,
+    );
+    k++;
+    expect(results[i].j[k].coupling).toBeCloseTo(
+      androstenData[i].j[k].coupling,
+      1,
+    );
   });
 });
