@@ -1,5 +1,5 @@
 export function decofast1(yi, jStar, sign, nbLines, addspace = 0) {
-  let y1 = new Float64Array(yi.length + addspace );
+  let y1 = new Float64Array(yi.length + addspace);
   for (let scan = 0; scan < addspace; scan++) {
     y1[scan] = 0;
   }
@@ -9,7 +9,7 @@ export function decofast1(yi, jStar, sign, nbLines, addspace = 0) {
   if (sign === 1) {
     if (nbLines === 1) {
       for (let scan = 0; scan < y1.length - jStar; scan++) {
-        y1[scan + jStar + addspace] -= y1[scan + addspace] ;
+        y1[scan + jStar + addspace] -= y1[scan + addspace];
       }
     } else {
       for (let scan = 0; scan < y1.length - jStar * nbLines; scan++) {
@@ -35,34 +35,50 @@ export function decofast1(yi, jStar, sign, nbLines, addspace = 0) {
 }
 export function decofast2(yi, jStar, sign, nbLines, addspace = 0) {
   let y2 = new Float64Array(yi.length + addspace);
-  
+
   for (let scan = 0; scan < yi.length; scan++) {
-    y2[scan ] = yi[scan];
+    y2[scan] = yi[scan];
   }
   for (let scan = 0; scan < addspace; scan++) {
-    y2[scan + yi.length ] = 0;
+    y2[scan + yi.length] = 0;
   }
   if (sign === 1) {
     if (nbLines === 1) {
-      for (let scan = y2.length - 1 - addspace; scan >= jStar * nbLines; scan -= 1) {
-        y2[scan - jStar ] -= y2[scan ];
+      for (
+        let scan = y2.length - 1 - addspace;
+        scan >= jStar * nbLines;
+        scan -= 1
+      ) {
+        y2[scan - jStar] -= y2[scan];
       }
     } else {
-      for (let scan = y2.length - 1 - addspace; scan >= jStar * nbLines; scan -= 1) {
+      for (
+        let scan = y2.length - 1 - addspace;
+        scan >= jStar * nbLines;
+        scan -= 1
+      ) {
         for (let line = 0; line < nbLines; line++) {
-          y2[scan - (line + 1) * jStar ] -= y2[scan ];
+          y2[scan - (line + 1) * jStar] -= y2[scan];
         }
       }
     }
   } else {
     if (nbLines === 1) {
-      for (let scan = y2.length - 1 - addspace; scan >= jStar * nbLines; scan -= 1) {
-        y2[scan - jStar ] += y2[scan ];
+      for (
+        let scan = y2.length - 1 - addspace;
+        scan >= jStar * nbLines;
+        scan -= 1
+      ) {
+        y2[scan - jStar] += y2[scan];
       }
     } else {
-      for (let scan = y2.length - 1 - addspace; scan >= jStar * nbLines; scan -= 1) {
+      for (
+        let scan = y2.length - 1 - addspace;
+        scan >= jStar * nbLines;
+        scan -= 1
+      ) {
         for (let line = 0; line < nbLines; line++) {
-          y2[scan - (line + 1) * jStar ] += y2[scan ];
+          y2[scan - (line + 1) * jStar] += y2[scan];
         }
       }
     }
