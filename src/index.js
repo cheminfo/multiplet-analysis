@@ -70,20 +70,20 @@ export function analyseMultiplet(data = {}, options = {}) {
   let scale;
   let spectrum;
   let topPosJ = 0;
-   // adjust vertical offset
-    if (correctVerticalOffset) {
-        let minValue = 1e20;
-        for (let index = 0; index < y.length; index++) {
-          if (minValue > y[index]) {
-            minValue = y[index];
-      }
-        }
-        if (minValue > 0) {
-          for (let index = 0; index < y.length; index++) {
-            y[index] -= minValue;
-          }
+  // adjust vertical offset
+  if (correctVerticalOffset) {
+    let minValue = 1e20;
+    for (let index = 0; index < y.length; index++) {
+      if (minValue > y[index]) {
+        minValue = y[index];
       }
     }
+    if (minValue > 0) {
+      for (let index = 0; index < y.length; index++) {
+        y[index] -= minValue;
+      }
+    }
+  }
   if (resolutionHz > minimalResolution) {
     // need increase resolution
     let returned = trigInterpolate(
@@ -167,7 +167,7 @@ export function analyseMultiplet(data = {}, options = {}) {
       }
       spectrum = symmetrize(spectrum);
     }
-   
+
     let topValue = -1;
     let gotJValue = false;
     let limitCoupling = scale.length - 1; //limit with respect to size of spectrum (which is reducing at each step)

@@ -1,5 +1,5 @@
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+//import { writeFileSync } from 'fs';
+//import { join } from 'path';
 
 import { analyseMultiplet } from '..';
 import androstenData from '../../data/allAndrosten.json';
@@ -83,7 +83,7 @@ describe('analyse multiplet of simulated spectra', () => {
       debug: true,
       minimalResolution: 0.01,
     });
-/*
+    /*
     writeFileSync(
       join('examples', 'web', 'result.json'),
       JSON.stringify(result, null, 1),
@@ -125,7 +125,7 @@ describe('analyse multiplet of simulated spectra', () => {
     }
 
     let i = 1;
-/*
+    /*
     writeFileSync(
       join('examples', 'web', 'result.json'),
       JSON.stringify(results[i], null, 1),
