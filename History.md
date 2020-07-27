@@ -1,3 +1,16 @@
+# [0.2.0](https://github.com/cheminfo/multiplet-analysis/compare/v0.1.0...v0.2.0) (2020-07-27)
+
+
+### Bug Fixes
+
+* correctly take the next power of two ([beb9e6d](https://github.com/cheminfo/multiplet-analysis/commit/beb9e6d36cba977e80b39e8df7f403226e8f5234))
+* minor points to pass tests ([8cc92b3](https://github.com/cheminfo/multiplet-analysis/commit/8cc92b39770a32817b8a744e11620cb6bd188d76))
+* remove obsolete test ([63ebe4d](https://github.com/cheminfo/multiplet-analysis/commit/63ebe4dcc367c315bc51d26976c5e6f2d65d3f4d))
+* set code back for clean log of messages associtated to commit ([f651b2f](https://github.com/cheminfo/multiplet-analysis/commit/f651b2ff8d8a389344a7a2940988cdc19676945f))
+* smaller steps in fast mode / fast mode also for debug option ([351bfdd](https://github.com/cheminfo/multiplet-analysis/commit/351bfdd2a89bdd19e260583b998880ccef828887))
+
+
+
 # 0.1.0 (2020-03-29)
 
 
