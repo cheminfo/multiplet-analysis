@@ -7,6 +7,7 @@ import ddd from '../../data/d=1_J=2,4,6_m=ddd.json';
 import quadruplet from '../../data/d=1_J=7_m=q.json';
 import doublet from '../../data/d=2_J=7_m=d.json';
 import toDebbug from '../../data/multiplet-analisys-toDebbug.json';
+import asymDoublet from '../../data/asymDoublet.json';
 
 describe('analyse multiplet of simulated spectra', () => {
   it('d=2_J=7_m=d 1', () => {
@@ -73,7 +74,26 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(result.j[2].coupling).toBeCloseTo(8.7, 1);
     expect(result.chemShift).toBeCloseTo(3.77, 2);
   });
-
+  it('Asym doublet', () => {
+    //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
+    let result = analyseMultiplet(asymDoublet, {
+      frequency: 600,
+      symmetrizeEachStep: true,
+      takeBestPartMultiplet: true,
+      debug: true,
+      minimalResolution: 0.01,
+    });
+    /*
+    writeFileSync(
+      join('examples', 'web', 'result.json'),
+      JSON.stringify(result, null, 1),
+      'utf8',
+    );
+*/
+    expect(result.j).toHaveLength(1);
+    expect(result.j[0].coupling).toBeCloseTo(15.5, 1);
+    expect(result.chemShift).toBeCloseTo(4.037, 2);
+  });
   it('multiplet-analisys-toDebbug 2', () => {
     //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(toDebbug, {

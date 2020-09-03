@@ -49,7 +49,7 @@
       createGraph();
 
       async function createGraph() {
-        let response = await fetch('./result2.json');
+        let response = await fetch('./multiplet-analisys-toDebbug.json');
         let result = await response.json();
 
         let steps = result.debug.steps;

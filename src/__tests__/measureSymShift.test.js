@@ -15,5 +15,15 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(
       measureSymShift(Float64Array.from([0, 0, 0, 0, 1, 0, 1.2, 0, 0, 0, 0])),
     ).toStrictEqual(0);
+    // asym multiplets
+    expect(measureSymShift(Float64Array.from([0, 1, 0, 1, 0]))).toStrictEqual(
+      0,
+    );
+    expect(
+      measureSymShift(Float64Array.from([0.0, 1, 0, 0.8, 0]), 30),
+    ).toStrictEqual(2);
+    expect(
+      measureSymShift(Float64Array.from([0.0, 1, 0, 0.8, 0]), 95),
+    ).toStrictEqual(0);
   });
 });
