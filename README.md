@@ -109,4 +109,8 @@ npm i ml-fft
 npm home ml-fft
 
 ## Demo and examples
-[main page](docs/README.md)
+
+[Main scientific page](docs/README.md).
+
+
+
