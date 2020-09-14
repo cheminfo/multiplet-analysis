@@ -106,3 +106,5 @@ const result = library(args);
 npm i ml-fft
 npm home ml-fft
 
+## Demo and examples
+[main page](docs/README.md)
