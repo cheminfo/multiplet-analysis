@@ -110,7 +110,7 @@ npm home ml-fft
 
 ## Demo and examples
 
-[Main scientific page](docs/README.md).
+[Main scientific page](docs/main.md).
 
 
 
