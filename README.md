@@ -115,8 +115,3 @@ npm home ml-fft
 [example 1](docs/index3.html).
 
 [example 2](docs/index2.html).
-
-
-
-
-

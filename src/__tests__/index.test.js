@@ -3,11 +3,11 @@
 
 import { analyseMultiplet } from '..';
 import androstenData from '../../data/allAndrosten.json';
+import asymDoublet from '../../data/asymDoublet.json';
 import ddd from '../../data/d=1_J=2,4,6_m=ddd.json';
 import quadruplet from '../../data/d=1_J=7_m=q.json';
 import doublet from '../../data/d=2_J=7_m=d.json';
 import toDebbug from '../../data/multiplet-analisys-toDebbug.json';
-import asymDoublet from '../../data/asymDoublet.json';
 
 describe('analyse multiplet of simulated spectra', () => {
   it('d=2_J=7_m=d 1', () => {
