@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.1](https://www.github.com/cheminfo/multiplet-analysis/compare/v1.0.0...v1.0.1) (2021-05-13)
+
+
+### Bug Fixes
+
+* use fft.js ([31a25a4](https://www.github.com/cheminfo/multiplet-analysis/commit/31a25a40ec216ed16f5a8ffcbdbedbaf0816a37f)), closes [#29](https://www.github.com/cheminfo/multiplet-analysis/issues/29)
+
 ## [1.0.0](https://github.com/cheminfo/multiplet-analysis/compare/v0.3.0...v1.0.0) (2021-03-24)
 
 # [0.3.0](https://github.com/cheminfo/multiplet-analysis/compare/v0.2.0...v0.3.0) (2020-09-11)
@@ -66,6 +73,3 @@
 * Introduced trigonometric interpolation using fft-js ([5fcfa82](https://github.com/cheminfo/multiplet-analysis/commit/5fcfa82b4ab797a78b808365e456300768607877))
 * return a chemical shift for the multiplet ([a0910b4](https://github.com/cheminfo/multiplet-analysis/commit/a0910b45e1eafaa599a28f5b12e1ba3a32bad195))
 * test of fft ([cc7cc16](https://github.com/cheminfo/multiplet-analysis/commit/cc7cc16ffe1f8cac4c785bd7dc6fd5c900784c02))
-
-
-
