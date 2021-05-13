@@ -44,14 +44,14 @@
     "eslint": "^7.26.0",
     "eslint-config-cheminfo": "^5.2.4",
     "esm": "^3.2.25",
-    "fft.js": "^4.0.4",
     "jest": "^26.6.3",
+    "jest-matcher-deep-close-to": "^2.0.1",
     "nmr-simulation": "^1.0.21",
     "prettier": "^2.3.0",
     "rollup": "^2.47.0"
   },
   "dependencies": {
-    "fft-js": "0.0.12",
+    "fft.js": "^4.0.4",
     "ml-array-xy-max-y": "^1.0.2"
   }
 }

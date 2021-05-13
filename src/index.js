@@ -92,7 +92,6 @@ export function analyseMultiplet(data = {}, options = {}) {
       addPhaseInterpolation,
       appliedPhaseCorrectionType,
     );
-    //if (debug) console.log(`interpolating`);
 
     spectrum = returned.spectrum;
     scale = returned.scale;
@@ -102,19 +101,6 @@ export function analyseMultiplet(data = {}, options = {}) {
     scale = x;
     spectrum = y;
   }
-
-  /// for testing break symmetry before running...
-  /*
-  movedBy = 120;
-  if (movedBy > 0) {
-    spe = spe.slice(0, spe.length - movedBy);
-    sca = sca.slice(0, sca.length - movedBy);
-  }
-  if (movedBy < 0) {
-    spe = spe.slice(-movedBy, spe.length);
-    sca = sca.slice(-movedBy, sca.length);
-  }*/
-  /// end
 
   resolutionPpm =
     Math.abs(scale[0] - scale[scale.length - 1]) / (scale.length - 1);
@@ -130,10 +116,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   let incrementForSpeed = 1;
   let curIncrementForSpeed;
 
-  //if (!debug) {
-  //incrementForSpeed = (1 + 0.5 / minimalResolution) | 0; // not enough.... some peak sneek between points
   incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
-  //}
   for (
     let loopoverJvalues = 1;
     loopoverJvalues < maxNumberOfCoupling;
@@ -181,8 +164,6 @@ export function analyseMultiplet(data = {}, options = {}) {
         maxTestedPt = Math.floor(
           topPosJ + jumpUpAfterFoundValue / resolutionHz,
         );
-        //console.log(`recuded size to :: ` + maxTestedPt);
-        //console.log(`recuded size to :: ` + maxTestedPt + " = " + (maxTestedPt*resolutionHz));
       }
     }
     curIncrementForSpeed = incrementForSpeed;
@@ -220,8 +201,6 @@ export function analyseMultiplet(data = {}, options = {}) {
             scalProd[jStar + curIncrementForSpeed] > critFoundJLow
           ) {
             while (curIncrementForSpeed > 1) {
-              //console.log(`curIncrementForSpeed:: ` + curIncrementForSpeed);
-
               curIncrementForSpeed = Math.floor(curIncrementForSpeed / 2); // get smaller and smaller step
               let froms = topPosJ - 2 * curIncrementForSpeed; // maybe 1 is enough....
               while (froms < 0) froms += curIncrementForSpeed;
@@ -233,7 +212,6 @@ export function analyseMultiplet(data = {}, options = {}) {
                 jStarFine <= tos;
                 jStarFine += curIncrementForSpeed
               ) {
-                // if (( scalProd[jStarFine] === -1) || true) { // this was a bad idea because precision reduced with earlyer tests
                 scalProd[jStarFine] = measureDeco(
                   spectrum,
                   jStarFine,
@@ -263,8 +241,6 @@ export function analyseMultiplet(data = {}, options = {}) {
                 topValue = 1.1;
               }
 
-              //  if (debug) console.log(`J:: ${topPosJ * resolutionHz}`);
-
               result.j.push({
                 multiplicity: 'd',
                 coupling: topPosJ * resolutionHz,
@@ -278,9 +254,6 @@ export function analyseMultiplet(data = {}, options = {}) {
           }
         }
       }
-      /*console.log(
-      `${jStar} J* = ${JStarArray[jStar]} ${scalProd[jStar]} lenght ${y.length}`,
-    );*/
     }
 
     if (debug) {

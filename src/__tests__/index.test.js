@@ -11,10 +11,7 @@ import toDebbug from '../../data/multiplet-analisys-toDebbug.json';
 
 describe('analyse multiplet of simulated spectra', () => {
   it('d=2_J=7_m=d 1', () => {
-    // was it.only
     let result = analyseMultiplet(doublet, { frequency: 400 });
-    //expect(result.multiplicity).toBe('');
-    //expect(result.j[0]).toStrictEqual({ multiplicity: 'd', coupling: 7 });
     expect(result.j[0].coupling).toBeCloseTo(7, 1); // one decimal at low resolution (no interpolation)
     expect(result.j[0].multiplicity).toStrictEqual('d');
     expect(result.j).toHaveLength(1);
@@ -22,7 +19,6 @@ describe('analyse multiplet of simulated spectra', () => {
   });
 
   it('d=1_J=7_m=q 2', () => {
-    //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(quadruplet, {
       frequency: 400,
       minimalResolution: 0.1,
@@ -32,12 +28,9 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(result.j[1].coupling).toBeCloseTo(7, 0); // no decimal at low resolution (no interpolation)
     expect(result.j[2].coupling).toBeCloseTo(7, 0); // no decimal at low resolution (no interpolation)
     expect(result.chemShift).toBeCloseTo(1.0, 3);
-
-    // expect(result.j).toHaveLength(3);
   });
 
   it('d=1_J=7_m=q high resolution', () => {
-    //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(quadruplet, {
       frequency: 400,
       symmetrizeEachStep: true,
@@ -50,7 +43,6 @@ describe('analyse multiplet of simulated spectra', () => {
   });
 
   it('d=1_J=2,4,6_m=ddd', () => {
-    //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(ddd, { frequency: 400 });
     expect(result.j[0].coupling).toBeCloseTo(6, 2);
     expect(result.j[1].coupling).toBeCloseTo(4, 2);
@@ -60,7 +52,6 @@ describe('analyse multiplet of simulated spectra', () => {
   });
 
   it('multiplet-analisys-toDebbug', () => {
-    //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(toDebbug, {
       frequency: 500,
       symmetrizeEachStep: true,
@@ -75,7 +66,6 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(result.chemShift).toBeCloseTo(3.77, 2);
   });
   it('Asym doublet', () => {
-    //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(asymDoublet, {
       frequency: 600,
       symmetrizeEachStep: true,
@@ -83,19 +73,12 @@ describe('analyse multiplet of simulated spectra', () => {
       debug: true,
       minimalResolution: 0.01,
     });
-    /*
-    writeFileSync(
-      join('examples', 'web', 'result.json'),
-      JSON.stringify(result, null, 1),
-      'utf8',
-    );
-*/
+
     expect(result.j).toHaveLength(1);
     expect(result.j[0].coupling).toBeCloseTo(15.5, 1);
     expect(result.chemShift).toBeCloseTo(4.037, 2);
   });
   it('multiplet-analisys-toDebbug 2', () => {
-    //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let result = analyseMultiplet(toDebbug, {
       frequency: 500,
       symmetrizeEachStep: true,
@@ -103,13 +86,6 @@ describe('analyse multiplet of simulated spectra', () => {
       debug: true,
       minimalResolution: 0.01,
     });
-    /*
-    writeFileSync(
-      join('examples', 'web', 'result.json'),
-      JSON.stringify(result, null, 1),
-      'utf8',
-    );
-*/
     expect(result.j).toHaveLength(3);
     expect(result.j[0].coupling).toBeCloseTo(8.85, 1);
     expect(result.j[1].coupling).toBeCloseTo(8.85, 1);
@@ -118,10 +94,7 @@ describe('analyse multiplet of simulated spectra', () => {
   });
 
   it('androsten multiplets 1', () => {
-    //let result = analyseMultiplet(quadruplet, { frequency: 400, minimalResolution: 0.01});
     let results = [];
-    //let totyo = androstenData[0].debug.steps[0].multiplet.x;
-    //console.log(`totyo`);
 
     let x;
     let y;
@@ -145,13 +118,6 @@ describe('analyse multiplet of simulated spectra', () => {
     }
 
     let i = 1;
-    /*
-    writeFileSync(
-      join('examples', 'web', 'result.json'),
-      JSON.stringify(results[i], null, 1),
-      'utf8',
-    );
-    */
     expect(results[i].j).toHaveLength(androstenData[i].j.length - 1);
     let k = 0;
     expect(results[i].j[k].coupling).toBeCloseTo(
@@ -170,14 +136,6 @@ describe('analyse multiplet of simulated spectra', () => {
     );
 
     i = 2;
-    /*
-    writeFileSync(
-      join('examples', 'web', 'result.json'),
-      JSON.stringify(results[i], null, 1),
-      'utf8',
-    );
-    */
-
     expect(results[i].j).toHaveLength(androstenData[i].j.length - 1);
     k = 0;
     expect(results[i].j[k].coupling).toBeCloseTo(

@@ -13,8 +13,6 @@ export function measureSymShift(y, options) {
   }
   let finishingLeftPoint = y.length / 2;
   let finishingRightPoint = y.length / 2;
-  // console.log(y);
-  // console.log(integral);
 
   for (let i = 1; i < y.length / 2; i++) {
     if (
@@ -23,8 +21,6 @@ export function measureSymShift(y, options) {
       minimalIntegralKeptInMultiplet / 100.0
     ) {
       finishingLeftPoint = i;
-      //   console.log( " 1<< " + finishingLeftPoint);
-
       break;
     }
   }
@@ -34,25 +30,18 @@ export function measureSymShift(y, options) {
       minimalIntegralKeptInMultiplet / 100.0
     ) {
       finishingRightPoint = i;
-      //      console.log( " 2>>" + finishingRightPoint);
-
       break;
     }
   }
-  //startingLeftFirstPoint = 1; ////////////////////////////////
-  //startingRightFirstPoint = 1; ////////////////////////////////
   let scalarProductReference;
   let scalarProductNewValue;
   let movedBy = 0;
   scalarProductReference = scalarProduct(y, y, -1, 1);
-  //  console.log("=========");
-  //    console.log(0 + "  " + scalarProductReference);
 
   // set boudaries of search keep 90% of spectrum
   // search left...
   for (let i = 1; i < finishingLeftPoint; i++) {
     scalarProductNewValue = scalarProduct(y, y, -1, 1, i, y.length);
-    //   console.log(i + "  " + scalarProductNewValue);
 
     if (scalarProductNewValue > scalarProductReference) {
       scalarProductReference = scalarProductNewValue;
@@ -61,7 +50,6 @@ export function measureSymShift(y, options) {
   }
   for (let i = 1; i < finishingRightPoint; i++) {
     scalarProductNewValue = scalarProduct(y, y, -1, 1, 0, y.length - i);
-    // console.log(-i + "  " + scalarProductNewValue);
 
     if (scalarProductNewValue > scalarProductReference) {
       scalarProductReference = scalarProductNewValue;
