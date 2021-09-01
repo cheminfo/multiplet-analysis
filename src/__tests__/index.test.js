@@ -12,9 +12,9 @@ import toDebbug from '../../data/multiplet-analisys-toDebbug.json';
 describe('analyse multiplet of simulated spectra', () => {
   it('d=2_J=7_m=d 1', () => {
     let result = analyseMultiplet(doublet, { frequency: 400 });
-    expect(result.j[0].coupling).toBeCloseTo(7, 1); // one decimal at low resolution (no interpolation)
-    expect(result.j[0].multiplicity).toStrictEqual('d');
-    expect(result.j).toHaveLength(1);
+    expect(result.js[0].coupling).toBeCloseTo(7, 1); // one decimal at low resolution (no interpolation)
+    expect(result.js[0].multiplicity).toStrictEqual('d');
+    expect(result.js).toHaveLength(1);
     expect(result.chemShift).toBeCloseTo(2.0, 5);
   });
 
@@ -24,9 +24,9 @@ describe('analyse multiplet of simulated spectra', () => {
       minimalResolution: 0.1,
       symmetrizeEachStep: true,
     });
-    expect(result.j[0].coupling).toBeCloseTo(7, 0); // one decimal at low resolution (no interpolation)
-    expect(result.j[1].coupling).toBeCloseTo(7, 0); // no decimal at low resolution (no interpolation)
-    expect(result.j[2].coupling).toBeCloseTo(7, 0); // no decimal at low resolution (no interpolation)
+    expect(result.js[0].coupling).toBeCloseTo(7, 0); // one decimal at low resolution (no interpolation)
+    expect(result.js[1].coupling).toBeCloseTo(7, 0); // no decimal at low resolution (no interpolation)
+    expect(result.js[2].coupling).toBeCloseTo(7, 0); // no decimal at low resolution (no interpolation)
     expect(result.chemShift).toBeCloseTo(1.0, 3);
   });
 
@@ -35,20 +35,20 @@ describe('analyse multiplet of simulated spectra', () => {
       frequency: 400,
       symmetrizeEachStep: true,
     });
-    expect(result.j[0].coupling).toBeCloseTo(7, 0); // improve....
-    expect(result.j[1].coupling).toBeCloseTo(7, 0);
-    expect(result.j[2].coupling).toBeCloseTo(7, 0);
+    expect(result.js[0].coupling).toBeCloseTo(7, 0); // improve....
+    expect(result.js[1].coupling).toBeCloseTo(7, 0);
+    expect(result.js[2].coupling).toBeCloseTo(7, 0);
     expect(result.chemShift).toBeCloseTo(1.0, 3);
-    expect(result.j).toHaveLength(3);
+    expect(result.js).toHaveLength(3);
   });
 
   it('d=1_J=2,4,6_m=ddd', () => {
     let result = analyseMultiplet(ddd, { frequency: 400 });
-    expect(result.j[0].coupling).toBeCloseTo(6, 2);
-    expect(result.j[1].coupling).toBeCloseTo(4, 2);
-    expect(result.j[2].coupling).toBeCloseTo(2, 2);
+    expect(result.js[0].coupling).toBeCloseTo(6, 2);
+    expect(result.js[1].coupling).toBeCloseTo(4, 2);
+    expect(result.js[2].coupling).toBeCloseTo(2, 2);
     expect(result.chemShift).toBeCloseTo(1.0, 3);
-    expect(result.j).toHaveLength(3);
+    expect(result.js).toHaveLength(3);
   });
 
   it('multiplet-analisys-toDebbug', () => {
@@ -59,10 +59,10 @@ describe('analyse multiplet of simulated spectra', () => {
       debug: true,
       minimalResolution: 0.05,
     });
-    expect(result.j).toHaveLength(3);
-    expect(result.j[0].coupling).toBeCloseTo(8.85, 1);
-    expect(result.j[1].coupling).toBeCloseTo(8.85, 1);
-    expect(result.j[2].coupling).toBeCloseTo(8.7, 1);
+    expect(result.js).toHaveLength(3);
+    expect(result.js[0].coupling).toBeCloseTo(8.85, 1);
+    expect(result.js[1].coupling).toBeCloseTo(8.85, 1);
+    expect(result.js[2].coupling).toBeCloseTo(8.7, 1);
     expect(result.chemShift).toBeCloseTo(3.77, 2);
   });
   it('Asym doublet', () => {
@@ -74,8 +74,8 @@ describe('analyse multiplet of simulated spectra', () => {
       minimalResolution: 0.01,
     });
 
-    expect(result.j).toHaveLength(1);
-    expect(result.j[0].coupling).toBeCloseTo(15.5, 1);
+    expect(result.js).toHaveLength(1);
+    expect(result.js[0].coupling).toBeCloseTo(15.5, 1);
     expect(result.chemShift).toBeCloseTo(4.037, 2);
   });
   it('multiplet-analisys-toDebbug 2', () => {
@@ -86,10 +86,10 @@ describe('analyse multiplet of simulated spectra', () => {
       debug: true,
       minimalResolution: 0.01,
     });
-    expect(result.j).toHaveLength(3);
-    expect(result.j[0].coupling).toBeCloseTo(8.85, 1);
-    expect(result.j[1].coupling).toBeCloseTo(8.85, 1);
-    expect(result.j[2].coupling).toBeCloseTo(8.7, 1);
+    expect(result.js).toHaveLength(3);
+    expect(result.js[0].coupling).toBeCloseTo(8.85, 1);
+    expect(result.js[1].coupling).toBeCloseTo(8.85, 1);
+    expect(result.js[2].coupling).toBeCloseTo(8.7, 1);
     expect(result.chemShift).toBeCloseTo(3.77, 2);
   });
 
@@ -118,43 +118,43 @@ describe('analyse multiplet of simulated spectra', () => {
     }
 
     let i = 1;
-    expect(results[i].j).toHaveLength(androstenData[i].j.length - 1);
+    expect(results[i].js).toHaveLength(androstenData[i].js.length - 1);
     let k = 0;
-    expect(results[i].j[k].coupling).toBeCloseTo(
-      androstenData[i].j[k].coupling,
+    expect(results[i].js[k].coupling).toBeCloseTo(
+      androstenData[i].js[k].coupling,
       1,
     );
     k++;
-    expect(results[i].j[k].coupling).toBeCloseTo(
-      androstenData[i].j[k].coupling,
+    expect(results[i].js[k].coupling).toBeCloseTo(
+      androstenData[i].js[k].coupling,
       1,
     );
     k++;
-    expect(results[i].j[k].coupling).toBeCloseTo(
-      androstenData[i].j[k].coupling,
+    expect(results[i].js[k].coupling).toBeCloseTo(
+      androstenData[i].js[k].coupling,
       0,
     );
 
     i = 2;
-    expect(results[i].j).toHaveLength(androstenData[i].j.length - 1);
+    expect(results[i].js).toHaveLength(androstenData[i].js.length - 1);
     k = 0;
-    expect(results[i].j[k].coupling).toBeCloseTo(
-      androstenData[i].j[k].coupling,
+    expect(results[i].js[k].coupling).toBeCloseTo(
+      androstenData[i].js[k].coupling,
       1,
     );
     k++;
-    expect(results[i].j[k].coupling).toBeCloseTo(
-      androstenData[i].j[k].coupling,
+    expect(results[i].js[k].coupling).toBeCloseTo(
+      androstenData[i].js[k].coupling,
       1,
     );
     k++;
-    expect(results[i].j[k].coupling).toBeCloseTo(
-      androstenData[i].j[k].coupling,
+    expect(results[i].js[k].coupling).toBeCloseTo(
+      androstenData[i].js[k].coupling,
       1,
     );
     k++;
-    expect(results[i].j[k].coupling).toBeCloseTo(
-      androstenData[i].j[k].coupling,
+    expect(results[i].js[k].coupling).toBeCloseTo(
+      androstenData[i].js[k].coupling,
       1,
     );
   });

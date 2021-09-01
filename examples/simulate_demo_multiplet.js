@@ -8,7 +8,7 @@ const prediction = [
   {
     atomIDs: [1],
     delta: 1.1,
-    j: [
+    js: [
       { assignment: [2], coupling: 7.2 },
       { assignment: [3], coupling: 7.2 },
       { assignment: [4], coupling: 7.2 },
@@ -21,7 +21,7 @@ const prediction = [
   {
     atomIDs: [2],
     delta: 3.0,
-    j: [{ assignment: [3], coupling: 2 }],
+    js: [{ assignment: [3], coupling: 2 }],
   },
   {
     atomIDs: [3],
