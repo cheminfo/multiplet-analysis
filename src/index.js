@@ -50,7 +50,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   } = options;
 
   let result = {};
-  result.j = [];
+  result.js = [];
   const maxNumberOfCoupling = 12;
   //option see if cut is good. (should we cut more or interpolate if cut too close to peak - cause artifacts in both cases)
 
@@ -241,7 +241,7 @@ export function analyseMultiplet(data = {}, options = {}) {
                 topValue = 1.1;
               }
 
-              result.j.push({
+              result.js.push({
                 multiplicity: 'd',
                 coupling: topPosJ * resolutionHz,
               });
