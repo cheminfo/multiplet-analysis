@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://www.github.com/cheminfo/multiplet-analysis/compare/v1.0.1...v2.0.0) (2021-09-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor j to js for jCouplings (#35)
+
+### Features
+
+* refactor j to js for jCouplings ([#35](https://www.github.com/cheminfo/multiplet-analysis/issues/35)) ([2ba41a1](https://www.github.com/cheminfo/multiplet-analysis/commit/2ba41a139612050e3397c53e5cd10c4974789f06))
+
+
+### Bug Fixes
+
+* add package description ([58c245f](https://www.github.com/cheminfo/multiplet-analysis/commit/58c245f2568b4967e97c9b2941c7bda6b6f3e319))
+
 ### [1.0.1](https://www.github.com/cheminfo/multiplet-analysis/compare/v1.0.0...v1.0.1) (2021-05-13)
 
 
