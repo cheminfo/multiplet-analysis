@@ -13,7 +13,7 @@ describe('analyse multiplet of simulated spectra', () => {
   it('d=2_J=7_m=d 1', () => {
     let result = analyseMultiplet(doublet, { frequency: 400 });
     expect(result.js[0].coupling).toBeCloseTo(7, 1); // one decimal at low resolution (no interpolation)
-    expect(result.js[0].multiplicity).toStrictEqual('d');
+    expect(result.js[0].multiplicity).toBe('d');
     expect(result.js).toHaveLength(1);
     expect(result.chemShift).toBeCloseTo(2.0, 5);
   });

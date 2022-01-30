@@ -5,12 +5,12 @@ describe('test measureDeco', () => {
     //  it.only
     expect(
       measureDeco(Float64Array.from([0, 1, 0, 1, 0]), 2, 1, 1, 0.5, 1),
-    ).toStrictEqual(1);
+    ).toBe(1);
     expect(
       measureDeco(Float64Array.from([0, 1, 0, 1, 0]), 3, 1, 1, 0.5, 1),
-    ).toStrictEqual(0);
+    ).toBe(0);
     expect(
       measureDeco(Float64Array.from([0, 1, 0, -1, 0]), 2, -1, 1, 0.5, 1),
-    ).toStrictEqual(1);
+    ).toBe(1);
   });
 });
