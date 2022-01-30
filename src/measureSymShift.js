@@ -1,10 +1,12 @@
 import { scalarProduct } from './scalarProduct';
 
-export function measureSymShift(y, options) {
-  let minimalIntegralKeptInMultiplet = 90.0;
-  if (options !== undefined) {
-    minimalIntegralKeptInMultiplet = options;
-  }
+/**
+ *
+ * @param {number[]} y
+ * @param {number} minimalIntegralKeptInMultiplet
+ * @returns {number}
+ */
+export function measureSymShift(y, minimalIntegralKeptInMultiplet = 90.0) {
   // set boundaries for integration (avoid chopping too much of the multiplet)
   let integral = new Float64Array(y.length);
   integral[0] = Math.abs(y[0]);

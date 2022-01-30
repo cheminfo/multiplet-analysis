@@ -49,8 +49,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     jumpUpAfterFoundValue = 2.0,
   } = options;
 
-  let result = {};
-  result.js = [];
+  let result = { js: [] };
   const maxNumberOfCoupling = 12;
   //option see if cut is good. (should we cut more or interpolate if cut too close to peak - cause artifacts in both cases)
 

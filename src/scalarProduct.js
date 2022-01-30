@@ -1,7 +1,18 @@
+/**
+ *
+ * @param {number[]} y1
+ * @param {number[]} y2
+ * @param {number} direction
+ * @param {number} incrementForSpeed
+ * @param {number} first
+ * @param {number} last
+ * @returns {number}
+ */
+
 export function scalarProduct(
   y1,
   y2,
-  sens,
+  direction,
   incrementForSpeed,
   first = 0,
   last = y1.length,
@@ -11,7 +22,7 @@ export function scalarProduct(
   let v11 = 0;
   let v22 = 0;
   let v12 = 0;
-  if (sens > 0) {
+  if (direction > 0) {
     for (let index = first; index < last; index += incrementForSpeed) {
       v12 += y1[index] * y2[index];
       v11 += y1[index] * y1[index];
