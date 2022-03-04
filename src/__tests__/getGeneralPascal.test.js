@@ -1,4 +1,4 @@
-import { getGeneralPascal } from '../multiplicity';
+import { getGeneralPascal } from '../getGeneralPascal';
 
 describe('analyse multiplet of simulated spectra', () => {
   it('first should be', () => {
