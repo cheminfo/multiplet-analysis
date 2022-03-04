@@ -41,14 +41,14 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.16.8",
-    "eslint": "^8.8.0",
+    "eslint": "^8.10.0",
     "eslint-config-cheminfo": "^7.2.2",
     "esm": "^3.2.25",
-    "jest": "^27.4.7",
+    "jest": "^27.5.1",
     "jest-matcher-deep-close-to": "^3.0.2",
     "nmr-simulation": "^1.0.21",
     "prettier": "^2.5.1",
-    "rollup": "^2.66.1"
+    "rollup": "^2.69.0"
   },
   "dependencies": {
     "fft.js": "^4.0.4",
