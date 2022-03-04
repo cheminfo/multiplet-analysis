@@ -88,7 +88,7 @@ export function decofast2(yi, jStar, sign, nbLines, addspace = 0) {
 
 /**
  *
- * @param {number} [yi]
+ * @param {array} [yi]
  * @param {number} [jStar]
  * @param {number} [sign=1]  ++ multiplet :1 +- multiplet : -1
  * @param {number} [dir=1] from left to right : 1 -1 from right to left, 0: sum of both
@@ -103,7 +103,7 @@ export function deco(
   chopTail = 1,
   multiplicity = 0.5,
 ) {
-  let nbLines = parseInt(2 * multiplicity, 10); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
+  let nbLines = Math.round(2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
   let y1;
   let y2;
   if (dir > -1) {
