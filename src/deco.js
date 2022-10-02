@@ -18,8 +18,7 @@ export function decofast1(yi, jStar, sign, nbLines, addspace = 0) {
         }
       }
     }
-  } else {
-    if (nbLines === 1) {
+  } else if (nbLines === 1) {
       for (let scan = 0; scan < y1.length - jStar; scan++) {
         y1[scan + jStar + addspace] += y1[scan + addspace];
       }
@@ -30,7 +29,6 @@ export function decofast1(yi, jStar, sign, nbLines, addspace = 0) {
         }
       }
     }
-  }
   return y1;
 }
 export function decofast2(yi, jStar, sign, nbLines, addspace = 0) {
@@ -62,8 +60,7 @@ export function decofast2(yi, jStar, sign, nbLines, addspace = 0) {
         }
       }
     }
-  } else {
-    if (nbLines === 1) {
+  } else if (nbLines === 1) {
       for (
         let scan = y2.length - 1 - addspace;
         scan >= jStar * nbLines;
@@ -82,7 +79,6 @@ export function decofast2(yi, jStar, sign, nbLines, addspace = 0) {
         }
       }
     }
-  }
   return y2;
 }
 
