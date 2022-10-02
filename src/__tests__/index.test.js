@@ -105,7 +105,7 @@ describe('analyse multiplet of simulated spectra', () => {
       y = androstenData[i].debug.steps[0].multiplet.y;
 
       results[i] = analyseMultiplet(
-        { x: x, y: y },
+        { x, y },
         {
           frequency: 500,
           symmetrizeEachStep: true,
