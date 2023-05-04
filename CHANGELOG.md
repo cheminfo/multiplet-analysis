@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://www.github.com/cheminfo/multiplet-analysis/compare/v2.0.0...v2.1.0) (2023-05-04)
+
+
+### Features
+
+* checkSymmetryFirst option ([#41](https://www.github.com/cheminfo/multiplet-analysis/issues/41)) ([cf66fcb](https://www.github.com/cheminfo/multiplet-analysis/commit/cf66fcbe11869f75b4eca84db02accbd7ffee37d))
+
 ## [2.0.0](https://www.github.com/cheminfo/multiplet-analysis/compare/v1.0.1...v2.0.0) (2021-09-01)
 
 
