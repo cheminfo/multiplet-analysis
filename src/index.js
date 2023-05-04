@@ -33,7 +33,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     debug = false,
     maxTestedJ = 20,
     minTestedJ = 1,
-    checkSimmetryFirst = false,
+    checkSymmetryFirst = false,
     minimalResolution = 0.01,
     correctVerticalOffset = true,
     makeShortCutForSpeed = true,
@@ -99,9 +99,9 @@ export function analyseMultiplet(data = {}, options = {}) {
   } else {
     scale = x;
     spectrum = y;
-  }
+  }//satnoeuhs
 
-  if (checkSimmetryFirst && !symmetrizeEachStep) {
+  if (checkSymmetryFirst && !symmetrizeEachStep) {
     const result = removeShift(spectrum, scale, 95);
     scale = result.scale;
     spectrum = result.spectrum;
