@@ -101,7 +101,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     spectrum = y;
   } //satnoeuhs
 
-  if (checkSymmetryFirst && !symmetrizeEachStep) {
+  if (checkSymmetryFirst) {
     const result = removeShift(spectrum, scale, 95);
     let symFactor = getSymFactor(result.spectrum);
     if (symFactor < 0.98) {
