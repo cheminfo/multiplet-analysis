@@ -99,20 +99,20 @@ export function analyseMultiplet(data = {}, options = {}) {
   } else {
     scale = x;
     spectrum = y;
-  }//satnoeuhs
+  } //satnoeuhs
 
   if (checkSymmetryFirst && !symmetrizeEachStep) {
     const result = removeShift(spectrum, scale, 95);
-    scale = result.scale;
-    spectrum = result.spectrum;
-    let symFactor = getSymFactor(spectrum, scale);
-    console.log(symFactor);
-    if (symFactor > 0.989) {
-      spectrum = symmetrize(spectrum);
-    } else {
+    let symFactor = getSymFactor(result.spectrum);
+    if (symFactor < 0.98) {
+      let maxAmplitudePosition = maxY({ x: scale, y: spectrum });
       return {
+        chemShift: scale[maxAmplitudePosition.index],
         js: [],
       };
+    } else {
+      scale = result.scale;
+      spectrum = symmetrize(result.spectrum);
     }
   }
   resolutionPpm =
@@ -444,31 +444,9 @@ end
 table_of_J
 */
 
-function getSymFactor(spectrum, scale) {
-  let cs = 0;
-  let area = 0;
-  for (let i = 0; i < spectrum.length; i++) {
-    cs += scale[i] * spectrum[i];
-    area += spectrum[i];
-  }
-  cs /= area;
-  let symFactor = 0;
-  for (let i = 0; i < spectrum.length; i++) {
-    symFactor +=
-      ((3 +
-        Math.min(
-          Math.abs(scale[i] - cs),
-          Math.abs(scale[scale.length - 1 - i] - cs),
-        )) /
-        (3 +
-          Math.max(
-            Math.abs(scale[i] - cs),
-            Math.abs(scale[scale.length - 1 - i] - cs),
-          ))) *
-      spectrum[i];
-  }
-  symFactor /= area;
-  return { cs, symFactor, area };
+function getSymFactor(spectrum) {
+  const center = spectrum.length / 2;
+  return scalarProduct(spectrum.slice(0, center), spectrum.slice(center), 0, 2);
 }
 
 function removeShift(spectrum, scale, minimalIntegralKeptInMultiplet) {
