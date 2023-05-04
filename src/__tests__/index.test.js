@@ -167,5 +167,5 @@ describe('analyse multiplet of simulated spectra', () => {
     });
     expect(result.js).toHaveLength(0);
     expect(result.chemShift).toBeCloseTo(7, 0);
-  })
+  });
 });
