@@ -7,6 +7,7 @@ import asymDoublet from '../../data/asymDoublet.json';
 import ddd from '../../data/d=1_J=2,4,6_m=ddd.json';
 import quadruplet from '../../data/d=1_J=7_m=q.json';
 import doublet from '../../data/d=2_J=7_m=d.json';
+import massive from '../../data/massive.json';
 import toDebbug from '../../data/multiplet-analisys-toDebbug.json';
 
 describe('analyse multiplet of simulated spectra', () => {
@@ -157,5 +158,14 @@ describe('analyse multiplet of simulated spectra', () => {
       androstenData[i].js[k].coupling,
       1,
     );
+  });
+
+  it('massive: checkSymmetryFirst option true', () => {
+    let result = analyseMultiplet(massive, {
+      frequency: 400,
+      checkSymmetryFirst: true,
+    });
+    expect(result.js).toHaveLength(0);
+    expect(result.chemShift).toBeCloseTo(7, 0);
   });
 });

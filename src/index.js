@@ -11,6 +11,7 @@ import { appendDebug } from './appendDebug';
 import { deco } from './deco';
 import { measureDeco } from './measureDeco';
 import { measureSymShift } from './measureSymShift';
+import { scalarProduct } from './scalarProduct';
 import { symmetrize } from './symmetrize';
 import { trigInterpolate } from './trigInterpolate';
 
@@ -24,7 +25,6 @@ import { trigInterpolate } from './trigInterpolate';
 
 export function analyseMultiplet(data = {}, options = {}) {
   let { x = [], y = [] } = data;
-
   if (!(x instanceof Float64Array)) x = Float64Array.from(x);
   if (!(y instanceof Float64Array)) y = Float64Array.from(y);
 
@@ -33,6 +33,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     debug = false,
     maxTestedJ = 20,
     minTestedJ = 1,
+    checkSymmetryFirst = false,
     minimalResolution = 0.01,
     correctVerticalOffset = true,
     makeShortCutForSpeed = true,
@@ -64,13 +65,12 @@ export function analyseMultiplet(data = {}, options = {}) {
 
   let integerFactorResolution = nextPowerTwo / nextPowerTwoInital;
 
-  let movedBy;
   let scale;
   let spectrum;
   let topPosJ = 0;
   // adjust vertical offset
   if (correctVerticalOffset) {
-    let minValue = 1e20;
+    let minValue = Number.MAX_SAFE_INTEGER;
     for (let index = 0; index < y.length; index++) {
       if (minValue > y[index]) {
         minValue = y[index];
@@ -99,12 +99,27 @@ export function analyseMultiplet(data = {}, options = {}) {
   } else {
     scale = x;
     spectrum = y;
-  }
+  } //satnoeuhs
 
+  if (checkSymmetryFirst) {
+    const result = removeShift(spectrum, scale, 95);
+    let symFactor = getSymFactor(result.spectrum);
+    if (symFactor < 0.98) {
+      let maxAmplitudePosition = maxY({ x: scale, y: spectrum });
+      return {
+        chemShift: scale[maxAmplitudePosition.index],
+        js: [],
+      };
+    } else {
+      scale = result.scale;
+      spectrum = symmetrize(result.spectrum);
+    }
+  }
   resolutionPpm =
     Math.abs(scale[0] - scale[scale.length - 1]) / (scale.length - 1);
   resolutionHz = resolutionPpm * frequency;
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
+
   let minTestedPt = Math.trunc(minTestedJ / resolutionHz) + 1;
   // will find center of symmetry of the multiplet
   // add zeroes as to make it symetrical if requested... and needed
@@ -114,7 +129,6 @@ export function analyseMultiplet(data = {}, options = {}) {
 
   let incrementForSpeed = 1;
   let curIncrementForSpeed;
-
   incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
   for (
     let loopoverJvalues = 1;
@@ -129,17 +143,11 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
     let beforeSymSpe = new Float64Array(spectrum.length);
 
-    //symmetrize if requested to
     if (symmetrizeEachStep === true) {
-      movedBy = -measureSymShift(spectrum);
-      if (movedBy > 0) {
-        spectrum = spectrum.slice(0, spectrum.length - movedBy);
-        scale = scale.slice(0, scale.length - movedBy);
-      }
-      if (movedBy < 0) {
-        spectrum = spectrum.slice(-movedBy, spectrum.length);
-        scale = scale.slice(-movedBy, scale.length);
-      }
+      //symmetrize if requested to
+      const result = removeShift(spectrum, scale, 95);
+      scale = result.scale;
+      spectrum = result.spectrum;
       if (debug) {
         // save this to plot it as well
         for (let index = 0; index < spectrum.length; index++) {
@@ -435,3 +443,21 @@ for main_j_loop=1:number_of_coupling_looked_in_multiplet%:10
 end
 table_of_J
 */
+
+function getSymFactor(spectrum) {
+  const center = spectrum.length / 2;
+  return scalarProduct(spectrum.slice(0, center), spectrum.slice(center), 0, 2);
+}
+
+function removeShift(spectrum, scale, minimalIntegralKeptInMultiplet) {
+  const movedBy = -measureSymShift(spectrum, minimalIntegralKeptInMultiplet);
+  if (movedBy > 0) {
+    spectrum = spectrum.slice(0, spectrum.length - movedBy);
+    scale = scale.slice(0, scale.length - movedBy);
+  }
+  if (movedBy < 0) {
+    spectrum = spectrum.slice(-movedBy, spectrum.length);
+    scale = scale.slice(-movedBy, scale.length);
+  }
+  return { spectrum, scale };
+}
