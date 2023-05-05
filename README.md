@@ -7,8 +7,8 @@
 The goal of this project is to be able to determine the multiplicity of
 a NMR signal as well as the coupling constants. It is based on a delta-function deconvolution
 developed by D. Jeannerat and G. Bodenhausen
-and [published](https://www.sciencedirect.com/science/article/abs/pii/S1090780799918451?via%3Dihub) in *J. Magn. Reson.* **1999**, 141(1), p133 doi:10.1006/jmre.1999.1845. 
-More info and discussion in doc/README.md 
+and [published](https://www.sciencedirect.com/science/article/abs/pii/S1090780799918451?via%3Dihub) in _J. Magn. Reson._ **1999**, 141(1), p133 doi:10.1006/jmre.1999.1845.
+More info and discussion in doc/README.md
 The result of the analysis that is an object composed:
 
 - delta
@@ -32,7 +32,6 @@ node -r esm examples/simulate.js; # to simulate from a user-defined spin system
 node -r esm examples/dd-exp.js; # to simulate from a user-defined spin system
 node -r esm examples/asymDoublet.js; # to simulate from a user-defined spin system
 ```
-
 
 ## Developement
 
@@ -100,7 +99,7 @@ const result = library(args);
 
 [npm-image]: https://img.shields.io/npm/v/multiplet-analysis.svg
 [npm-url]: https://www.npmjs.com/package/multiplet-analysis
-[ci-image]: https://github.com/cheminfo/multiplet-analysis/workflows/Node.js%20CI/badge.svg?branch=master
+[ci-image]: https://github.com/cheminfo/multiplet-analysis/workflows/Node.js%20CI/badge.svg?branch=main
 [ci-url]: https://github.com/cheminfo/multiplet-analysis/actions?query=workflow%3A%22Node.js+CI%22
 [download-image]: https://img.shields.io/npm/dm/multiplet-analysis.svg
 [download-url]: https://www.npmjs.com/package/multiplet-analysis
