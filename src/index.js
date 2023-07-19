@@ -446,7 +446,12 @@ table_of_J
 
 function getSymFactor(spectrum) {
   const center = spectrum.length / 2;
-  return scalarProduct(spectrum.slice(0, center), spectrum.slice(center), 0, 2);
+  return scalarProduct(
+    spectrum.slice(0, center),
+    spectrum.slice(center).reverse(),
+    1,
+    1,
+  );
 }
 
 function removeShift(spectrum, scale, minimalIntegralKeptInMultiplet) {
