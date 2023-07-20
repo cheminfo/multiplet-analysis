@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.1...v2.1.2) (2023-07-20)
+
+
+### Bug Fixes
+
+* ensure cosine similarity for checkSymmetryFirst option([#45](https://github.com/cheminfo/multiplet-analysis/issues/45)) ([3cde35c](https://github.com/cheminfo/multiplet-analysis/commit/3cde35c12bc6b3dc2ca24018c9795dfa395be757))
+
 ## [2.1.1](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.0...v2.1.1) (2023-05-05)
 
 
