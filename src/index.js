@@ -188,7 +188,6 @@ export function analyseMultiplet(data = {}, options = {}) {
         spectrum,
         jStar,
         sign,
-        chopTail,
         multiplicity,
         curIncrementForSpeed,
       );
@@ -223,7 +222,6 @@ export function analyseMultiplet(data = {}, options = {}) {
                   spectrum,
                   jStarFine,
                   sign,
-                  chopTail,
                   multiplicity,
                   curIncrementForSpeed,
                 );

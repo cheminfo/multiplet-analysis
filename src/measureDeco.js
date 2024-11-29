@@ -5,7 +5,6 @@ export function measureDeco(
   y, // input vector
   jStar, // tested value of J in pt
   sign, // sign of the split 1: ++ -1: +-
-  chopTail, // 1: cut tail
   multiplicity,
   incrementForSpeed,
 ) {
