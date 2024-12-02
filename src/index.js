@@ -5,8 +5,6 @@
  * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
  */
 
-import maxY from 'ml-array-xy-max-y';
-
 import { appendDebug } from './appendDebug';
 import { deco } from './deco';
 import { measureDeco } from './measureDeco';
@@ -14,6 +12,7 @@ import { measureSymShift } from './measureSymShift';
 import { scalarProduct } from './scalarProduct';
 import { symmetrize } from './symmetrize';
 import { trigInterpolate } from './trigInterpolate';
+import { nextPowerOfTwo, xyMaxYPoint } from 'ml-spectra-processing';
 
 /**
  * Analyse a multiplet
@@ -58,13 +57,6 @@ export function analyseMultiplet(data = {}, options = {}) {
   let resolutionPpm = Math.abs(x[0] - x[x.length - 1]) / (x.length - 1);
   let resolutionHz = resolutionPpm * frequency;
 
-  let factorResolution = resolutionHz / minimalResolution;
-
-  let nextPowerTwo = 2 ** Math.ceil(Math.log2(x.length * factorResolution));
-  let nextPowerTwoInital = 2 ** Math.ceil(Math.log2(x.length));
-
-  let integerFactorResolution = nextPowerTwo / nextPowerTwoInital;
-
   let scale;
   let spectrum;
   let topPosJ = 0;
@@ -83,7 +75,11 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
   }
   if (resolutionHz > minimalResolution) {
-    // need increase resolution
+    const nextPoTwoInital = nextPowerOfTwo(x.length);
+    const factorResolution = resolutionHz / minimalResolution;
+    const nextPofTwo = nextPowerOfTwo(x.length * factorResolution);
+    const integerFactorResolution = nextPofTwo / nextPoTwoInital;
+
     let returned = trigInterpolate(
       x,
       y,
@@ -99,13 +95,13 @@ export function analyseMultiplet(data = {}, options = {}) {
   } else {
     scale = x;
     spectrum = y;
-  } //satnoeuhs
+  }
 
   if (checkSymmetryFirst) {
     const result = removeShift(spectrum, scale, 95);
     let symFactor = getSymFactor(result.spectrum);
     if (symFactor < 0.98) {
-      let maxAmplitudePosition = maxY({ x: scale, y: spectrum });
+      let maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
       return {
         chemShift: scale[maxAmplitudePosition.index],
         js: [],
@@ -145,9 +141,9 @@ export function analyseMultiplet(data = {}, options = {}) {
 
     if (symmetrizeEachStep === true) {
       //symmetrize if requested to
-      const result = removeShift(spectrum, scale, 95);
-      scale = result.scale;
-      spectrum = result.spectrum;
+      const newData = removeShift(spectrum, scale, 95);
+      scale = newData.scale;
+      spectrum = newData.spectrum;
       if (debug) {
         // save this to plot it as well
         for (let index = 0; index < spectrum.length; index++) {
@@ -296,7 +292,7 @@ export function analyseMultiplet(data = {}, options = {}) {
         chopTail,
         multiplicity,
       ); // for next step
-      if (chopTail) {
+      if (chopTail || takeBestPartMultiplet) {
         let remove = 0.5 * topPosJ * (2 * multiplicity);
         scale = scale.slice(remove, scale.length - remove);
       }
@@ -307,7 +303,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   }
   // to be tested ...
 
-  let maxAmplitudePosition = maxY({ x: scale, y: spectrum });
+  let maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
   result.chemShift = scale[maxAmplitudePosition.index];
   return result;
 }

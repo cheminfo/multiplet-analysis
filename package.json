@@ -52,6 +52,6 @@
   },
   "dependencies": {
     "fft.js": "^4.0.4",
-    "ml-array-xy-max-y": "^1.0.2"
+    "ml-spectra-processing": "^14.7.0"
   }
 }
