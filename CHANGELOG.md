@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.2...v2.1.3) (2024-12-03)
+
+
+### Bug Fixes
+
+* center the multiplet at the beginning n explore the minTestedJ ([#48](https://github.com/cheminfo/multiplet-analysis/issues/48)) ([d9c1b31](https://github.com/cheminfo/multiplet-analysis/commit/d9c1b317764cde723eb940cbc42f1fe66115bcbb))
+
 ## [2.1.2](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.1...v2.1.2) (2023-07-20)
 
 
