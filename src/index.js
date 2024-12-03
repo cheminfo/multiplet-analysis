@@ -5,7 +5,7 @@
  * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
  */
 
-import maxY from 'ml-array-xy-max-y';
+import { nextPowerOfTwo, xyMaxYPoint } from 'ml-spectra-processing';
 
 import { appendDebug } from './appendDebug';
 import { deco } from './deco';
@@ -15,12 +15,12 @@ import { scalarProduct } from './scalarProduct';
 import { symmetrize } from './symmetrize';
 import { trigInterpolate } from './trigInterpolate';
 
+/**@typedef {import('../multiplet-analysis').AnalizeMultipletOptions} AnalizeMultipletOptions */
+/**@typedef {import('cheminfo-types').DataXY} DataXY */
 /**
  * Analyse a multiplet
- * @param {object} [data] object of the kind {x:[], y:[]} containing the multiplet
- * @param {object} [options={}]
- * @param {number} [options.frequency=400] frequency
- * @param {boolean} [options.debug=false] generate debug information if true
+ * @param {DataXY} [data] xy data containing the multiplet.
+ * @param {AnalizeMultipletOptions} [options]
  */
 
 export function analyseMultiplet(data = {}, options = {}) {
@@ -58,13 +58,6 @@ export function analyseMultiplet(data = {}, options = {}) {
   let resolutionPpm = Math.abs(x[0] - x[x.length - 1]) / (x.length - 1);
   let resolutionHz = resolutionPpm * frequency;
 
-  let factorResolution = resolutionHz / minimalResolution;
-
-  let nextPowerTwo = 2 ** Math.ceil(Math.log2(x.length * factorResolution));
-  let nextPowerTwoInital = 2 ** Math.ceil(Math.log2(x.length));
-
-  let integerFactorResolution = nextPowerTwo / nextPowerTwoInital;
-
   let scale;
   let spectrum;
   let topPosJ = 0;
@@ -83,7 +76,11 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
   }
   if (resolutionHz > minimalResolution) {
-    // need increase resolution
+    const nextPoTwoInital = nextPowerOfTwo(x.length);
+    const factorResolution = resolutionHz / minimalResolution;
+    const nextPofTwo = nextPowerOfTwo(x.length * factorResolution);
+    const integerFactorResolution = nextPofTwo / nextPoTwoInital;
+
     let returned = trigInterpolate(
       x,
       y,
@@ -99,37 +96,38 @@ export function analyseMultiplet(data = {}, options = {}) {
   } else {
     scale = x;
     spectrum = y;
-  } //satnoeuhs
+  }
 
+  [spectrum, scale] = removeShift(spectrum, scale, 95);
   if (checkSymmetryFirst) {
-    const result = removeShift(spectrum, scale, 95);
-    let symFactor = getSymFactor(result.spectrum);
+    let symFactor = getSymFactor(spectrum);
     if (symFactor < 0.98) {
-      let maxAmplitudePosition = maxY({ x: scale, y: spectrum });
+      let maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
       return {
         chemShift: scale[maxAmplitudePosition.index],
         js: [],
       };
     } else {
-      scale = result.scale;
-      spectrum = symmetrize(result.spectrum);
+      spectrum = symmetrize(spectrum);
     }
   }
+
+  let incrementForSpeed = 1;
+  let curIncrementForSpeed;
+  incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
+
   resolutionPpm =
     Math.abs(scale[0] - scale[scale.length - 1]) / (scale.length - 1);
   resolutionHz = resolutionPpm * frequency;
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
 
-  let minTestedPt = Math.trunc(minTestedJ / resolutionHz) + 1;
+  let minTestedPt = Math.trunc(minTestedJ / resolutionHz) - incrementForSpeed;
   // will find center of symmetry of the multiplet
   // add zeroes as to make it symetrical if requested... and needed
 
   // main J-coupling determination
   // not calculated - set to -1
 
-  let incrementForSpeed = 1;
-  let curIncrementForSpeed;
-  incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
   for (
     let loopoverJvalues = 1;
     loopoverJvalues < maxNumberOfCoupling;
@@ -137,17 +135,17 @@ export function analyseMultiplet(data = {}, options = {}) {
   ) {
     let scalProd = [];
     let jStarArray = [];
-    for (let jStar = 0; jStar < minTestedPt; jStar++) {
+    for (let jStar = 0; jStar < minTestedPt + incrementForSpeed; jStar++) {
       jStarArray[jStar] = jStar * resolutionHz;
       scalProd[jStar] = 0;
     }
+
     let beforeSymSpe = new Float64Array(spectrum.length);
 
+    //symmetrize if requested to
     if (symmetrizeEachStep === true) {
-      //symmetrize if requested to
-      const result = removeShift(spectrum, scale, 95);
-      scale = result.scale;
-      spectrum = result.spectrum;
+      [spectrum, scale] = removeShift(spectrum, scale, 95);
+
       if (debug) {
         // save this to plot it as well
         for (let index = 0; index < spectrum.length; index++) {
@@ -175,7 +173,11 @@ export function analyseMultiplet(data = {}, options = {}) {
     }
     curIncrementForSpeed = incrementForSpeed;
     let jStarFine;
-    for (let jStar = minTestedPt; jStar < maxTestedPt; jStar++) {
+    for (
+      let jStar = minTestedPt + incrementForSpeed;
+      jStar < maxTestedPt;
+      jStar++
+    ) {
       jStarArray[jStar] = jStar * resolutionHz;
       scalProd[jStar] = -1;
     }
@@ -188,12 +190,11 @@ export function analyseMultiplet(data = {}, options = {}) {
         spectrum,
         jStar,
         sign,
-        chopTail,
         multiplicity,
         curIncrementForSpeed,
       );
-
       jStarArray[jStar] = jStar * resolutionHz;
+
       if (!gotJValue) {
         if (scalProd[jStar] > topValue) {
           topValue = scalProd[jStar];
@@ -223,7 +224,6 @@ export function analyseMultiplet(data = {}, options = {}) {
                   spectrum,
                   jStarFine,
                   sign,
-                  chopTail,
                   multiplicity,
                   curIncrementForSpeed,
                 );
@@ -298,7 +298,7 @@ export function analyseMultiplet(data = {}, options = {}) {
         chopTail,
         multiplicity,
       ); // for next step
-      if (chopTail) {
+      if (chopTail || takeBestPartMultiplet) {
         let remove = 0.5 * topPosJ * (2 * multiplicity);
         scale = scale.slice(remove, scale.length - remove);
       }
@@ -309,7 +309,7 @@ export function analyseMultiplet(data = {}, options = {}) {
   }
   // to be tested ...
 
-  let maxAmplitudePosition = maxY({ x: scale, y: spectrum });
+  let maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
   result.chemShift = scale[maxAmplitudePosition.index];
   return result;
 }
@@ -464,5 +464,5 @@ function removeShift(spectrum, scale, minimalIntegralKeptInMultiplet) {
     spectrum = spectrum.slice(-movedBy, spectrum.length);
     scale = scale.slice(-movedBy, scale.length);
   }
-  return { spectrum, scale };
+  return [spectrum, scale];
 }
