@@ -1,8 +1,9 @@
+import { toBeDeepCloseTo } from 'jest-matcher-deep-close-to';
 import { xFindClosestIndex, xMean } from 'ml-spectra-processing';
+
 import { analyseMultiplet } from '..';
 import quadruplet from '../../data/quadruplet.json';
 import quadrupletWithSatelites from '../../data/quadrupletWithSatelitesAndPhaseProblem.json';
-import { toBeDeepCloseTo } from 'jest-matcher-deep-close-to';
 
 expect.extend({ toBeDeepCloseTo });
 
@@ -23,7 +24,7 @@ test('real quadruplet', () => {
   checkJCoupling(result.js);
 });
 
-test('real quadruplet', () => {
+test('real quadruplet with satellites', () => {
   let result = analyseMultiplet(quadrupletWithSatelites, {
     frequency: 600.16,
     minimalResolution: 0.3,
@@ -65,7 +66,7 @@ test('real quadruplet left asymmetric range including satellite', () => {
   checkJCoupling(result.js);
 });
 
-test('real quadruplet left asymmetric range including satellite', () => {
+test('real quadruplet right asymmetric range including satellite', () => {
   const { x, y } = quadrupletWithSatelites;
   const closeIndex = xFindClosestIndex(x, 3.5);
   let result = analyseMultiplet(
