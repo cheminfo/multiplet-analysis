@@ -5,7 +5,13 @@
  * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
  */
 
-import { nextPowerOfTwo, xyMaxYPoint } from 'ml-spectra-processing';
+import {
+  nextPowerOfTwo,
+  xMinValue,
+  xSequentialFillFromStep,
+  xSubtract,
+  xyMaxYPoint,
+} from 'ml-spectra-processing';
 
 import { appendDebug } from './appendDebug';
 import { deco } from './deco';
@@ -63,16 +69,9 @@ export function analyseMultiplet(data = {}, options = {}) {
   let topPosJ = 0;
   // adjust vertical offset
   if (correctVerticalOffset) {
-    let minValue = Number.MAX_SAFE_INTEGER;
-    for (let index = 0; index < y.length; index++) {
-      if (minValue > y[index]) {
-        minValue = y[index];
-      }
-    }
+    const minValue = xMinValue(y);
     if (minValue > 0) {
-      for (let index = 0; index < y.length; index++) {
-        y[index] -= minValue;
-      }
+      y = xSubtract(y, minValue);
     }
   }
   if (resolutionHz > minimalResolution) {
@@ -98,20 +97,6 @@ export function analyseMultiplet(data = {}, options = {}) {
     spectrum = y;
   }
 
-  [spectrum, scale] = removeShift(spectrum, scale, 95);
-  if (checkSymmetryFirst) {
-    let symFactor = getSymFactor(spectrum);
-    if (symFactor < 0.98) {
-      let maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
-      return {
-        chemShift: scale[maxAmplitudePosition.index],
-        js: [],
-      };
-    } else {
-      spectrum = symmetrize(spectrum);
-    }
-  }
-
   let incrementForSpeed = 1;
   let curIncrementForSpeed;
   incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
@@ -122,6 +107,32 @@ export function analyseMultiplet(data = {}, options = {}) {
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
 
   let minTestedPt = Math.trunc(minTestedJ / resolutionHz) - incrementForSpeed;
+
+  [spectrum, scale] = removeShift(spectrum, scale, 95);
+  if (checkSymmetryFirst) {
+    let symFactor = getSymFactor(spectrum);
+    console.log('entra');
+    if (symFactor < 0.98) {
+      let maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
+
+      result.chemShift = scale[maxAmplitudePosition.index];
+      let jStarArray = xSequentialFillFromStep({
+        from: 0,
+        step: resolutionHz,
+        size: maxTestedPt,
+      });
+      let scalProd = new Float64Array(maxTestedPt).fill(-1);
+      for (let jStar = 0; jStar < minTestedPt + incrementForSpeed; jStar++) {
+        scalProd[jStar] = 0;
+      }
+      console.log('entra');
+      appendDebug(scale, spectrum, jStarArray, scalProd, null, result);
+      console.log(result);
+      return result;
+    } else {
+      spectrum = symmetrize(spectrum);
+    }
+  }
   // will find center of symmetry of the multiplet
   // add zeroes as to make it symetrical if requested... and needed
 
