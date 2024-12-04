@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.4](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.3...v2.1.4) (2024-12-04)
+
+
+### Bug Fixes
+
+* type file ([#51](https://github.com/cheminfo/multiplet-analysis/issues/51)) ([2b22286](https://github.com/cheminfo/multiplet-analysis/commit/2b2228602f3ccaca5b54d5be5520d9a4d7befe91))
+
 ## [2.1.3](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.2...v2.1.3) (2024-12-03)
 
 
