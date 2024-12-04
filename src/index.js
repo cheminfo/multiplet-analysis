@@ -143,7 +143,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     let beforeSymSpe = new Float64Array(spectrum.length);
 
     //symmetrize if requested to
-    if (symmetrizeEachStep === true) {
+    if (symmetrizeEachStep) {
       [spectrum, scale] = removeShift(spectrum, scale, 95);
 
       if (debug) {
