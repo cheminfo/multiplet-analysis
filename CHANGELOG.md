@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.5](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.4...v2.1.5) (2024-12-04)
+
+
+### Bug Fixes
+
+* returns reports if checkSymmetryFirst is true ([#53](https://github.com/cheminfo/multiplet-analysis/issues/53)) ([e58ca0d](https://github.com/cheminfo/multiplet-analysis/commit/e58ca0db479cf244bb8fad57a4e9acda41902101))
+
 ## [2.1.4](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.3...v2.1.4) (2024-12-04)
 
 
