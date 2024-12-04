@@ -111,7 +111,6 @@ export function analyseMultiplet(data = {}, options = {}) {
   [spectrum, scale] = removeShift(spectrum, scale, 95);
   if (checkSymmetryFirst) {
     let symFactor = getSymFactor(spectrum);
-    console.log('entra');
     if (symFactor < 0.98) {
       let maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
 
@@ -125,9 +124,7 @@ export function analyseMultiplet(data = {}, options = {}) {
       for (let jStar = 0; jStar < minTestedPt + incrementForSpeed; jStar++) {
         scalProd[jStar] = 0;
       }
-      console.log('entra');
       appendDebug(scale, spectrum, jStarArray, scalProd, null, result);
-      console.log(result);
       return result;
     } else {
       spectrum = symmetrize(spectrum);
