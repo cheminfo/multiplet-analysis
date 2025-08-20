@@ -1,9 +1,9 @@
 import { toBeDeepCloseTo } from 'jest-matcher-deep-close-to';
 import { xFindClosestIndex, xMean } from 'ml-spectra-processing';
 
-import { analyseMultiplet } from '..';
 import quadruplet from '../../data/quadruplet.json';
 import quadrupletWithSatelites from '../../data/quadrupletWithSatelitesAndPhaseProblem.json';
+import { analyseMultiplet } from '../analyseMultiplet';
 
 expect.extend({ toBeDeepCloseTo });
 
