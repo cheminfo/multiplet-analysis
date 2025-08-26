@@ -2,7 +2,7 @@
   "name": "multiplet-analysis",
   "version": "2.1.5",
   "description": "Extract coupling constants from a complex NMR multiiplet",
-  "main": "lib/index.js",
+  "type": "module",
   "types": "multiplet-analysis.d.ts",
   "module": "src/index.js",
   "files": [
@@ -10,16 +10,18 @@
     "src",
     "multiplet-analysis.d.ts"
   ],
+  "exports": {
+    ".": "./lib/index.js"
+  },
   "scripts": {
-    "build": "cheminfo-build --entry src/index.js --root AirPLS",
-    "compile": "rollup -c",
-    "prepack": "npm run compile",
+    "build": "cheminfo-build --entry src/index.js --root multiplet-analysis",
+    "clean": "rimraf coverage lib",
     "eslint": "eslint src",
     "eslint-fix": "npm run eslint -- --fix",
     "prettier": "prettier --check src",
     "prettier-write": "prettier --write src",
-    "test": "npm run test-only && npm run eslint && npm run prettier",
-    "test-only": "jest --coverage"
+    "test": "npm run test-only && npm run check-types && npm run eslint && npm run prettier",
+    "test-only": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
@@ -40,21 +42,22 @@
     "trailingComma": "all"
   },
   "devDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.21.5",
-    "eslint": "^8.24.0",
-    "eslint-config-cheminfo": "^8.2.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.27.1",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.34.0",
+    "eslint-config-cheminfo": "^15.0.2",
     "esm": "^3.2.25",
-    "jest": "^29.1.2",
+    "jest": "^30.0.5",
     "jest-matcher-deep-close-to": "^3.0.2",
-    "nmr-processing": "^14.0.5",
+    "nmr-processing": "^19.1.0",
     "nmr-simulation": "^1.0.21",
-    "prettier": "^2.8.8",
-    "rollup": "^3.21.4"
+    "prettier": "^3.6.2",
+    "rollup": "^4.48.1"
   },
   "dependencies": {
     "cheminfo-types": "^1.8.1",
     "fft.js": "^4.0.4",
     "ml-airpls": "^2.0.0",
-    "ml-spectra-processing": "^14.7.0"
+    "ml-spectra-processing": "^14.17.1"
   }
 }
