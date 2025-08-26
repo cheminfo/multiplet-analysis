@@ -1,6 +1,8 @@
 import { toBeDeepCloseTo } from 'jest-matcher-deep-close-to';
 import { signalsToXY } from 'nmr-processing';
 
+import { test, expect } from 'vitest';
+
 import { analyseMultiplet } from '../index';
 
 expect.extend({ toBeDeepCloseTo });

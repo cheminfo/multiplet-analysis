@@ -1,6 +1,8 @@
 //import { writeFileSync } from 'fs';
 //import { join } from 'path';
 
+import { describe, it, expect } from 'vitest';
+
 import { analyseMultiplet } from '..';
 import noisyCarbon from '../../data/noisy-carbon.json';
 

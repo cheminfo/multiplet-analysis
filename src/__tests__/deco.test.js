@@ -1,5 +1,7 @@
 import { deco } from '../deco';
 
+import { describe, it, expect } from 'vitest';
+
 describe('check deco', () => {
   it('first should be', () => {
     //  it.only

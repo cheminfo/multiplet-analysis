@@ -1,6 +1,7 @@
 import { toBeDeepCloseTo } from 'jest-matcher-deep-close-to';
 
 import { trigInterpolate } from '../trigInterpolate';
+import { describe, it, expect } from 'vitest';
 
 expect.extend({ toBeDeepCloseTo });
 

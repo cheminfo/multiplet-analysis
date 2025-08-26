@@ -32,9 +32,6 @@
     "url": "https://github.com/cheminfo/multiplet-analysis/issues"
   },
   "homepage": "https://github.com/cheminfo/multiplet-analysis#readme",
-  "jest": {
-    "testEnvironment": "node"
-  },
   "prettier": {
     "arrowParens": "always",
     "semi": true,

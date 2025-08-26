@@ -1,5 +1,7 @@
 import { getGeneralPascal } from '../getGeneralPascal';
 
+import { describe, it, expect } from 'vitest';
+
 describe('analyse multiplet of simulated spectra', () => {
   it('first should be', () => {
     //  it.only

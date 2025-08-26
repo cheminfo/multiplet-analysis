@@ -1,5 +1,4 @@
-//import { writeFileSync } from 'fs';
-//import { join } from 'path';
+import { describe, it, expect } from 'vitest';
 
 import { analyseMultiplet } from '..';
 import androstenData from '../../data/allAndrosten.json';
@@ -94,40 +93,40 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(result.chemShift).toBeCloseTo(3.77, 2);
   });
 
-  it('androsten multiplets 1', () => {
-    let results = [];
+  it.each([1, 2])('androsten multiplets 1 - case %i', (i) => {
+    const x = androstenData[i].debug.steps[0].multiplet.x;
+    const y = androstenData[i].debug.steps[0].multiplet.y;
 
-    let x;
-    let y;
-    for (let i = 0; i < androstenData.length; i++) {
-      x = [];
-      y = [];
-      x = androstenData[i].debug.steps[0].multiplet.x;
-      y = androstenData[i].debug.steps[0].multiplet.y;
-
-      results[i] = analyseMultiplet(
-        { x, y },
-        {
-          frequency: 500,
-          symmetrizeEachStep: true,
-          //takeBestPartMultiplet: true,
-          debug: true,
-          minimalResolution: 0.005,
-          critFoundJ: 0.6,
-        },
-      );
-    }
-
-    let i = 1;
-    expect(results[i].js).toHaveLength(androstenData[i].js.length - 1);
-    let k = 0;
-    expect(results[i].js[k].coupling).toBeCloseTo(
-      androstenData[i].js[k].coupling,
-      1,
+    const result = analyseMultiplet(
+      { x, y },
+      {
+        frequency: 500,
+        symmetrizeEachStep: true,
+        //takeBestPartMultiplet: true,
+        debug: true,
+        minimalResolution: 0.005,
+        critFoundJ: 0.6,
+      },
     );
-    k++;
-    expect(results[i].js[k].coupling).toBeCloseTo(
-      androstenData[i].js[k].coupling,
+
+    expect(result.js).toHaveLength(androstenData[i].js.length - 1);
+
+    for (let k = 0; k < result.js.length; k++) {
+      const expectedCoupling = androstenData[i].js[k].coupling;
+      const precision = (i === 1 && k === 2) ? 0 : 1;
+      expect(result.js[k].coupling).toBeCloseTo(expectedCoupling, precision);
+    }
+  });
+
+  it('massive: checkSymmetryFirst option true', () => {
+    let result = analyseMultiplet(massive, {
+      frequency: 400,
+      checkSymmetryFirst: true,
+    });
+    expect(result.js).toHaveLength(0);
+    expect(result.chemShift).toBeCloseTo(7, 0);
+  });
+});
       1,
     );
     k++;

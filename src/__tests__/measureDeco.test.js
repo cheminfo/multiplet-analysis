@@ -1,5 +1,7 @@
 import { measureDeco } from '../measureDeco';
 
+import { describe, it, expect } from 'vitest';
+
 describe('test measureDeco', () => {
   it('first should be', () => {
     //  it.only
