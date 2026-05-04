@@ -1,14 +1,18 @@
+/* eslint vitest/expect-expect: ['error', {assertFunctionNames: ['checkJCoupling']}] */
+
 import { toBeDeepCloseTo } from 'jest-matcher-deep-close-to';
 import { xFindClosestIndex, xMean } from 'ml-spectra-processing';
+import { expect, test } from 'vitest';
 
-import { analyseMultiplet } from '..';
-import quadruplet from '../../data/quadruplet.json';
-import quadrupletWithSatelites from '../../data/quadrupletWithSatelitesAndPhaseProblem.json';
+import quadruplet from '../../data/quadruplet.json' with { type: 'json' };
+import quadrupletWithSatelites from '../../data/quadrupletWithSatelitesAndPhaseProblem.json' with { type: 'json' };
+import type { AnalyseMultipletJCoupling } from '../index.ts';
+import { analyseMultiplet } from '../index.ts';
 
 expect.extend({ toBeDeepCloseTo });
 
 test('real quadruplet', () => {
-  let result = analyseMultiplet(quadruplet, {
+  const result = analyseMultiplet(quadruplet, {
     frequency: 600.16,
     minimalResolution: 0.3,
     maxTestedJ: 9,
@@ -19,13 +23,12 @@ test('real quadruplet', () => {
     symmetrizeEachStep: false,
     decreasingJvalues: true,
     makeShortCutForSpeed: true,
-    debug: true,
   });
   checkJCoupling(result.js);
 });
 
 test('real quadruplet with satellites', () => {
-  let result = analyseMultiplet(quadrupletWithSatelites, {
+  const result = analyseMultiplet(quadrupletWithSatelites, {
     frequency: 600.16,
     minimalResolution: 0.3,
     maxTestedJ: 9,
@@ -36,7 +39,6 @@ test('real quadruplet with satellites', () => {
     symmetrizeEachStep: true,
     decreasingJvalues: false,
     makeShortCutForSpeed: true,
-    debug: true,
   });
   checkJCoupling(result.js);
 });
@@ -44,7 +46,7 @@ test('real quadruplet with satellites', () => {
 test('real quadruplet left asymmetric range including satellite', () => {
   const { x, y } = quadrupletWithSatelites;
   const closeIndex = xFindClosestIndex(x, 3.8);
-  let result = analyseMultiplet(
+  const result = analyseMultiplet(
     {
       x: x.slice(0, closeIndex),
       y: y.slice(0, closeIndex),
@@ -60,7 +62,6 @@ test('real quadruplet left asymmetric range including satellite', () => {
       symmetrizeEachStep: true,
       decreasingJvalues: false,
       makeShortCutForSpeed: true,
-      debug: true,
     },
   );
   checkJCoupling(result.js);
@@ -69,7 +70,7 @@ test('real quadruplet left asymmetric range including satellite', () => {
 test('real quadruplet right asymmetric range including satellite', () => {
   const { x, y } = quadrupletWithSatelites;
   const closeIndex = xFindClosestIndex(x, 3.5);
-  let result = analyseMultiplet(
+  const result = analyseMultiplet(
     {
       x: x.slice(closeIndex),
       y: y.slice(closeIndex),
@@ -85,14 +86,15 @@ test('real quadruplet right asymmetric range including satellite', () => {
       symmetrizeEachStep: false,
       decreasingJvalues: false,
       makeShortCutForSpeed: true,
-      debug: true,
     },
   );
   checkJCoupling(result.js);
 });
 
-function checkJCoupling(jCoupling) {
+function checkJCoupling(jCoupling: AnalyseMultipletJCoupling[]) {
   expect(jCoupling).toHaveLength(3);
+
   const meanCoupling = xMean(jCoupling.map((j) => j.coupling));
+
   expect(meanCoupling).toBeDeepCloseTo(7.05, 1);
 }
