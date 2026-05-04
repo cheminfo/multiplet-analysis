@@ -1,13 +1,10 @@
-import { DataXY } from 'cheminfo-types';
-export interface AnalizeMultipletOptions {
+export type Sign = 1 | -1;
+
+export interface AnalyseMultipletOptions {
   /**
    * @default 400
    */
   frequency?: number;
-  /**
-   * @default false
-   */
-  debug?: boolean;
   /**
    * @default 20
    */
@@ -39,7 +36,7 @@ export interface AnalizeMultipletOptions {
   /**
    * @default 1
    */
-  sign?: number;
+  sign?: Sign;
   /**
    * @default true
    */
@@ -78,9 +75,13 @@ export interface AnalizeMultipletOptions {
   jumpUpAfterFoundValue?: number;
 }
 
-export function analyseMultiplet(
-  data: DataXY,
-  options?: AnalizeMultipletOptions,
-);
+export interface AnalyseMultipletJCoupling {
+  multiplicity: string;
+  coupling: number;
+}
 
-declare module 'multiplet-analysis' {}
+export interface AnalyseMultipletResult {
+  js: AnalyseMultipletJCoupling[];
+  phaseCorrectionOnMultipletInDeg: number;
+  chemShift: number;
+}

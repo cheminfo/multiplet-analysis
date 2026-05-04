@@ -1,6 +1,9 @@
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { SpinSystem, simulate1D } from 'nmr-simulation';
+
+import { analyseMultiplet } from '../src/index.ts';
 
 // a prediction should contain only once the couplings
 
@@ -20,32 +23,32 @@ const prediction = [
   },
   {
     atomIDs: [2],
-    delta: 3.0,
+    delta: 3,
     j: [{ assignment: [3], coupling: 2 }],
   },
   {
     atomIDs: [3],
-    delta: 5.0,
+    delta: 5,
   },
   {
     atomIDs: [4],
-    delta: 7.0,
+    delta: 7,
   },
   {
     atomIDs: [5],
-    delta: 9.0,
+    delta: 9,
   },
   {
     atomIDs: [6],
-    delta: 11.0,
+    delta: 11,
   },
   {
     atomIDs: [7],
-    delta: 13.0,
+    delta: 13,
   },
   {
     atomIDs: [8],
-    delta: 15.0,
+    delta: 15,
   },
 ];
 
@@ -69,11 +72,13 @@ writeFileSync(
   'utf8',
 );
 
-import { analyseMultiplet } from '../src/index';
-
 //let result = analyseMultiplet(simulated, { frequency: 400, debug: true });
 //let result = analyseMultiplet(simulated, { frequency: 400, debug: true, symmetrizeEachStep: true});
-let result = analyseMultiplet(spectrum, { frequency: 400, debug: true , takeBestPartMultiplet : true});
+let result = analyseMultiplet(spectrum, {
+  frequency: 400,
+  debug: true,
+  takeBestPartMultiplet: true,
+});
 //let result = analyseMultiplet(spectrum, { frequency: 400, debug: true , forceFirstDeconvolutionToThisValue : 14.145});
 //let result = analyseMultiplet(spectrum, { frequency: 400, debug: true , forceFirstDeconvolutionToThisValue : 4.2, takeBestPartMultiplet : true});
 //let result = analyseMultiplet(simulated, { frequency: 400, debug: true , takeBestPartMultiplet : true});

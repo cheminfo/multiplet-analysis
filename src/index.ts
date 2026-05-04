@@ -1,42 +1,43 @@
-/**
- * Analyse X / Y array and extract multiplicity
- * @param {object} [data={}] An object containing properties x and y
- * @param {object} [options={}] Options (default is empty object)
- * @param {number} [options.frequency=400] Acquisition frequency, default is 400 MHz
- */
-
+import type { DataXY } from 'cheminfo-types';
 import {
   nextPowerOfTwo,
+  xEnsureFloat64,
   xMinValue,
-  xSequentialFillFromStep,
   xSubtract,
   xyMaxYPoint,
 } from 'ml-spectra-processing';
 
-import { appendDebug } from './appendDebug';
-import { deco } from './deco';
-import { measureDeco } from './measureDeco';
-import { measureSymShift } from './measureSymShift';
-import { scalarProduct } from './scalarProduct';
-import { symmetrize } from './symmetrize';
-import { trigInterpolate } from './trigInterpolate';
+import { deco } from './deco.ts';
+import { measureDeco } from './measureDeco.ts';
+import { measureSymShift } from './measureSymShift.ts';
+import { scalarProduct } from './scalarProduct.ts';
+import { symmetrize } from './symmetrize.ts';
+import { trigInterpolate } from './trigInterpolate.ts';
+import type {
+  AnalyseMultipletOptions,
+  AnalyseMultipletResult,
+} from './types.ts';
 
-/**@typedef {import('../multiplet-analysis').AnalizeMultipletOptions} AnalizeMultipletOptions */
-/**@typedef {import('cheminfo-types').DataXY} DataXY */
+export type {
+  AnalyseMultipletJCoupling,
+  AnalyseMultipletOptions,
+  AnalyseMultipletResult,
+} from './types.ts';
+
 /**
- * Analyse a multiplet
- * @param {DataXY} [data] xy data containing the multiplet.
- * @param {AnalizeMultipletOptions} [options]
+ * Analyse a multiplet.
+ * @param data - xy data containing the multiplet.
+ * @param [options]
  */
-
-export function analyseMultiplet(data = {}, options = {}) {
-  let { x = [], y = [] } = data;
-  if (!(x instanceof Float64Array)) x = Float64Array.from(x);
-  if (!(y instanceof Float64Array)) y = Float64Array.from(y);
+export function analyseMultiplet(
+  data: DataXY,
+  options: AnalyseMultipletOptions = {},
+) {
+  const x = xEnsureFloat64(data.x);
+  let y = xEnsureFloat64(data.y);
 
   const {
     frequency = 400,
-    debug = false,
     maxTestedJ = 20,
     minTestedJ = 1,
     checkSymmetryFirst = false,
@@ -53,20 +54,26 @@ export function analyseMultiplet(data = {}, options = {}) {
     forceFirstDeconvolutionToThisValue = 0,
     appliedPhaseCorrectionType = 0,
     decreasingJvalues = true,
-    jumpUpAfterFoundValue = 2.0,
+    jumpUpAfterFoundValue = 2,
   } = options;
 
-  let result = { js: [] };
+  const result: AnalyseMultipletResult = {
+    js: [],
+    phaseCorrectionOnMultipletInDeg: 0,
+    chemShift: 0,
+  };
+
   const maxNumberOfCoupling = 12;
   //option see if cut is good. (should we cut more or interpolate if cut too close to peak - cause artifacts in both cases)
 
-  // determine if need interpolation
-  let resolutionPpm = Math.abs(x[0] - x[x.length - 1]) / (x.length - 1);
+  // Determine if interpolation is needed.
+  let resolutionPpm = Math.abs(x[0] - (x.at(-1) as number)) / (x.length - 1);
   let resolutionHz = resolutionPpm * frequency;
 
   let scale;
-  let spectrum;
+  let spectrum: Float64Array;
   let topPosJ = 0;
+
   // adjust vertical offset
   if (correctVerticalOffset) {
     const minValue = xMinValue(y);
@@ -80,7 +87,7 @@ export function analyseMultiplet(data = {}, options = {}) {
     const nextPofTwo = nextPowerOfTwo(x.length * factorResolution);
     const integerFactorResolution = nextPofTwo / nextPoTwoInital;
 
-    let returned = trigInterpolate(
+    const returned = trigInterpolate(
       x,
       y,
       integerFactorResolution * y.length,
@@ -102,29 +109,23 @@ export function analyseMultiplet(data = {}, options = {}) {
   incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
 
   resolutionPpm =
-    Math.abs(scale[0] - scale[scale.length - 1]) / (scale.length - 1);
+    Math.abs(scale[0] - (scale.at(-1) as number)) / (scale.length - 1);
   resolutionHz = resolutionPpm * frequency;
   let maxTestedPt = Math.trunc(maxTestedJ / resolutionHz);
 
-  let minTestedPt = Math.trunc(minTestedJ / resolutionHz) - incrementForSpeed;
+  const minTestedPt = Math.trunc(minTestedJ / resolutionHz) - incrementForSpeed;
 
   [spectrum, scale] = removeShift(spectrum, scale, 95);
   if (checkSymmetryFirst) {
-    let symFactor = getSymFactor(spectrum);
+    const symFactor = getSymFactor(spectrum);
     if (symFactor < 0.98) {
-      let maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
+      const maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
 
       result.chemShift = scale[maxAmplitudePosition.index];
-      let jStarArray = xSequentialFillFromStep({
-        from: 0,
-        step: resolutionHz,
-        size: maxTestedPt,
-      });
-      let scalProd = new Float64Array(maxTestedPt).fill(-1);
+      const scalProd = new Float64Array(maxTestedPt).fill(-1);
       for (let jStar = 0; jStar < minTestedPt + incrementForSpeed; jStar++) {
         scalProd[jStar] = 0;
       }
-      appendDebug(scale, spectrum, jStarArray, scalProd, null, result);
       return result;
     } else {
       spectrum = symmetrize(spectrum);
@@ -141,43 +142,33 @@ export function analyseMultiplet(data = {}, options = {}) {
     loopoverJvalues < maxNumberOfCoupling;
     loopoverJvalues++
   ) {
-    let scalProd = [];
-    let jStarArray = [];
+    const scalProd = [];
+    const jStarArray = [];
     for (let jStar = 0; jStar < minTestedPt + incrementForSpeed; jStar++) {
       jStarArray[jStar] = jStar * resolutionHz;
       scalProd[jStar] = 0;
     }
 
-    let beforeSymSpe = new Float64Array(spectrum.length);
-
     //symmetrize if requested to
     if (symmetrizeEachStep) {
       [spectrum, scale] = removeShift(spectrum, scale, 95);
 
-      if (debug) {
-        // save this to plot it as well
-        for (let index = 0; index < spectrum.length; index++) {
-          beforeSymSpe[index] = spectrum[index];
-        }
-      }
       spectrum = symmetrize(spectrum);
     }
 
     let topValue = -1;
     let gotJValue = false;
-    let limitCoupling = scale.length - 1; //limit with respect to size of spectrum (which is reducing at each step)
-    let critFoundJLow = critFoundJ - 0.3;
+    const limitCoupling = scale.length - 1; //limit with respect to size of spectrum (which is reducing at each step)
+    const critFoundJLow = critFoundJ - 0.3;
     if (maxTestedPt > limitCoupling) {
       maxTestedPt = limitCoupling;
     }
-    if (loopoverJvalues > 1 && decreasingJvalues) {
-      if (
-        maxTestedPt > Math.floor(topPosJ + jumpUpAfterFoundValue / resolutionHz)
-      ) {
-        maxTestedPt = Math.floor(
-          topPosJ + jumpUpAfterFoundValue / resolutionHz,
-        );
-      }
+    if (
+      loopoverJvalues > 1 &&
+      decreasingJvalues &&
+      maxTestedPt > Math.floor(topPosJ + jumpUpAfterFoundValue / resolutionHz)
+    ) {
+      maxTestedPt = Math.floor(topPosJ + jumpUpAfterFoundValue / resolutionHz);
     }
     curIncrementForSpeed = incrementForSpeed;
     let jStarFine;
@@ -209,88 +200,64 @@ export function analyseMultiplet(data = {}, options = {}) {
           topPosJ = jStar;
         }
 
-        if (jStar < maxTestedPt - 2 * curIncrementForSpeed) {
-          if (
-            scalProd[jStar] < scalProd[jStar + curIncrementForSpeed] &&
-            scalProd[jStar + curIncrementForSpeed] >=
-              scalProd[jStar + 2 * curIncrementForSpeed] &&
-            scalProd[jStar + curIncrementForSpeed] > critFoundJLow
-          ) {
-            while (curIncrementForSpeed > 1) {
-              curIncrementForSpeed = Math.floor(curIncrementForSpeed / 2); // get smaller and smaller step
-              let froms = topPosJ - 2 * curIncrementForSpeed; // maybe 1 is enough....
-              while (froms < 0) froms += curIncrementForSpeed;
-              let tos = topPosJ + 2 * curIncrementForSpeed; // maybe 1 is enough....
-              while (tos >= maxTestedPt) tos -= curIncrementForSpeed;
-              topValue = -1; // reset because increased precision may make the top lower
-              for (
-                jStarFine = froms;
-                jStarFine <= tos;
-                jStarFine += curIncrementForSpeed
-              ) {
-                scalProd[jStarFine] = measureDeco(
-                  spectrum,
-                  jStarFine,
-                  sign,
-                  multiplicity,
-                  curIncrementForSpeed,
-                );
-                if (scalProd[jStarFine] > topValue) {
-                  topValue = scalProd[jStarFine];
-                  topPosJ = jStarFine;
-                }
-              }
-            }
-            curIncrementForSpeed = incrementForSpeed;
-            // end refine
-            if (topValue > critFoundJ) {
-              // ugly force value for tests
-              if (
-                forceFirstDeconvolutionToThisValue > 0 &&
-                loopoverJvalues === 1 &&
-                gotJValue === false
-              ) {
-                topPosJ = Math.floor(
-                  forceFirstDeconvolutionToThisValue / resolutionHz,
-                );
-                topValue = 1.1;
-              }
-
-              result.js.push({
-                multiplicity: 'd',
-                coupling: topPosJ * resolutionHz,
-              });
-              gotJValue = true;
-
-              if (makeShortCutForSpeed) {
-                break;
+        if (
+          jStar < maxTestedPt - 2 * curIncrementForSpeed &&
+          scalProd[jStar] < scalProd[jStar + curIncrementForSpeed] &&
+          scalProd[jStar + curIncrementForSpeed] >=
+            scalProd[jStar + 2 * curIncrementForSpeed] &&
+          scalProd[jStar + curIncrementForSpeed] > critFoundJLow
+        ) {
+          while (curIncrementForSpeed > 1) {
+            curIncrementForSpeed = Math.floor(curIncrementForSpeed / 2); // get smaller and smaller step
+            let froms = topPosJ - 2 * curIncrementForSpeed; // maybe 1 is enough....
+            while (froms < 0) froms += curIncrementForSpeed;
+            let tos = topPosJ + 2 * curIncrementForSpeed; // maybe 1 is enough....
+            while (tos >= maxTestedPt) tos -= curIncrementForSpeed;
+            topValue = -1; // reset because increased precision may make the top lower
+            for (
+              jStarFine = froms;
+              jStarFine <= tos;
+              jStarFine += curIncrementForSpeed
+            ) {
+              scalProd[jStarFine] = measureDeco(
+                spectrum,
+                jStarFine,
+                sign,
+                multiplicity,
+                curIncrementForSpeed,
+              );
+              if (scalProd[jStarFine] > topValue) {
+                topValue = scalProd[jStarFine];
+                topPosJ = jStarFine;
               }
             }
           }
-        }
-      }
-    }
+          curIncrementForSpeed = incrementForSpeed;
+          // end refine
+          if (topValue > critFoundJ) {
+            // ugly force value for tests
+            if (
+              forceFirstDeconvolutionToThisValue > 0 &&
+              loopoverJvalues === 1 &&
+              !gotJValue
+            ) {
+              topPosJ = Math.floor(
+                forceFirstDeconvolutionToThisValue / resolutionHz,
+              );
+              topValue = 1.1;
+            }
 
-    if (debug) {
-      if (symmetrizeEachStep === true) {
-        appendDebug(
-          scale,
-          spectrum,
-          jStarArray,
-          scalProd,
-          loopoverJvalues,
-          result,
-          beforeSymSpe,
-        );
-      } else {
-        appendDebug(
-          scale,
-          spectrum,
-          jStarArray,
-          scalProd,
-          loopoverJvalues,
-          result,
-        );
+            result.js.push({
+              multiplicity: 'd',
+              coupling: topPosJ * resolutionHz,
+            });
+            gotJValue = true;
+
+            if (makeShortCutForSpeed) {
+              break;
+            }
+          }
+        }
       }
     }
 
@@ -302,22 +269,22 @@ export function analyseMultiplet(data = {}, options = {}) {
         spectrum,
         topPosJ,
         sign,
-        0 + 0.1 * takeBestPartMultiplet,
-        chopTail,
+        0 + 0.1 * (takeBestPartMultiplet ? 1 : 0),
+        chopTail ? 1 : 0,
         multiplicity,
       ); // for next step
       if (chopTail || takeBestPartMultiplet) {
-        let remove = 0.5 * topPosJ * (2 * multiplicity);
+        const remove = 0.5 * topPosJ * (2 * multiplicity);
         scale = scale.slice(remove, scale.length - remove);
       }
       if (scale.length !== spectrum.length) {
-        throw Error('sts');
+        throw new Error('sts');
       }
     }
   }
   // to be tested ...
 
-  let maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
+  const maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
   result.chemShift = scale[maxAmplitudePosition.index];
   return result;
 }
@@ -452,25 +419,27 @@ end
 table_of_J
 */
 
-function getSymFactor(spectrum) {
+function getSymFactor(spectrum: Float64Array) {
   const center = spectrum.length / 2;
-  return scalarProduct(
-    spectrum.slice(0, center),
-    spectrum.slice(center).reverse(),
-    1,
-    1,
-  );
+  const firstHalf = spectrum.slice(0, center);
+  const secondHalf = spectrum.slice(center);
+  secondHalf.reverse();
+  return scalarProduct(firstHalf, secondHalf, 1, 1);
 }
 
-function removeShift(spectrum, scale, minimalIntegralKeptInMultiplet) {
+function removeShift(
+  spectrum: Float64Array,
+  scale: Float64Array,
+  minimalIntegralKeptInMultiplet: number,
+) {
   const movedBy = -measureSymShift(spectrum, minimalIntegralKeptInMultiplet);
   if (movedBy > 0) {
     spectrum = spectrum.slice(0, spectrum.length - movedBy);
     scale = scale.slice(0, scale.length - movedBy);
   }
   if (movedBy < 0) {
-    spectrum = spectrum.slice(-movedBy, spectrum.length);
-    scale = scale.slice(-movedBy, scale.length);
+    spectrum = spectrum.slice(-movedBy);
+    scale = scale.slice(-movedBy);
   }
   return [spectrum, scale];
 }

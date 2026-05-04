@@ -1,26 +1,29 @@
-import { scalarProduct } from './scalarProduct';
+import { scalarProduct } from './scalarProduct.ts';
 
 /**
  *
- * @param {number[]} y
- * @param {number} minimalIntegralKeptInMultiplet
- * @returns {number}
+ * @param y
+ * @param minimalIntegralKeptInMultiplet
+ * @returns
  */
-export function measureSymShift(y, minimalIntegralKeptInMultiplet = 90.0) {
+export function measureSymShift(
+  y: Float64Array,
+  minimalIntegralKeptInMultiplet = 90,
+): number {
   // set boundaries for integration (avoid chopping too much of the multiplet)
-  let integral = new Float64Array(y.length);
+  const integral = new Float64Array(y.length);
   integral[0] = Math.abs(y[0]);
   for (let i = 1; i < y.length; i++) {
     integral[i] = integral[i - 1] + Math.abs(y[i]);
   }
   let finishingLeftPoint = y.length / 2;
   let finishingRightPoint = y.length / 2;
+  const lastIntegralValue = integral.at(-1) as number;
 
   for (let i = 1; i < y.length / 2; i++) {
     if (
-      (integral[integral.length - 1] - integral[i - 1]) /
-        integral[integral.length - 1] <
-      minimalIntegralKeptInMultiplet / 100.0
+      (lastIntegralValue - integral[i - 1]) / lastIntegralValue <
+      minimalIntegralKeptInMultiplet / 100
     ) {
       finishingLeftPoint = i;
       break;
@@ -28,8 +31,8 @@ export function measureSymShift(y, minimalIntegralKeptInMultiplet = 90.0) {
   }
   for (let i = 1; i < y.length / 2; i++) {
     if (
-      integral[integral.length - i - 1] / integral[integral.length - 1] <
-      minimalIntegralKeptInMultiplet / 100.0
+      integral[integral.length - i - 1] / lastIntegralValue <
+      minimalIntegralKeptInMultiplet / 100
     ) {
       finishingRightPoint = i;
       break;

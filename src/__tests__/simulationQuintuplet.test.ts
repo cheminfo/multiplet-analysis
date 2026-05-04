@@ -1,11 +1,12 @@
 import { toBeDeepCloseTo } from 'jest-matcher-deep-close-to';
 import { signalsToXY } from 'nmr-processing';
+import { expect, test } from 'vitest';
 
-import { analyseMultiplet } from '../index';
+import { analyseMultiplet } from '../index.ts';
 
 expect.extend({ toBeDeepCloseTo });
 
-test('', () => {
+test('simulation quintuplet', () => {
   const signalCouplings = [
     { atoms: [2], coupling: 10.1 },
     { atoms: [3], coupling: 6.12317 },
@@ -29,46 +30,45 @@ test('', () => {
       },
       {
         atoms: [3],
-        delta: 5.0,
+        delta: 5,
         js: [],
       },
       {
         atoms: [4],
-        delta: 7.0,
+        delta: 7,
         js: [],
       },
       {
         atoms: [5],
-        delta: 9.0,
+        delta: 9,
         js: [],
       },
       {
         atoms: [6],
-        delta: 11.0,
+        delta: 11,
         js: [],
       },
       {
         atoms: [7],
-        delta: 13.0,
+        delta: 13,
         js: [],
       },
       {
         atoms: [8],
-        delta: 15.0,
+        delta: 15,
         js: [],
       },
       {
         atoms: [9],
-        delta: 15.0,
+        delta: 15,
         js: [],
       },
     ],
     { from: 1.05, to: 1.15, nbPoints: 1024 },
   );
 
-  let result = analyseMultiplet(spectrum, {
+  const result = analyseMultiplet(spectrum, {
     frequency: 400,
-    debug: true,
     minimalResolution: 0.1,
     critFoundJ: 0.85,
     decreasingJvalues: true,

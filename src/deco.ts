@@ -1,5 +1,13 @@
-export function decofast1(yi, jStar, sign, nbLines, addspace = 0) {
-  let y1 = new Float64Array(yi.length + addspace);
+import type { Sign } from './types.ts';
+
+export function decofast1(
+  yi: Float64Array,
+  jStar: number,
+  sign: Sign,
+  nbLines: number,
+  addspace = 0,
+) {
+  const y1 = new Float64Array(yi.length + addspace);
   for (let scan = 0; scan < addspace; scan++) {
     y1[scan] = 0;
   }
@@ -31,8 +39,15 @@ export function decofast1(yi, jStar, sign, nbLines, addspace = 0) {
   }
   return y1;
 }
-export function decofast2(yi, jStar, sign, nbLines, addspace = 0) {
-  let y2 = new Float64Array(yi.length + addspace);
+
+export function decofast2(
+  yi: Float64Array,
+  jStar: number,
+  sign: Sign,
+  nbLines: number,
+  addspace = 0,
+) {
+  const y2 = new Float64Array(yi.length + addspace);
 
   for (let scan = 0; scan < yi.length; scan++) {
     y2[scan] = yi[scan];
@@ -84,22 +99,22 @@ export function decofast2(yi, jStar, sign, nbLines, addspace = 0) {
 
 /**
  *
- * @param {array} [yi]
- * @param {number} [jStar]
- * @param {number} [sign=1]  ++ multiplet :1 +- multiplet : -1
- * @param {number} [dir=1] from left to right : 1 -1 from right to left, 0: sum of both
- * @param {number} [chopTail=1] run the end of the multiplet
- * @param {number} [multiplicity] value for spin 1/2
+ * @param [yi]
+ * @param [jStar]
+ * @param [sign=1]  - ++ multiplet :1 +- multiplet : -1
+ * @param [dir=1] - from left to right : 1 -1 from right to left, 0: sum of both
+ * @param [chopTail=1] - run the end of the multiplet
+ * @param [multiplicity] - value for spin 1/2
  */
 export function deco(
-  yi,
-  jStar,
-  sign = 1,
+  yi: Float64Array,
+  jStar: number,
+  sign: Sign = 1,
   dir = 1,
   chopTail = 1,
   multiplicity = 0.5,
-) {
-  let nbLines = Math.round(2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
+): Float64Array {
+  const nbLines = Math.round(2 * multiplicity); // 1 for doublet (spin 1/2) 2, for spin 1, etc... never tested...
   let y1;
   let y2;
   if (dir > -1) {
@@ -132,11 +147,13 @@ export function deco(
     }
     return new Float64Array(y1.buffer, 0, y1.length - jStar * nbLines);
   }
-  let half = ((y1.length - jStar * nbLines) / 2.0) | 0;
+  const half = ((y1.length - jStar * nbLines) / 2) | 0;
   if (dir === 0.1) {
     for (let scan = half; scan < y2.length - jStar * nbLines; scan++) {
       y1[scan] = sign * y2[scan + jStar * nbLines];
     }
     return new Float64Array(y1.buffer, 0, y1.length - jStar * nbLines);
   }
+
+  throw new Error('unreachable');
 }

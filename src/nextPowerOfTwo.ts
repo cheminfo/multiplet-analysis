@@ -1,4 +1,4 @@
-export function nextPowerOfTwo(n) {
+export function nextPowerOfTwo(n: number) {
   if (n === 0) return 1;
   n--;
   n |= n >> 1;

@@ -1,28 +1,19 @@
-/**
- *
- * @param {number[]} y1
- * @param {number[]} y2
- * @param {number} direction
- * @param {number} incrementForSpeed
- * @param {number} first
- * @param {number} last
- * @returns {number}
- */
+import type { Sign } from './types.ts';
 
 export function scalarProduct(
-  y1,
-  y2,
-  direction,
-  incrementForSpeed,
+  y1: Float64Array,
+  y2: Float64Array,
+  direction: Sign,
+  incrementForSpeed: number,
   first = 0,
   last = y1.length,
-) {
-  // sens = 1; crude scalar product
-  // sens =-1: flip spectrum first
+): number {
+  // direction = 1; crude scalar product
+  // direction =-1: flip spectrum first
   let v11 = 0;
   let v22 = 0;
   let v12 = 0;
-  if (direction > 0) {
+  if (direction === 1) {
     for (let index = first; index < last; index += incrementForSpeed) {
       v12 += y1[index] * y2[index];
       v11 += y1[index] * y1[index];
