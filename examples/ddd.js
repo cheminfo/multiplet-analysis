@@ -1,7 +1,8 @@
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import ddd from '../data/d=1_J=2,4,6_m=ddd.json';
-import { analyseMultiplet } from '../src/index.js';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { analyseMultiplet } from '../src/index.ts';
 
 //let result = analyseMultiplet(ddd, { frequency: 400, debug: true , symmetrizeEachStep: true });
 //let result = analyseMultiplet(ddd, { frequency: 400, debug: true , symmetrizeEachStep: false });

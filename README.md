@@ -23,14 +23,14 @@ The result of the analysis that is an object composed:
 ## Run example
 
 ```
-node -r esm examples/quadruplet.js
-node -r esm examples/ddd.js
-node -r esm examples/ddd_ABCD.js
-node -r esm examples/doublet.js
+node examples/quadruplet.js
+node examples/ddd.js
+node examples/ddd_ABCD.js
+node examples/doublet.js
 
-node -r esm examples/simulate.js; # to simulate from a user-defined spin system
-node -r esm examples/dd-exp.js; # to simulate from a user-defined spin system
-node -r esm examples/asymDoublet.js; # to simulate from a user-defined spin system
+node examples/simulate.js; # to simulate from a user-defined spin system
+node examples/dd-exp.js; # to simulate from a user-defined spin system
+node examples/asymDoublet.js; # to simulate from a user-defined spin system
 ```
 
 ## Developement
@@ -41,12 +41,12 @@ cd multiplet-analysis
 code .
 ```
 
-To run the `jest` tests in an interactive way (preferably on a second screen):
-`npx jest --watch`
+To run the `vitest` tests in an interactive way (preferably on a second screen):
+`npx vitest`
 
-In order to debug you may anytime add a `console.log` in the code. The result of the log will appear in the `jest --watch`.
+In order to debug you may anytime add a `console.log` in the code. The result of the log will appear in the `vitest` terminal.
 
-In the `jest --.watch` terminal you may as well select only one specific test.
+In the `vitest` terminal you may as well select only one specific test.
 
 In is also possible to select a specific test in the code by
 adding `.only` after `describe` or `it` like for example: `it.only('s`
@@ -65,10 +65,6 @@ There are also 2 examples files to create the data:
 - exampleGenerateData : create an object like {x:[], y:[]}
 
 When you clone / update the project don't forget to `npm i` to load possible new dependencies.
-
-If you want to execute those scripts written as module you need to use `esm` that is installed as a development dependency.
-`npm install esm`
-`node -r esm ./examples/web/exampleGenerateAnnotations.js`
 
 ## Creating simulated data
 
@@ -103,9 +99,6 @@ const result = library(args);
 [ci-url]: https://github.com/cheminfo/multiplet-analysis/actions?query=workflow%3A%22Node.js+CI%22
 [download-image]: https://img.shields.io/npm/dm/multiplet-analysis.svg
 [download-url]: https://www.npmjs.com/package/multiplet-analysis
-
-npm i ml-fft
-npm home ml-fft
 
 ## Demo and examples
 

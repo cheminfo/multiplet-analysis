@@ -1,8 +1,8 @@
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import mult from '../data/asymDoublet.json';
-import { analyseMultiplet } from '../src/index';
+import { analyseMultiplet } from '../src/index.ts';
 
 let result = analyseMultiplet(mult, {
   frequency: 500,

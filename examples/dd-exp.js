@@ -1,8 +1,8 @@
-import doublet from '../data/dd-exp.json';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
-import { analyseMultiplet } from '../src/index';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+import doublet from '../data/dd-exp.json';
+import { analyseMultiplet } from '../src/index.ts';
 
 let result = analyseMultiplet(doublet, {
   frequency: 600,
