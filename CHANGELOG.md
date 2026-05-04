@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.5...v3.0.0) (2026-05-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to ESM and TypeScript ([#58](https://github.com/cheminfo/multiplet-analysis/issues/58))
+
+### Features
+
+* migrate to ESM and TypeScript ([#58](https://github.com/cheminfo/multiplet-analysis/issues/58)) ([198fb6c](https://github.com/cheminfo/multiplet-analysis/commit/198fb6c0f2de644de9ed723819800419320ac41a))
+
 ## [2.1.5](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.4...v2.1.5) (2024-12-04)
 
 

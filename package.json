@@ -1,6 +1,6 @@
 {
   "name": "multiplet-analysis",
-  "version": "2.1.5",
+  "version": "3.0.0",
   "license": "MIT",
   "description": "Extract coupling constants from a complex NMR multiplet",
   "keywords": [],
