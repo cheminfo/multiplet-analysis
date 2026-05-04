@@ -1,19 +1,19 @@
 import FFT from 'fft.js';
 
 export function trigInterpolate(
-  x,
-  y,
-  numberOfPointOutput,
-  addPhaseInterpolation,
-  appliedPhaseCorrectionType,
+  x: Float64Array,
+  y: Float64Array,
+  numberOfPointOutput: number,
+  addPhaseInterpolation: number,
+  appliedPhaseCorrectionType = 0,
 ) {
-  let scale = new Float64Array(numberOfPointOutput);
-  let spectrum = new Float64Array(numberOfPointOutput);
+  const scale = new Float64Array(numberOfPointOutput);
+  const spectrum = new Float64Array(numberOfPointOutput);
 
-  let scaIncrement = (x[x.length - 1] - x[0]) / (x.length - 1); // delta one pt
+  const scaIncrement = ((x.at(-1) as number) - x[0]) / (x.length - 1); // delta one pt
   let scaPt = x[0]; // move to limit side - not middle of first point (half a pt left...)
-  let trueWidth = scaIncrement * x.length;
-  let scaIncrementInterp = trueWidth / numberOfPointOutput;
+  const trueWidth = scaIncrement * x.length;
+  const scaIncrementInterp = trueWidth / numberOfPointOutput;
 
   for (let i = 0; i < numberOfPointOutput; i++) {
     scale[i] = scaPt;
@@ -22,8 +22,8 @@ export function trigInterpolate(
 
   // interpolate spectrum
   // prepare input for fft apply fftshift
-  let nextPowerTwoInput = 2 ** Math.ceil(Math.log2(y.length));
-  let nextPowerTwoOut = 2 ** Math.ceil(Math.log2(numberOfPointOutput));
+  const nextPowerTwoInput = 2 ** Math.ceil(Math.log2(y.length));
+  const nextPowerTwoOut = 2 ** Math.ceil(Math.log2(numberOfPointOutput));
 
   const fft = new FFT(nextPowerTwoInput);
   const an = fft.createComplexArray();
@@ -43,7 +43,7 @@ export function trigInterpolate(
 
   // move to larger array...
   const fft2 = new FFT(nextPowerTwoOut);
-  let timeDomainZeroFilled = fft2.createComplexArray();
+  const timeDomainZeroFilled = fft2.createComplexArray();
   for (let i = 0; i < halfNumPt * 2; i++) {
     timeDomainZeroFilled[i] = timeDomain[i]; //* Math.cos((phase / 180) * Math.PI)
   }
@@ -54,10 +54,10 @@ export function trigInterpolate(
   const halfNumPt2 = Math.floor(numberOfPointOutput / 2);
 
   // applies phase change
-  let phaseRad = ((addPhaseInterpolation + 0.0) / 180.0) * Math.PI; // this is for testing additional phases
-  if (phaseRad !== 0.0) {
+  let phaseRad = ((addPhaseInterpolation + 0) / 180) * Math.PI; // this is for testing additional phases
+  if (phaseRad !== 0) {
     for (let i = 0; i < 2 * halfNumPt2; i++) {
-      let tmp =
+      const tmp =
         interpolatedSpectrum[i * 2] * Math.cos(phaseRad) +
         interpolatedSpectrum[i * 2 + 1] * Math.sin(phaseRad); // only Re now...
       interpolatedSpectrum[i * 2 + 1] =
@@ -83,7 +83,7 @@ export function trigInterpolate(
             );
           } else {
             localPhaseRad =
-              (Math.sign(interpolatedSpectrum[loop * 2 + 1]) * Math.PI) / 2.0;
+              (Math.sign(interpolatedSpectrum[loop * 2 + 1]) * Math.PI) / 2;
           }
           norm = Math.sqrt(
             interpolatedSpectrum[loop * 2 + 1] *
@@ -96,17 +96,17 @@ export function trigInterpolate(
         if (vectx !== 0) {
           localPhaseRad = Math.atan(vecty / vectx);
         } else {
-          localPhaseRad = (Math.sign(vecty) * Math.PI) / 2.0;
+          localPhaseRad = (Math.sign(vecty) * Math.PI) / 2;
         }
       }
-      norm = Math.sqrt(vecty * vecty + vectx * vectx);
-      phaseRad = -(10.0 / (i * i)) * Math.sign(vecty);
+      norm = Math.hypot(vecty, vectx);
+      phaseRad = -(10 / (i * i)) * Math.sign(vecty);
 
-      returnedPhase -= (180.0 * phaseRad) / Math.PI;
+      returnedPhase -= (180 * phaseRad) / Math.PI;
 
-      if (phaseRad !== 0.0) {
+      if (phaseRad !== 0) {
         for (let loop = 0; loop < 2 * halfNumPt2; loop++) {
-          let tmp =
+          const tmp =
             interpolatedSpectrum[loop * 2] * Math.cos(phaseRad) +
             interpolatedSpectrum[loop * 2 + 1] * Math.sin(phaseRad); // only Re now...
           interpolatedSpectrum[loop * 2 + 1] =
@@ -119,15 +119,15 @@ export function trigInterpolate(
   }
 
   // applies fftshift
-  let dropPoints = nextPowerTwoOut - numberOfPointOutput;
+  const dropPoints = nextPowerTwoOut - numberOfPointOutput;
   for (let i = 0; i < halfNumPt2; i++) {
     spectrum[i] = interpolatedSpectrum[(halfNumPt2 + dropPoints + i) * 2]; // only Re now...
   }
   for (let i = 0; i < halfNumPt2; i++) {
     spectrum[i + halfNumPt2] = interpolatedSpectrum[i * 2];
   }
-  if (returnedPhase > 360.0) {
-    returnedPhase -= 360.0;
+  if (returnedPhase > 360) {
+    returnedPhase -= 360;
   }
 
   return {

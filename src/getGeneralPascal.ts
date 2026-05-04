@@ -1,5 +1,4 @@
-export function getGeneralPascal(n, spin = 0.5) {
-  //spin = typeof spin !== 'undefined' ? spin : 0.5;
+export function getGeneralPascal(n: number, spin = 0.5) {
   if (n === 0) return [1];
   const nbLine = 2 * spin + 1;
   let line;
@@ -21,8 +20,8 @@ export function getGeneralPascal(n, spin = 0.5) {
       line = [];
       for (let j = 0; j < nbLine; j++) {
         if (j === 0) {
-          for (let k = 0; k < previousLine.length; k++) {
-            line.push(previousLine[k]); // copy the line
+          for (const previousValue of previousLine) {
+            line.push(previousValue); // copy the line
           }
         } else {
           for (let k = 0; k < previousLine.length - 1; k++) {
