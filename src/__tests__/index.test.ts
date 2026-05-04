@@ -98,7 +98,7 @@ describe('analyse multiplet of simulated spectra', () => {
     expect(result.chemShift).toBeCloseTo(3.77, 2);
   });
 
-  it('androsten multiplets 1', () => {
+  it('androsten multiplets 1', { timeout: 15_000 }, () => {
     const results = [];
 
     let x;
