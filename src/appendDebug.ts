@@ -21,7 +21,7 @@ export function appendDebug(
     if (yin[i] !== undefined) {
       multiplet.x.push(xin[i]);
       multiplet.y.push(yin[i]);
-      if (!(beforeSymSpe === undefined)) {
+      if (beforeSymSpe !== undefined) {
         multiplet.s.push(beforeSymSpe[i]);
       }
     }
