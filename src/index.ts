@@ -27,13 +27,13 @@ export type {
   AnalyseMultipletResult,
 } from './types.ts';
 
-type AnalyseMultipletOptionsNormal = AnalyseMultipletOptions & {
+export type AnalyseMultipletOptionsNormal = AnalyseMultipletOptions & {
   debug?: false;
 };
-type AnalyseMultipletOptionsWithDebug = AnalyseMultipletOptions & {
+export type AnalyseMultipletOptionsWithDebug = AnalyseMultipletOptions & {
   debug: true;
 };
-type AnalyseMultipletResultWithDebug = AnalyseMultipletResult & {
+export type AnalyseMultipletResultWithDebug = AnalyseMultipletResult & {
   debug: AnalyseMultipletDebugData;
 };
 
