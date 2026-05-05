@@ -85,3 +85,19 @@ export interface AnalyseMultipletResult {
   phaseCorrectionOnMultipletInDeg: number;
   chemShift: number;
 }
+
+export interface AnalyseMultipletDebugStep {
+  multiplet: {
+    x: number[];
+    y: number[];
+    s: number[];
+  };
+  errorFunction: {
+    x: number[];
+    y: number[];
+  };
+}
+
+export interface AnalyseMultipletDebugData {
+  steps: AnalyseMultipletDebugStep[];
+}

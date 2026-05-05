@@ -3,10 +3,12 @@ import {
   nextPowerOfTwo,
   xEnsureFloat64,
   xMinValue,
+  xSequentialFillFromStep,
   xSubtract,
   xyMaxYPoint,
 } from 'ml-spectra-processing';
 
+import { appendDebug } from './appendDebug.ts';
 import { deco } from './deco.ts';
 import { measureDeco } from './measureDeco.ts';
 import { measureSymShift } from './measureSymShift.ts';
@@ -14,6 +16,7 @@ import { scalarProduct } from './scalarProduct.ts';
 import { symmetrize } from './symmetrize.ts';
 import { trigInterpolate } from './trigInterpolate.ts';
 import type {
+  AnalyseMultipletDebugData,
   AnalyseMultipletOptions,
   AnalyseMultipletResult,
 } from './types.ts';
@@ -24,6 +27,16 @@ export type {
   AnalyseMultipletResult,
 } from './types.ts';
 
+type AnalyseMultipletOptionsNormal = AnalyseMultipletOptions & {
+  debug?: false;
+};
+type AnalyseMultipletOptionsWithDebug = AnalyseMultipletOptions & {
+  debug: true;
+};
+type AnalyseMultipletResultWithDebug = AnalyseMultipletResult & {
+  debug: AnalyseMultipletDebugData;
+};
+
 /**
  * Analyse a multiplet.
  * @param data - xy data containing the multiplet.
@@ -31,8 +44,18 @@ export type {
  */
 export function analyseMultiplet(
   data: DataXY,
-  options: AnalyseMultipletOptions = {},
-) {
+  options?: AnalyseMultipletOptionsNormal,
+): AnalyseMultipletResult;
+export function analyseMultiplet(
+  data: DataXY,
+  options: AnalyseMultipletOptionsWithDebug,
+): AnalyseMultipletResultWithDebug;
+export function analyseMultiplet(
+  data: DataXY,
+  options:
+    | AnalyseMultipletOptionsNormal
+    | AnalyseMultipletOptionsWithDebug = {},
+): AnalyseMultipletResult | AnalyseMultipletResultWithDebug {
   const x = xEnsureFloat64(data.x);
   let y = xEnsureFloat64(data.y);
 
@@ -55,6 +78,7 @@ export function analyseMultiplet(
     appliedPhaseCorrectionType = 0,
     decreasingJvalues = true,
     jumpUpAfterFoundValue = 2,
+    debug = false,
   } = options;
 
   const result: AnalyseMultipletResult = {
@@ -62,6 +86,23 @@ export function analyseMultiplet(
     phaseCorrectionOnMultipletInDeg: 0,
     chemShift: 0,
   };
+
+  const debugData: AnalyseMultipletDebugData = {
+    steps: [],
+  };
+
+  function makeReturn():
+    | AnalyseMultipletResult
+    | AnalyseMultipletResultWithDebug {
+    if (debug) {
+      return {
+        ...result,
+        debug: debugData,
+      } satisfies AnalyseMultipletResultWithDebug;
+    } else {
+      return result;
+    }
+  }
 
   const maxNumberOfCoupling = 12;
   //option see if cut is good. (should we cut more or interpolate if cut too close to peak - cause artifacts in both cases)
@@ -104,9 +145,8 @@ export function analyseMultiplet(
     spectrum = y;
   }
 
-  let incrementForSpeed = 1;
+  const incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
   let curIncrementForSpeed;
-  incrementForSpeed = (1 + 0.3 / minimalResolution) | 0; // 1 could be set better (according to line widht ?!)
 
   resolutionPpm =
     Math.abs(scale[0] - (scale.at(-1) as number)) / (scale.length - 1);
@@ -126,7 +166,16 @@ export function analyseMultiplet(
       for (let jStar = 0; jStar < minTestedPt + incrementForSpeed; jStar++) {
         scalProd[jStar] = 0;
       }
-      return result;
+
+      if (debug) {
+        const jStarArray = xSequentialFillFromStep({
+          from: 0,
+          step: resolutionHz,
+          size: maxTestedPt,
+        });
+        appendDebug(debugData, scale, spectrum, jStarArray, scalProd);
+      }
+      return makeReturn();
     } else {
       spectrum = symmetrize(spectrum);
     }
@@ -142,16 +191,24 @@ export function analyseMultiplet(
     loopoverJvalues < maxNumberOfCoupling;
     loopoverJvalues++
   ) {
-    const scalProd = [];
-    const jStarArray = [];
+    // These two must be arrays because their size is dynamically increased below.
+    const scalProd: number[] = [];
+    const jStarArray: number[] = [];
     for (let jStar = 0; jStar < minTestedPt + incrementForSpeed; jStar++) {
       jStarArray[jStar] = jStar * resolutionHz;
       scalProd[jStar] = 0;
     }
 
-    //symmetrize if requested to
+    let beforeSymSpe: Float64Array | undefined;
+
+    // Symmetrize if requested to.
     if (symmetrizeEachStep) {
       [spectrum, scale] = removeShift(spectrum, scale, 95);
+
+      if (debug) {
+        // Save this to plot it as well.
+        beforeSymSpe = spectrum.slice();
+      }
 
       spectrum = symmetrize(spectrum);
     }
@@ -261,6 +318,21 @@ export function analyseMultiplet(
       }
     }
 
+    if (debug) {
+      if (symmetrizeEachStep) {
+        appendDebug(
+          debugData,
+          scale,
+          spectrum,
+          jStarArray,
+          scalProd,
+          beforeSymSpe,
+        );
+      } else {
+        appendDebug(debugData, scale, spectrum, jStarArray, scalProd);
+      }
+    }
+
     if (!gotJValue) {
       break;
     } else {
@@ -269,7 +341,7 @@ export function analyseMultiplet(
         spectrum,
         topPosJ,
         sign,
-        0 + 0.1 * (takeBestPartMultiplet ? 1 : 0),
+        takeBestPartMultiplet ? 0.1 : 0,
         chopTail ? 1 : 0,
         multiplicity,
       ); // for next step
@@ -286,7 +358,8 @@ export function analyseMultiplet(
 
   const maxAmplitudePosition = xyMaxYPoint({ x: scale, y: spectrum });
   result.chemShift = scale[maxAmplitudePosition.index];
-  return result;
+
+  return makeReturn();
 }
 
 /* matlab code :
