@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/cheminfo/multiplet-analysis/compare/v3.0.0...v3.0.1) (2026-05-05)
+
+
+### Bug Fixes
+
+* restore `debug` option ([#60](https://github.com/cheminfo/multiplet-analysis/issues/60)) ([c13664d](https://github.com/cheminfo/multiplet-analysis/commit/c13664df902cd2a7140c6d6738d9e5e790e27d05))
+
 ## [3.0.0](https://github.com/cheminfo/multiplet-analysis/compare/v2.1.5...v3.0.0) (2026-05-04)
 
 
